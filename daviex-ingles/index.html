@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Daviex – Ecosistema de Inmersión en Inglés</title>
+
+  <!-- Configuración PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Daviex" />
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3898/3898082.png" />
+
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.88);
+      --accent-primary: #4f46e5;
+      --accent-secondary: #06b6d4;
+      --accent-light: #a5b4fc;
+      --accent-soft: rgba(99, 102, 241, 0.2);
+      --accent-border: rgba(99, 102, 241, 0.38);
+    }
+
+    /* TEMA ROSADO (SE ACTIVA CON UN SOLO BOTÓN) */
+    body.theme-pink {
+      --bg-main: #160912;
+      --card-bg: rgba(36, 14, 28, 0.88);
+      --accent-primary: #db2777;
+      --accent-secondary: #f43f5e;
+      --accent-light: #f9a8d4;
+      --accent-soft: rgba(236, 72, 153, 0.22);
+      --accent-border: rgba(236, 72, 153, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: #f1f5f9;
+      overscroll-behavior-y: contain;
+      transition: background-color 0.3s ease;
+    }
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Adaptación automática de colores cuando el Modo Rosado está activo */
+    body.theme-pink .bg-indigo-600 { background-color: #db2777 !important; }
+    body.theme-pink .hover\:bg-indigo-500:hover { background-color: #ec4899 !important; }
+    body.theme-pink .text-indigo-300,
+    body.theme-pink .text-indigo-200 { color: #f9a8d4 !important; }
+    body.theme-pink .border-indigo-500\/20,
+    body.theme-pink .border-indigo-500\/30,
+    body.theme-pink .border-indigo-500\/40 { border-color: rgba(236, 72, 153, 0.45) !important; }
+    body.theme-pink .bg-indigo-500\/20,
+    body.theme-pink .bg-indigo-600\/25,
+    body.theme-pink .bg-indigo-600\/30 { background-color: rgba(236, 72, 153, 0.22) !important; }
+    body.theme-pink .from-indigo-500 { --tw-gradient-from: #ec4899 !important; }
+    body.theme-pink .to-cyan-500 { --tw-gradient-to: #f43f5e !important; }
+    body.theme-pink .from-indigo-600 { --tw-gradient-from: #db2777 !important; }
+    body.theme-pink .to-cyan-600 { --tw-gradient-to: #e11d48 !important; }
+    body.theme-pink .shadow-indigo-600\/30 { --tw-shadow-color: rgba(219, 39, 119, 0.35) !important; }
+
+    .perspective {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flipped {
+      transform: rotateY(180deg);
+    }
+    .flip-face {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+      100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+    .recording-pulse {
+      animation: pulse-ring 1.4s infinite;
+    }
+    .safe-bottom {
+      padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    }
+  </style>
+</head>
+<body class="min-h-screen safe-bottom selection:bg-indigo-500 selection:text-white">
+
+  <!-- =========================================================
+       MODAL DEL PACTO INICIAL + PERSONALIZACIÓN POR INTERESES
+       ========================================================= -->
+  <div id="pactModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-card rounded-3xl max-w-md w-full p-5 sm:p-6 border border-indigo-500/40 space-y-4 shadow-2xl my-auto">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-2xl shadow-lg shrink-0">
+          🤖
+        </div>
+        <div>
+          <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold">El Pacto Inicial</span>
+          <h2 class="text-base sm:text-lg font-extrabold text-white mt-0.5">Hola, soy Daviex. Hablemos claro.</h2>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed">
+        <p>Estoy diseñado con neurociencia para que domines el inglés. Pero te diré la verdad desde el primer día:</p>
+        <p class="text-amber-300 font-semibold">"Si tú no me usas, si no hablas en voz alta y si no te esfuerzas, no hay nada que yo pueda hacer por ti."</p>
+        <p>Usa el español solo para entender al principio; luego actívame en <b>Modo Inmersión</b>. Si hay español e inglés juntos, tu cerebro buscará lo fácil. Y <b class="text-white">lo difícil es lo que vale la pena</b>.</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-slate-300 block mb-1">1. ¿Cómo te llamas?</label>
+          <input id="pactNameInput" type="text" placeholder="Tu nombre o apodo..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-300 block mb-1">2. ¿Cuál es tu meta real con el inglés?</label>
+          <input id="pactGoalInput" type="text" placeholder="Ej: Ser desarrollador bilingüe, viajar, entender música..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-300 block mb-1">3. ¿Qué tema te apasiona más? (Para personalizar tus retos)</label>
+          <select id="pactInterestInput" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+            <option value="tech">💻 Tecnología, Programación & Videojuegos</option>
+            <option value="music">🎸 Música, Canciones & Cultura</option>
+            <option value="movies">🎬 Cine, Series & Buenas Historias</option>
+            <option value="growth">🚀 Negocios, Hábitos & Psicología</option>
+          </select>
+        </div>
+      </div>
+
+      <button onclick="savePact()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 active:scale-[0.99] transition">
+        🤝 Acepto el compromiso. ¡Empecemos!
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BARRA SUPERIOR COMPACTA + BOTÓN ÚNICO DE COLOR (AZUL / ROSADO)
+       ========================================================= -->
+  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-3 py-2.5">
+    <div class="max-w-xl mx-auto flex items-center justify-between gap-1.5">
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-lg shadow-md shrink-0">
+          🤖
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white">Daviex</h1>
+            <button onclick="openPactModal()" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-indigo-300 border border-slate-700 font-semibold shrink-0">
+              ⚙️ Meta
+            </button>
+          </div>
+          <p id="headerGreeting" class="text-[10px] sm:text-[11px] text-slate-400 truncate">Tu entrenador bilingüe</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <!-- BOTÓN ÚNICO PARA CAMBIAR ENTRE MODO AZUL Y MODO ROSADO -->
+        <button onclick="toggleThemeColor()" id="btnThemeColor" title="Cambiar color de estilo (Azul / Rosado)" class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 text-[11px] font-bold flex items-center gap-1 active:scale-95 transition">
+          <span id="themeColorIcon">💙</span>
+          <span id="themeColorText" class="hidden sm:inline">Azul</span>
+        </button>
+
+        <!-- Interruptor Modo Inmersión -->
+        <button onclick="toggleImmersion()" id="btnImmersion" class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-bold flex items-center gap-1 transition-all">
+          🧠 <span id="immersionLabel">OFF</span>
+        </button>
+
+        <!-- Botón Compartir por WhatsApp -->
+        <button onclick="shareAppWhatsApp()" title="Compartir App" class="p-1.5 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
+          📲
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="max-w-xl mx-auto px-3.5 pt-3.5 space-y-4">
+
+    <!-- Banner de Inmersión Activa -->
+    <div id="immersionBanner" class="hidden rounded-2xl p-3 bg-gradient-to-r from-indigo-950/90 to-cyan-950/90 border border-cyan-500/40 text-[11px] text-cyan-100 leading-relaxed">
+      🔥 <b>Modo Inmersión ON:</b> Español oculto. Asocia sonidos e ideas directamente en inglés como aprendiste de niño. ¡Lo difícil es lo que vale la pena!
+    </div>
+
+    <!-- =========================================================
+         PANEL DE PROPÓSITO Y MOTOR SRS (REPETICIÓN ESPACIADA)
+         ========================================================= -->
+    <section class="glass-card rounded-2xl p-3.5 space-y-2.5 border border-indigo-500/20">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+        <div class="text-xs text-slate-300 truncate">
+          🎯 <b id="userGoalBanner" class="text-indigo-300">Dominar el inglés paso a paso</b>
+        </div>
+        <span id="srsDueBadge" onclick="switchTab('practice')" class="cursor-pointer text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
+          ⏰ 0 para hoy
+        </span>
+      </div>
+
+      <!-- Contador de Evolución SRS -->
+      <div class="grid grid-cols-4 gap-1.5 text-center">
+        <div class="bg-slate-900/70 rounded-xl py-1.5 px-1 border border-slate-800/80">
+          <span class="text-xs">🌱</span>
+          <span id="statStage0" class="text-xs font-extrabold text-white ml-0.5">0</span>
+          <span class="text-[9px] text-slate-400 block">Semillas (Hoy)</span>
+        </div>
+        <div class="bg-slate-900/70 rounded-xl py-1.5 px-1 border border-slate-800/80">
+          <span class="text-xs">🌿</span>
+          <span id="statStage1" class="text-xs font-extrabold text-cyan-400 ml-0.5">0</span>
+          <span class="text-[9px] text-slate-400 block">Brotes (1d)</span>
+        </div>
+        <div class="bg-slate-900/70 rounded-xl py-1.5 px-1 border border-slate-800/80">
+          <span class="text-xs">🌳</span>
+          <span id="statStage2" class="text-xs font-extrabold text-emerald-400 ml-0.5">0</span>
+          <span class="text-[9px] text-slate-400 block">Árboles (3d)</span>
+        </div>
+        <div class="bg-slate-900/70 rounded-xl py-1.5 px-1 border border-slate-800/80">
+          <span class="text-xs">🔥</span>
+          <span id="statStage3" class="text-xs font-extrabold text-amber-400 ml-0.5">0</span>
+          <span class="text-[9px] text-slate-400 block">Fuego (7d)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECCIÓN 1: DESCUBRIR & GUARDAR CONTEXTUALIZADO
+         ========================================================= -->
+    <section id="view-ask" class="space-y-3.5">
+      <div class="glass-card rounded-2xl p-4 space-y-3.5">
+        <div class="text-xs text-slate-300 leading-relaxed">
+          <b class="text-white">🔍 Captura inglés del mundo real:</b> Nunca guardes palabras sueltas sin contexto. Busca una frase o palabra que escuchaste hoy y créale una historia tuya.
+        </div>
+
+        <!-- Selector de dirección -->
+        <div class="flex items-center justify-between bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-[11px]">
+          <span class="text-slate-400 pl-2">Traducir de:</span>
+          <div class="flex gap-1">
+            <button onclick="setLangPair('en|es')" id="lang-en-es" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold">
+              🇬🇧 EN ➔ 🇪🇸 ES
+            </button>
+            <button onclick="setLangPair('es|en')" id="lang-es-en" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold">
+              🇪🇸 ES ➔ 🇬🇧 EN
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra de búsqueda -->
+        <div class="flex gap-2">
+          <input id="searchInput" type="text" placeholder="Ej: What a friend I've found, relentless..." 
+            onkeydown="if(event.key==='Enter') askDaviex()"
+            class="w-full px-3.5 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500" />
+          <button onclick="askDaviex()" id="btnSearch" class="px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-extrabold text-white shrink-0 shadow-lg shadow-indigo-600/30 active:scale-95 transition">
+            Analizar
+          </button>
+        </div>
+
+        <!-- Sugerencias adaptadas al interés del usuario -->
+        <div class="space-y-1">
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">Sugerencias para tu pasión:</span>
+          <div id="interestChipsContainer" class="flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Resultado Analizado + Reto de Contexto Personal -->
+      <div id="daviexResult" class="hidden glass-card rounded-2xl p-4 border border-indigo-500/40 space-y-3.5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span id="resCategory" class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 font-bold">Expresión</span>
+            <h2 id="resEnglish" class="text-xl font-extrabold text-white mt-1"></h2>
+            <p id="resPhonetic" class="text-xs text-cyan-400 font-mono"></p>
+          </div>
+          <div class="flex gap-1 shrink-0">
+            <button onclick="speakCurrentResult(0.95)" class="px-2.5 py-2 rounded-xl bg-slate-800 text-xs font-bold text-white border border-slate-700">
+              🔊
+            </button>
+            <button onclick="speakCurrentResult(0.6)" class="px-2.5 py-2 rounded-xl bg-slate-800 text-xs font-bold text-amber-300 border border-slate-700">
+              🐢
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Apoyo en Español:</span>
+            <p id="resSpanish" class="text-sm font-bold text-emerald-400 mt-0.5"></p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-cyan-400 block">🧠 Definición Nativa (Inmersión):</span>
+            <p id="resExplanation" class="text-xs text-slate-200 mt-0.5 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Apropiación Contextual Obligatoria -->
+        <div class="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-indigo-200">
+              ✍️ Contexto Real (Obligatorio para el SRS):
+            </label>
+            <button onclick="suggestPersonalTemplate()" class="text-[10px] px-2 py-0.5 rounded-lg bg-indigo-600/30 text-indigo-200 border border-indigo-500/30 font-semibold">
+              💡 Autocompletar idea
+            </button>
+          </div>
+          <input id="resExampleInput" type="text" placeholder="Escribe una frase que conecte esto con tu vida..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+
+        <button onclick="saveResultToDeck()" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 text-xs font-extrabold text-white shadow-lg shadow-indigo-600/30 active:scale-[0.99]">
+          🌱 Sembrar en mi Motor SRS
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECCIÓN 2: ENTRENAR SRS + SHADOWING CON SELECTOR DE MICRÓFONO
+         ========================================================= -->
+    <section id="view-practice" class="hidden space-y-3.5">
+      
+      <!-- Controles del Motor SRS -->
+      <div class="flex items-center justify-between gap-2 px-1">
+        <span id="cardCounterLabel" class="text-xs font-bold text-slate-400">Tarjeta 1 de X</span>
+        <div class="flex gap-1">
+          <button onclick="setPracticeFilter('due')" id="pfilter-due" class="text-[11px] px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-extrabold">
+            ⏰ Para Hoy (SRS)
+          </button>
+          <button onclick="setPracticeFilter('all')" id="pfilter-all" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold">
+            Todas
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjeta Interactiva 3D -->
+      <div class="perspective w-full h-64 sm:h-72 cursor-pointer select-none" onclick="flipCurrentCard()">
+        <div id="flashcardInner" class="flip-card-inner relative w-full h-full">
+          
+          <!-- FRENTE (100% INGLÉS + CONTEXTO) -->
+          <div class="flip-face absolute inset-0 glass-card rounded-3xl p-5 flex flex-col justify-between border border-indigo-500/30 shadow-xl">
+            <div class="flex items-center justify-between gap-2">
+              <span id="fcStageBadge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-white font-bold border border-slate-700">🌱 Semilla</span>
+              <div class="flex gap-1.5" onclick="event.stopPropagation()">
+                <button onclick="speakCurrentFlashcard(0.95)" class="px-3 py-1 rounded-xl bg-slate-800 text-xs font-bold text-white border border-slate-700">
+                  🔊 Nativo
+                </button>
+                <button onclick="speakCurrentFlashcard(0.6)" class="px-2.5 py-1 rounded-xl bg-slate-800 text-xs font-bold text-amber-300 border border-slate-700">
+                  🐢
+                </button>
+              </div>
+            </div>
+
+            <div class="text-center my-auto space-y-2 px-1">
+              <h3 id="fcFrontText" class="text-2xl font-extrabold text-white tracking-tight leading-snug"></h3>
+              <p id="fcPhonetic" class="text-xs text-cyan-400 font-mono"></p>
+              <p id="fcFrontContextHint" class="text-xs text-slate-300 italic line-clamp-2"></p>
+            </div>
+
+            <div class="text-center">
+              <span class="text-[10px] text-slate-400 bg-slate-900/90 px-3 py-1 rounded-full border border-slate-800">
+                👆 Toca la tarjeta para ver significado y conexión
+              </span>
+            </div>
+          </div>
+
+          <!-- REVERSO -->
+          <div class="flip-face flip-back absolute inset-0 glass-card rounded-3xl p-5 flex flex-col justify-between border border-emerald-500/40 bg-slate-900/95 shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Conexión Neuronal</span>
+              <button onclick="event.stopPropagation(); speakCurrentFlashcard(0.95)" class="px-2.5 py-1 rounded-lg bg-slate-800 text-xs text-white">
+                🔊 Repetir
+              </button>
+            </div>
+
+            <div class="my-auto space-y-2.5 text-center px-1">
+              <div id="fcSpanishContainer">
+                <h4 id="fcBackText" class="text-lg sm:text-xl font-extrabold text-emerald-400"></h4>
+              </div>
+
+              <div id="fcImmersionNotice" class="hidden p-2 rounded-xl bg-indigo-950/70 border border-indigo-500/30 text-[11px] text-indigo-200">
+                🧠 <b>Modo Inmersión:</b> Sin traducción.
+                <button onclick="event.stopPropagation(); peekSpanish()" class="underline text-cyan-300 ml-1 font-bold">Mostrar español</button>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left space-y-1">
+                <span class="text-[10px] text-cyan-400 uppercase font-bold block">Tu Frase Contextual:</span>
+                <p id="fcExample" class="text-xs text-white font-medium italic"></p>
+                <p id="fcDefinitionEn" class="text-[11px] text-slate-300 pt-1 border-t border-slate-700/60"></p>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <span class="text-[10px] text-slate-400">Practica tu voz abajo o califica el recuerdo 👇</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- =========================================================
+           PASO 4 APLICADO: SHADOWING DIRECTO SIN FILTROS + SELECTOR DE MICRÓFONO
+           ========================================================= -->
+      <div class="glass-card rounded-2xl p-3.5 border border-cyan-500/30 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm">🎙️</span>
+            <h4 class="text-xs font-extrabold text-white">Estudio de Shadowing (Audio Directo)</h4>
+          </div>
+          <span id="micStatusLabel" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold">
+            Listo para grabar
+          </span>
+        </div>
+
+        <!-- Selector de Micrófono Físico (Paso 4 para evitar micrófonos virtuales mudos) -->
+        <div class="flex items-center gap-1.5">
+          <select id="micSelectDropdown" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-[11px] text-slate-200 focus:outline-none focus:border-cyan-500">
+            <option value="">🎤 Micrófono predeterminado del sistema (Sin filtros)</option>
+          </select>
+          <button onclick="refreshMicrophoneList()" title="Buscar micrófonos conectados" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 shrink-0">
+            🔄
+          </button>
+        </div>
+
+        <!-- Barra visual de volumen del micrófono en tiempo real -->
+        <div id="micMeterBox" class="hidden space-y-1">
+          <div class="flex justify-between text-[10px] text-rose-300 font-bold">
+            <span>🔴 Grabando audio crudo... ¡Habla ahora!</span>
+            <span id="micVolumePct">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+            <div id="micLevelBar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-75" style="width: 4%;"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="speakCurrentFlashcard(0.92)" class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700">
+            1️⃣ Oír Nativo
+          </button>
+          <button id="btnRecordShadow" onclick="toggleShadowRecording()" class="py-2.5 px-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-extrabold">
+            2️⃣ Grabar Voz
+          </button>
+          <button id="btnCompareShadow" onclick="compareShadowAudio()" disabled class="py-2.5 px-2 rounded-xl bg-slate-800/50 text-slate-500 border border-slate-800 text-xs font-bold">
+            3️⃣ Comparar
+          </button>
+        </div>
+
+        <!-- Reproductor nativo visible -->
+        <div id="userAudioWrapper" class="hidden pt-1 space-y-1">
+          <div class="flex items-center justify-between text-[11px] text-cyan-300 font-semibold px-1">
+            <span>🎧 Tu grabación:</span>
+            <button onclick="playOnlyUserAudio()" class="underline text-emerald-400 font-bold">▶️ Oír solo mi voz</button>
+          </div>
+          <audio id="userAudioPlayer" controls class="w-full h-9 rounded-lg"></audio>
+        </div>
+      </div>
+
+      <!-- Botones de Calificación SRS -->
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="rateCard('hard')" class="py-2.5 px-2 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold flex flex-col items-center">
+          <span>🌱 Olvidé</span>
+          <span class="text-[10px] font-normal opacity-80">Repasar hoy</span>
+        </button>
+        <button onclick="rateCard('good')" class="py-2.5 px-2 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex flex-col items-center">
+          <span>🌿 Bien</span>
+          <span class="text-[10px] font-normal opacity-80">+1 a 3 días</span>
+        </button>
+        <button onclick="rateCard('easy')" class="py-2.5 px-2 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold flex flex-col items-center">
+          <span>🔥 Fácil</span>
+          <span class="text-[10px] font-normal opacity-80">En 7 días</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECCIÓN 3: MÉTODO FEYNMAN + LABORATORIO + CULTURA VIVA
+         ========================================================= -->
+    <section id="view-culture" class="hidden space-y-4">
+      
+      <!-- PILAR 4: EL MÉTODO FEYNMAN -->
+      <div class="glass-card rounded-2xl p-4 border border-amber-500/30 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">
+            🧠 Método Feynman (Soltar la lengua)
+          </span>
+          <button onclick="nextFeynmanPrompt()" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 font-semibold">
+            🔄 Otro reto
+          </button>
+        </div>
+
+        <div>
+          <h3 id="feynmanQuestion" class="text-sm font-extrabold text-white"></h3>
+          <p id="feynmanHelper" class="text-[11px] text-slate-400 mt-0.5"></p>
+        </div>
+
+        <textarea id="feynmanInput" rows="2" placeholder="Explícalo con palabras sencillas en inglés..." class="w-full p-3 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btnEvaluateFeynman" onclick="evaluateFeynman()" class="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold">
+            🔍 Evaluar Claridad
+          </button>
+          <button onclick="shareFeynmanWhatsApp()" class="py-2.5 px-3 rounded-xl bg-slate-800 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
+            📲 Practicar con Amigo
+          </button>
+        </div>
+
+        <div id="feynmanFeedback" class="hidden p-3 rounded-xl bg-slate-900 border border-amber-500/40 text-xs space-y-1.5">
+          <div id="feynmanFeedbackContent"></div>
+        </div>
+      </div>
+
+      <!-- LABORATORIO DE ORACIONES -->
+      <div class="glass-card rounded-2xl p-4 border border-emerald-500/30 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">
+            🎯 Misión Diaria Activa
+          </span>
+          <button onclick="pickNewDailyMission()" class="text-[11px] px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300">
+            🎲 Otra palabra
+          </button>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-extrabold text-white">
+            Crea una oración usando: <span id="missionWord" class="text-emerald-400 underline">Grateful</span>
+          </h3>
+          <p id="missionMeaning" class="text-[11px] text-slate-400 mt-0.5"></p>
+        </div>
+
+        <input id="missionSentenceInput" type="text" placeholder="Escribe tu frase en inglés aquí..." class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-500" />
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btnCheckSentence" onclick="checkMySentence()" class="py-2.5 px-3 rounded-xl bg-emerald-600 text-xs font-extrabold text-white">
+            ✅ Revisar Gramática
+          </button>
+          <button onclick="sendMissionWhatsApp()" class="py-2.5 px-3 rounded-xl bg-slate-800 text-xs font-bold text-emerald-300 border border-emerald-500/30">
+            📲 Enviar por WhatsApp
+          </button>
+        </div>
+
+        <div id="sentenceFeedback" class="hidden p-3 rounded-xl bg-slate-900 border border-emerald-500/40 text-xs space-y-2">
+          <div id="feedbackText"></div>
+          <button onclick="approveAndLevelUpMission()" class="w-full py-1.5 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-bold">
+            🔥 ¡Sí, subir nivel en mi SRS!
+          </button>
+        </div>
+      </div>
+
+      <!-- INMERSIÓN VIVA DESDE INTERNET -->
+      <div class="glass-card rounded-2xl p-4 border border-indigo-500/30 space-y-3">
+        <h3 class="text-sm font-extrabold text-white">🌐 Inmersión Viva (Internet)</h3>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button id="btnLiveQuote" onclick="fetchLiveQuote()" class="py-2 px-2 rounded-xl bg-indigo-600 text-[11px] font-bold text-white">
+            💡 Cita Web
+          </button>
+          <button id="btnLiveJoke" onclick="fetchLiveJoke()" class="py-2 px-2 rounded-xl bg-cyan-600 text-[11px] font-bold text-white">
+            😄 Chiste Web
+          </button>
+          <button onclick="nextCuratedStory()" class="py-2 px-2 rounded-xl bg-slate-800 text-[11px] font-bold text-slate-200 border border-slate-700">
+            📖 Cuento
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span id="cultBadge" class="text-[10px] uppercase px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold">Inmersión</span>
+            <button onclick="speakCultureItem()" class="px-2.5 py-1 rounded-lg bg-slate-800 text-xs font-bold text-white">
+              🔊 Escuchar
+            </button>
+          </div>
+          <h4 id="cultTitle" class="text-xs font-bold text-indigo-300"></h4>
+          <p id="cultEnglish" class="text-xs sm:text-sm text-white leading-relaxed font-semibold"></p>
+          <div class="p-2.5 rounded-xl bg-slate-800/70 border border-slate-700/70">
+            <p id="cultKeyTakeaway" class="text-[11px] text-slate-300"></p>
+          </div>
+          <button onclick="saveDynamicItemToDeck()" class="w-full py-2 rounded-xl bg-indigo-600/25 text-indigo-200 border border-indigo-500/30 text-xs font-bold">
+            🌱 Guardar en mi Mazo SRS
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         SECCIÓN 4: MI MAZO COMPLETO + RESPALDO JSON
+         ========================================================= -->
+    <section id="view-list" class="hidden space-y-3.5">
+      <div class="glass-card rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+        <span class="text-xs text-slate-300 font-bold">Respaldo y Gestión de Tarjetas:</span>
+        <div class="flex items-center gap-1.5">
+          <button onclick="exportDeck()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-[11px] font-semibold text-slate-200 border border-slate-700">
+            ⬇️ Exportar
+          </button>
+          <label class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-[11px] font-semibold text-slate-200 border border-slate-700 cursor-pointer">
+            ⬆️ Importar
+            <input type="file" accept=".json" class="hidden" onchange="importDeck(event)" />
+          </label>
+          <button onclick="openManualModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-[11px] font-bold text-white">
+            + Manual
+          </button>
+        </div>
+      </div>
+
+      <div id="deckListContainer" class="space-y-2"></div>
+    </section>
+
+  </main>
+
+  <!-- Modal para Agregar Tarjeta Manualmente -->
+  <div id="manualModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="glass-card rounded-2xl max-w-md w-full p-5 border border-slate-700 space-y-3.5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-white">Sembrar Palabra o Frase Manual</h3>
+        <button onclick="closeManualModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div class="space-y-2.5">
+        <input id="manEn" type="text" placeholder="Frase o palabra en Inglés..." class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white" />
+        <input id="manEs" type="text" placeholder="Significado en Español..." class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white" />
+        <input id="manEx" type="text" placeholder="Tu oración de ejemplo real..." class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white" />
+      </div>
+      <div class="flex justify-end gap-2 pt-1">
+        <button onclick="closeManualModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300">Cancelar</button>
+        <button onclick="saveManualCard()" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold text-white">Sembrar 🌱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BARRA DE NAVEGACIÓN INFERIOR FIJA
+       ========================================================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-2 py-1.5">
+    <div class="max-w-xl mx-auto grid grid-cols-4 gap-1">
+      <button onclick="switchTab('ask')" id="tab-ask" class="flex flex-col items-center justify-center py-1.5 rounded-xl bg-indigo-600 text-white font-bold">
+        <span class="text-base leading-none">🔍</span>
+        <span class="text-[10px] mt-1">Consultar</span>
+      </button>
+      <button onclick="switchTab('practice')" id="tab-practice" class="relative flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-white font-semibold">
+        <span class="text-base leading-none">🎙️</span>
+        <span class="text-[10px] mt-1">SRS & Voz</span>
+        <span id="navDueDot" class="hidden absolute top-1 right-4 w-2 h-2 rounded-full bg-amber-400"></span>
+      </button>
+      <button onclick="switchTab('culture')" id="tab-culture" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-white font-semibold">
+        <span class="text-base leading-none">🧠</span>
+        <span class="text-[10px] mt-1">Feynman</span>
+      </button>
+      <button onclick="switchTab('list')" id="tab-list" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-white font-semibold">
+        <span class="text-base leading-none">📚</span>
+        <span class="text-[10px] mt-1">Mi Mazo</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    const STORAGE_KEY = 'daviex_vocab_deck_v3';
+    const PROFILE_KEY = 'daviex_user_profile_v3';
+    const DAY_MS = 86400000;
+
+    const STAGE_INFO = [
+      { icon: '🌱', name: 'Semilla', days: 0, badgeClass: 'bg-slate-800 text-slate-200 border-slate-700' },
+      { icon: '🌿', name: 'Brote', days: 1, badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+      { icon: '🌳', name: 'Árbol', days: 3, badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+      { icon: '🔥', name: 'Fuego', days: 7, badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30' }
+    ];
+
+    const INTEREST_PACKS = {
+      tech: {
+        name: '💻 Tecnología & Código',
+        chips: ['Figure out', 'Under the hood', 'From scratch', 'Breakthrough'],
+        feynman: [
+          { q: 'Explain what an Algorithm is to a 10-year-old.', hint: 'Usa palabras simples como: step by step, recipe, solve a problem.' },
+          { q: 'Explain why learning to code or build apps is useful.', hint: 'Usa: create, automate, help people, future.' },
+          { q: 'Describe your favorite video game or app in 2 sentences.', hint: 'Usa: goal, challenge, fun, players.' }
+        ]
+      },
+      music: {
+        name: '🎸 Música & Canciones',
+        chips: ["What a friend I've found", 'Deep lyrics', 'Out of tune', 'By heart'],
+        feynman: [
+          { q: 'Explain how it feels when you play an instrument or listen to your favorite song.', hint: 'Usa: peace, rhythm, practice, emotion.' },
+          { q: 'Explain why practicing chords every night makes your fingers faster.', hint: 'Usa: muscle memory, habit, step by step.' }
+        ]
+      },
+      movies: {
+        name: '🎬 Cine & Historias',
+        chips: ['Plot twist', 'Mind-blowing', 'Edge of my seat', 'Masterpiece'],
+        feynman: [
+          { q: 'Summarize your favorite movie in just 2 simple sentences.', hint: 'No busques perfección, explica de qué trata la historia.' },
+          { q: 'Explain what makes a movie villain unforgettable.', hint: 'Usa: smart, purpose, challenge, hero.' }
+        ]
+      },
+      growth: {
+        name: '🚀 Hábitos & Psicología',
+        chips: ['Compound effect', 'Relentless', 'Discipline', 'It takes time'],
+        feynman: [
+          { q: 'Explain why small daily habits are better than motivation.', hint: 'Usa: motivation fades, discipline stays, every single day.' },
+          { q: 'Explain what "leaving your comfort zone" means in simple English.', hint: 'Usa: fear, grow, try new things, hard.' }
+        ]
+      }
+    };
+
+    const DEFAULT_CARDS = [
+      {
+        id: 'c1',
+        english: "What a friend I've found",
+        spanish: "¡Qué amigo he encontrado!",
+        phonetic: "/wɒt ə frɛnd aɪv faʊnd/",
+        category: "Música / Expresión",
+        definitionEn: "An expression of deep gratitude for a loyal friend.",
+        example: "Listening to this song reminded me: what a friend I've found!",
+        stage: 0,
+        nextReview: Date.now()
+      },
+      {
+        id: 'c2',
+        english: "Figure out",
+        spanish: "Descifrar / Resolver / Entender",
+        phonetic: "/ˈfɪɡjər aʊt/",
+        category: "Phrasal Verb",
+        definitionEn: "To solve a problem or understand how something works.",
+        example: "When my code has a bug, I stay calm and figure out the solution.",
+        stage: 0,
+        nextReview: Date.now()
+      },
+      {
+        id: 'c3',
+        english: "Grateful",
+        spanish: "Agradecido",
+        phonetic: "/ˈɡreɪtfəl/",
+        category: "Adjective",
+        definitionEn: "Feeling appreciation for what you have and the progress you make.",
+        example: "I am grateful for my family and the discipline I build every day.",
+        stage: 1,
+        nextReview: Date.now()
+      },
+      {
+        id: 'c4',
+        english: "From scratch",
+        spanish: "Desde cero",
+        phonetic: "/frɒm skrætʃ/",
+        category: "Idiom",
+        definitionEn: "Starting from the very beginning without using pre-made parts.",
+        example: "I built my own English learning app from scratch.",
+        stage: 0,
+        nextReview: Date.now()
+      }
+    ];
+
+    const CURATED_STORIES = [
+      {
+        badge: '📖 Micro-Cuento',
+        title: 'The Bamboo Tree',
+        english: 'A farmer watered a bamboo seed every single day for four years, and nothing grew above the ground. In the fifth year, it shot up 80 feet in six weeks. Why? Because during those four silent years, it was growing deep roots.',
+        spanish: 'Un granjero regó una semilla de bambú por 4 años y nada brotó. Al quinto año creció 24 metros en 6 semanas, porque estuvo echando raíces profundas.'
+      },
+      {
+        badge: '📖 Micro-Cuento',
+        title: 'Two Wolves',
+        english: 'An old man told his grandson: "Inside me, there is a fight between two wolves. One is fear and laziness. The other is discipline and purpose." The boy asked: "Which wolf wins?" The grandfather replied: "The one you feed."',
+        spanish: 'Dentro de nosotros pelean dos lobos: el miedo y la disciplina. ¿Cuál gana? Al que tú alimentes.'
+      }
+    ];
+
+    let deck = [];
+    let userProfile = { name: '', goal: '', interest: 'tech', immersion: false, theme: 'default' };
+    let currentLangPair = 'en|es';
+    let lastLookupData = null;
+    let practiceFilter = 'due';
+    let currentCardIndex = 0;
+    let isFlipped = false;
+
+    let currentMissionCard = null;
+    let currentFeynmanIndex = 0;
+    let currentStoryIndex = 0;
+    let currentDynamicItem = { english: '', spanish: '', title: '' };
+
+    // Variables de Grabación de Audio Directa (Sin filtros)
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordedAudioUrl = null;
+    let isRecordingShadow = false;
+    let audioContext = null;
+    let analyserNode = null;
+    let meterAnimId = null;
+
+    // =========================================================
+    // INICIALIZACIÓN Y GESTIÓN DE TEMA (AZUL / ROSADO)
+    // =========================================================
+    function loadApp() {
+      const rawDeck = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('daviex_vocab_deck_v2');
+      if (rawDeck) {
+        try {
+          deck = JSON.parse(rawDeck);
+          deck.forEach(c => {
+            if (typeof c.stage !== 'number') c.stage = 0;
+            if (!c.nextReview) c.nextReview = Date.now();
+          });
+        } catch (e) {
+          deck = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+        }
+      } else {
+        deck = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+        saveDeck();
+      }
+
+      const rawProf = localStorage.getItem(PROFILE_KEY) || localStorage.getItem('daviex_user_profile_v2');
+      if (rawProf) {
+        try {
+          userProfile = { interest: 'tech', theme: 'default', ...JSON.parse(rawProf) };
+          applyProfileUI();
+        } catch (e) {
+          openPactModal();
+        }
+      } else {
+        openPactModal();
+      }
+
+      updateStats();
+      pickNewDailyMission();
+      renderFeynmanPrompt();
+      fetchLiveQuote();
+      populateMicListSilent();
+    }
+
+    // UN SOLO BOTÓN PARA CAMBIAR ENTRE ESTILO AZUL Y ESTILO ROSADO
+    function toggleThemeColor() {
+      userProfile.theme = userProfile.theme === 'pink' ? 'default' : 'pink';
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
+      applyProfileUI();
+    }
+
+    function openPactModal() {
+      document.getElementById('pactNameInput').value = userProfile.name || '';
+      document.getElementById('pactGoalInput').value = userProfile.goal || '';
+      document.getElementById('pactInterestInput').value = userProfile.interest || 'tech';
+      document.getElementById('pactModal').classList.remove('hidden');
+      document.getElementById('pactModal').classList.add('flex');
+    }
+
+    function savePact() {
+      userProfile.name = document.getElementById('pactNameInput').value.trim() || 'Campeón';
+      userProfile.goal = document.getElementById('pactGoalInput').value.trim() || 'Ser bilingüe y crear grandes proyectos';
+      userProfile.interest = document.getElementById('pactInterestInput').value || 'tech';
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
+
+      document.getElementById('pactModal').classList.add('hidden');
+      document.getElementById('pactModal').classList.remove('flex');
+      applyProfileUI();
+      renderFeynmanPrompt();
+    }
+
+    function applyProfileUI() {
+      // Aplicar clase de color en el body
+      const isPink = userProfile.theme === 'pink';
+      document.body.classList.toggle('theme-pink', isPink);
+      document.getElementById('themeColorIcon').textContent = isPink ? '🌸' : '💙';
+      document.getElementById('themeColorText').textContent = isPink ? 'Rosado' : 'Azul';
+
+      const pack = INTEREST_PACKS[userProfile.interest] || INTEREST_PACKS.tech;
+      document.getElementById('headerGreeting').textContent = `${userProfile.name || 'Amigo'} • ${pack.name}`;
+      document.getElementById('userGoalBanner').textContent = userProfile.goal || 'Dominar el inglés paso a paso';
+
+      const chipsDiv = document.getElementById('interestChipsContainer');
+      chipsDiv.innerHTML = pack.chips.map(ch => `
+        <button onclick="quickTry('${ch.replace(/'/g, "\\'")}', 'en|es')" class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700">
+          "${ch}"
+        </button>
+      `).join('');
+
+      const btnImm = document.getElementById('btnImmersion');
+      const lblImm = document.getElementById('immersionLabel');
+      const bannerImm = document.getElementById('immersionBanner');
+
+      if (userProfile.immersion) {
+        btnImm.className = 'px-2.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold flex items-center gap-1';
+        lblImm.textContent = 'ON';
+        bannerImm.classList.remove('hidden');
+      } else {
+        btnImm.className = 'px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-bold flex items-center gap-1';
+        lblImm.textContent = 'OFF';
+        bannerImm.classList.add('hidden');
+      }
+    }
+
+    function toggleImmersion() {
+      userProfile.immersion = !userProfile.immersion;
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
+      applyProfileUI();
+      renderPracticeCard();
+      pickNewDailyMission();
+    }
+
+    function saveDeck() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+      updateStats();
+    }
+
+    function getDueCards() {
+      const now = Date.now();
+      return deck.filter(c => !c.nextReview || c.nextReview <= now);
+    }
+
+    function updateStats() {
+      const s0 = deck.filter(c => (c.stage || 0) === 0).length;
+      const s1 = deck.filter(c => c.stage === 1).length;
+      const s2 = deck.filter(c => c.stage === 2).length;
+      const s3 = deck.filter(c => c.stage >= 3).length;
+      const dueCount = getDueCards().length;
+
+      document.getElementById('statStage0').textContent = s0;
+      document.getElementById('statStage1').textContent = s1;
+      document.getElementById('statStage2').textContent = s2;
+      document.getElementById('statStage3').textContent = s3;
+
+      const dueBadge = document.getElementById('srsDueBadge');
+      const navDot = document.getElementById('navDueDot');
+      if (dueCount > 0) {
+        dueBadge.textContent = `⏰ ${dueCount} para hoy`;
+        dueBadge.className = 'cursor-pointer text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0';
+        navDot.classList.remove('hidden');
+      } else {
+        dueBadge.textContent = `✅ SRS al día`;
+        dueBadge.className = 'cursor-pointer text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0';
+        navDot.classList.add('hidden');
+      }
+    }
+
+    function switchTab(tab) {
+      ['ask', 'practice', 'culture', 'list'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tab) {
+          btn.className = 'relative flex flex-col items-center justify-center py-1.5 rounded-xl bg-indigo-600 text-white font-bold shadow';
+        } else {
+          btn.className = 'relative flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-white font-semibold';
+        }
+      });
+
+      if (tab === 'practice') renderPracticeCard();
+      if (tab === 'list') renderDeckList();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =========================================================
+    // SECCIÓN 1: CONSULTAR Y GUARDAR CON CONTEXTO
+    // =========================================================
+    function setLangPair(pair) {
+      currentLangPair = pair;
+      document.getElementById('lang-en-es').className = pair === 'en|es'
+        ? 'px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold'
+        : 'px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold';
+      document.getElementById('lang-es-en').className = pair === 'es|en'
+        ? 'px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold'
+        : 'px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold';
+    }
+
+    function quickTry(text, pair) {
+      setLangPair(pair);
+      document.getElementById('searchInput').value = text;
+      askDaviex();
+    }
+
+    function speakText(text, rate = 0.95) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = rate;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function speakCurrentResult(rate) {
+      if (lastLookupData && lastLookupData.english) speakText(lastLookupData.english, rate);
+    }
+
+    async function askDaviex() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return alert('Escribe una palabra o frase.');
+
+      const btn = document.getElementById('btnSearch');
+      btn.textContent = '...';
+      btn.disabled = true;
+
+      try {
+        const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(query)}&langpair=${currentLangPair}`);
+        const transData = await transRes.json();
+        const translatedText = transData?.responseData?.translatedText || 'Traducción lista';
+
+        const englishText = currentLangPair === 'en|es' ? query : translatedText;
+        const spanishText = currentLangPair === 'en|es' ? translatedText : query;
+
+        let phonetic = '';
+        let category = query.includes(' ') ? 'Expresión Contextual' : 'Vocabulario';
+        let definitionEn = `Real-world expression: "${englishText}". Connect it directly to an action or image.`;
+        let example = `Today I am using "${englishText}" to reach my goal.`;
+
+        const cleanWord = englishText.split(' ')[0].replace(/[^a-zA-Z]/g, '');
+        if (englishText.split(' ').length === 1 && cleanWord) {
+          try {
+            const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`);
+            if (dictRes.ok) {
+              const dictData = await dictRes.json();
+              const entry = dictData[0];
+              phonetic = entry.phonetic || (entry.phonetics.find(p => p.text)?.text) || '';
+              const firstMeaning = entry.meanings?.[0];
+              if (firstMeaning) {
+                category = firstMeaning.partOfSpeech.toUpperCase();
+                const defObj = firstMeaning.definitions?.[0];
+                if (defObj?.definition) definitionEn = defObj.definition;
+                if (defObj?.example) example = defObj.example;
+              }
+            }
+          } catch (dictErr) {}
+        }
+
+        lastLookupData = {
+          english: englishText,
+          spanish: spanishText,
+          phonetic: phonetic || '/Audio Nativo 🔊/',
+          category,
+          definitionEn,
+          example
+        };
+
+        document.getElementById('resCategory').textContent = lastLookupData.category;
+        document.getElementById('resEnglish').textContent = lastLookupData.english;
+        document.getElementById('resPhonetic').textContent = lastLookupData.phonetic;
+        document.getElementById('resSpanish').textContent = lastLookupData.spanish;
+        document.getElementById('resExplanation').textContent = lastLookupData.definitionEn;
+        document.getElementById('resExampleInput').value = lastLookupData.example;
+
+        document.getElementById('daviexResult').classList.remove('hidden');
+        speakText(lastLookupData.english, 0.95);
+      } catch (err) {
+        alert('Error de red. Verifica tu conexión a internet.');
+      } finally {
+        btn.textContent = 'Analizar';
+        btn.disabled = false;
+      }
+    }
+
+    function suggestPersonalTemplate() {
+      if (!lastLookupData) return;
+      const w = lastLookupData.english;
+      const templates = [
+        `In my daily routine, "${w}" reminds me of my purpose.`,
+        `When I practice English or code, I use "${w}".`,
+        `I heard "${w}" today and decided to master it.`
+      ];
+      document.getElementById('resExampleInput').value = templates[Math.floor(Math.random() * templates.length)];
+    }
+
+    function saveResultToDeck() {
+      if (!lastLookupData) return;
+      const customExample = document.getElementById('resExampleInput').value.trim();
+      if (!customExample) return alert('✍️ Escribe una oración de contexto antes de guardar.');
+
+      deck.unshift({
+        id: 'card_' + Date.now(),
+        english: lastLookupData.english,
+        spanish: lastLookupData.spanish,
+        phonetic: lastLookupData.phonetic,
+        category: lastLookupData.category,
+        definitionEn: lastLookupData.definitionEn,
+        example: customExample,
+        stage: 0,
+        nextReview: Date.now()
+      });
+
+      saveDeck();
+      alert('🌱 ¡Guardada en tu Motor SRS! Lista para entrenar y hacer Shadowing.');
+      switchTab('practice');
+    }
+
+    // =========================================================
+    // SECCIÓN 2: MOTOR SRS + PASO 4 (SELECTOR DE MICRÓFONO Y AUDIO CRUDO)
+    // =========================================================
+    function getFilteredDeck() {
+      if (practiceFilter === 'due') return getDueCards();
+      return deck;
+    }
+
+    function setPracticeFilter(filter) {
+      practiceFilter = filter;
+      currentCardIndex = 0;
+      document.getElementById('pfilter-due').className = filter === 'due'
+        ? 'text-[11px] px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-extrabold'
+        : 'text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold';
+      document.getElementById('pfilter-all').className = filter === 'all'
+        ? 'text-[11px] px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold'
+        : 'text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold';
+      renderPracticeCard();
+    }
+
+    function renderPracticeCard() {
+      const list = getFilteredDeck();
+      const inner = document.getElementById('flashcardInner');
+      isFlipped = false;
+      inner.classList.remove('flipped');
+
+      if (list.length === 0) {
+        document.getElementById('cardCounterLabel').textContent = '0 pendientes hoy';
+        document.getElementById('fcStageBadge').textContent = '✅ ¡SRS Completado!';
+        document.getElementById('fcFrontText').textContent = '¡Tu cerebro está al día por hoy!';
+        document.getElementById('fcPhonetic').textContent = 'El algoritmo SRS te avisará cuando toque repasar.';
+        document.getElementById('fcFrontContextHint').textContent = 'Toca el botón "Todas" arriba si quieres repasar libremente.';
+        return;
+      }
+
+      if (currentCardIndex >= list.length) currentCardIndex = 0;
+      const card = list[currentCardIndex];
+      const st = STAGE_INFO[card.stage || 0];
+
+      document.getElementById('cardCounterLabel').textContent = `Tarjeta ${currentCardIndex + 1} de ${list.length}`;
+      const badgeEl = document.getElementById('fcStageBadge');
+      badgeEl.textContent = `${st.icon} ${st.name}`;
+      badgeEl.className = `text-[11px] px-2.5 py-0.5 rounded-full font-bold border ${st.badgeClass}`;
+
+      document.getElementById('fcFrontText').textContent = card.english;
+      document.getElementById('fcPhonetic').textContent = card.phonetic || '';
+      document.getElementById('fcFrontContextHint').textContent = `"${card.example || ''}"`;
+
+      document.getElementById('fcBackText').textContent = card.spanish;
+      document.getElementById('fcExample').textContent = `"${card.example || ''}"`;
+      document.getElementById('fcDefinitionEn').textContent = card.definitionEn
+        ? `🇬🇧 Concept: ${card.definitionEn}`
+        : '';
+
+      const spCont = document.getElementById('fcSpanishContainer');
+      const immNotice = document.getElementById('fcImmersionNotice');
+      if (userProfile.immersion) {
+        spCont.classList.add('hidden');
+        immNotice.classList.remove('hidden');
+      } else {
+        spCont.classList.remove('hidden');
+        immNotice.classList.add('hidden');
+      }
+    }
+
+    function peekSpanish() {
+      document.getElementById('fcSpanishContainer').classList.remove('hidden');
+      document.getElementById('fcImmersionNotice').classList.add('hidden');
+    }
+
+    function flipCurrentCard() {
+      const inner = document.getElementById('flashcardInner');
+      isFlipped = !isFlipped;
+      inner.classList.toggle('flipped', isFlipped);
+    }
+
+    function speakCurrentFlashcard(rate) {
+      const list = getFilteredDeck();
+      if (list.length === 0) return;
+      speakText(list[currentCardIndex].english, rate);
+    }
+
+    function rateCard(rating) {
+      const list = getFilteredDeck();
+      if (list.length === 0) return;
+      const currentCard = list[currentCardIndex];
+
+      const realCard = deck.find(c => c.id === currentCard.id);
+      if (realCard) {
+        const curStage = realCard.stage || 0;
+        if (rating === 'hard') {
+          realCard.stage = 0;
+          realCard.nextReview = Date.now();
+        } else if (rating === 'good') {
+          realCard.stage = Math.min(3, curStage + 1);
+          const days = STAGE_INFO[realCard.stage].days;
+          realCard.nextReview = Date.now() + (days * DAY_MS);
+        } else if (rating === 'easy') {
+          realCard.stage = 3;
+          realCard.nextReview = Date.now() + (7 * DAY_MS);
+        }
+        saveDeck();
+      }
+
+      currentCardIndex++;
+      renderPracticeCard();
+    }
+
+    // =========================================================
+    // PASO 4: LISTAR MICRÓFONOS Y GRABAR AUDIO CRUDO SIN FILTROS
+    // =========================================================
+    async function populateMicListSilent() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter(d => d.kind === 'audioinput');
+        const select = document.getElementById('micSelectDropdown');
+        const currentVal = select.value;
+
+        select.innerHTML = `<option value="">🎤 Micrófono predeterminado (Audio crudo sin filtros)</option>`;
+        mics.forEach((m, idx) => {
+          const opt = document.createElement('option');
+          opt.value = m.deviceId;
+          opt.textContent = m.label ? `🎙️ ${m.label}` : `🎙️ Micrófono #${idx + 1}`;
+          select.appendChild(opt);
+        });
+        if (currentVal) select.value = currentVal;
+      } catch (e) {}
+    }
+
+    async function refreshMicrophoneList() {
+      try {
+        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempStream.getTracks().forEach(t => t.stop());
+        await populateMicListSilent();
+        alert('✅ Lista de micrófonos actualizada. Si tienes varios, prueba elegir otro en la lista desplegable.');
+      } catch (e) {
+        alert('Permite el acceso al micrófono en el navegador para ver la lista de dispositivos.');
+      }
+    }
+
+    async function toggleShadowRecording() {
+      const btn = document.getElementById('btnRecordShadow');
+      const statusLbl = document.getElementById('micStatusLabel');
+      const meterBox = document.getElementById('micMeterBox');
+
+      if (isRecordingShadow) {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+        isRecordingShadow = false;
+        btn.textContent = '2️⃣ Grabar Voz';
+        btn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white');
+        meterBox.classList.add('hidden');
+        if (meterAnimId) cancelAnimationFrame(meterAnimId);
+        return;
+      }
+
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+      try {
+        const selectedMicId = document.getElementById('micSelectDropdown').value;
+
+        // PASO 4: Desactivar todos los filtros que bloquean el driver de sonido
+        const rawAudioConstraints = {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        };
+        if (selectedMicId) {
+          rawAudioConstraints.deviceId = { exact: selectedMicId };
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: rawAudioConstraints
+        });
+
+        await populateMicListSilent();
+        startMicVolumeMeter(stream);
+        meterBox.classList.remove('hidden');
+
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) {
+            audioChunks.push(e.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          // Dejar que el navegador use el contenedor nativo de los fragmentos sin forzar webm
+          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || '' });
+
+          if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
+          recordedAudioUrl = URL.createObjectURL(blob);
+
+          stream.getTracks().forEach(t => t.stop());
+          if (audioContext) audioContext.close().catch(() => {});
+
+          const player = document.getElementById('userAudioPlayer');
+          player.src = recordedAudioUrl;
+          player.volume = 1.0;
+          document.getElementById('userAudioWrapper').classList.remove('hidden');
+
+          const compBtn = document.getElementById('btnCompareShadow');
+          compBtn.disabled = false;
+          compBtn.className = 'py-2.5 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-extrabold shadow';
+
+          statusLbl.textContent = '✅ ¡Voz grabada!';
+          statusLbl.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold';
+
+          player.play().catch(() => {});
+        };
+
+        // Capturar bloques cada 200ms para asegurar que nunca quede vacío
+        mediaRecorder.start(200);
+        isRecordingShadow = true;
+        btn.textContent = '⏹️ Parar';
+        btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
+        statusLbl.textContent = '🔴 Grabando...';
+        statusLbl.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold';
+
+        setTimeout(() => {
+          if (isRecordingShadow) toggleShadowRecording();
+        }, 6000);
+
+      } catch (err) {
+        alert('Error al abrir el micrófono seleccionado. Prueba tocar el botón 🔄 o elegir el micrófono predeterminado.');
+      }
+    }
+
+    function startMicVolumeMeter(stream) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioCtx();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 256;
+        source.connect(analyserNode);
+
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+        const bar = document.getElementById('micLevelBar');
+        const pct = document.getElementById('micVolumePct');
+
+        function updateMeter() {
+          if (!isRecordingShadow) return;
+          analyserNode.getByteTimeDomainData(dataArray);
+          let maxPeak = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            const v = Math.abs(dataArray[i] - 128);
+            if (v > maxPeak) maxPeak = v;
+          }
+          const level = Math.min(100, Math.round((maxPeak / 64) * 100));
+          bar.style.width = `${Math.max(5, level)}%`;
+          pct.textContent = `${level}%`;
+          meterAnimId = requestAnimationFrame(updateMeter);
+        }
+        updateMeter();
+      } catch (e) {}
+    }
+
+    function playOnlyUserAudio() {
+      const player = document.getElementById('userAudioPlayer');
+      if (player && player.src) {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        player.currentTime = 0;
+        player.play();
+      }
+    }
+
+    function compareShadowAudio() {
+      const list = getFilteredDeck();
+      const player = document.getElementById('userAudioPlayer');
+      if (list.length === 0 || !recordedAudioUrl || !player) return;
+      const phrase = list[currentCardIndex].english;
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(phrase);
+        utter.lang = 'en-US';
+        utter.rate = 0.92;
+        utter.onend = () => {
+          setTimeout(() => {
+            player.currentTime = 0;
+            player.play();
+          }, 300);
+        };
+        window.speechSynthesis.speak(utter);
+      } else {
+        player.currentTime = 0;
+        player.play();
+      }
+    }
+
+    // =========================================================
+    // SECCIÓN 3: MÉTODO FEYNMAN + LABORATORIO + CULTURA WEB
+    // =========================================================
+    function renderFeynmanPrompt() {
+      const pack = INTEREST_PACKS[userProfile.interest] || INTEREST_PACKS.tech;
+      const item = pack.feynman[currentFeynmanIndex % pack.feynman.length];
+      document.getElementById('feynmanQuestion').textContent = item.q;
+      document.getElementById('feynmanHelper').textContent = `💡 Pista: ${item.hint}`;
+      document.getElementById('feynmanInput').value = '';
+      document.getElementById('feynmanFeedback').classList.add('hidden');
+    }
+
+    function nextFeynmanPrompt() {
+      currentFeynmanIndex++;
+      renderFeynmanPrompt();
+    }
+
+    async function evaluateFeynman() {
+      const text = document.getElementById('feynmanInput').value.trim();
+      if (!text) return alert('✍️ Escribe tu explicación sencilla en inglés primero.');
+
+      const btn = document.getElementById('btnEvaluateFeynman');
+      btn.textContent = 'Analizando...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|es`);
+        const data = await res.json();
+        const backTrans = data?.responseData?.translatedText || '';
+        const wordCount = text.split(/\s+/).length;
+
+        const fb = document.getElementById('feynmanFeedback');
+        fb.classList.remove('hidden');
+        document.getElementById('feynmanFeedbackContent').innerHTML = `
+          <span class="text-amber-300 font-bold block">✅ Explicación de ${wordCount} palabras procesada:</span>
+          <p class="text-slate-300 mt-1">Un hablante nativo entiende tu idea así:</p>
+          <p class="text-emerald-400 font-bold italic mt-0.5">"${backTrans}"</p>
+        `;
+        speakText(text, 0.92);
+      } catch (e) {
+        alert('Error al evaluar. Revisa tu conexión.');
+      } finally {
+        btn.textContent = '🔍 Evaluar Claridad';
+        btn.disabled = false;
+      }
+    }
+
+    function shareFeynmanWhatsApp() {
+      const q = document.getElementById('feynmanQuestion').textContent;
+      const ans = document.getElementById('feynmanInput').value.trim();
+      if (!ans) return alert('Escribe primero tu respuesta al reto Feynman.');
+      const msg = `🧠 *Reto Feynman en Inglés (Daviex):*\n*Reto:* ${q}\n*Mi explicación:* "${ans}"\n¿Cómo lo explicarías tú?`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function pickNewDailyMission() {
+      if (deck.length === 0) return;
+      currentMissionCard = deck[Math.floor(Math.random() * deck.length)];
+      document.getElementById('missionWord').textContent = currentMissionCard.english;
+      document.getElementById('missionMeaning').textContent = userProfile.immersion
+        ? `Concept: ${currentMissionCard.definitionEn}`
+        : `Significado: "${currentMissionCard.spanish}"`;
+      document.getElementById('missionSentenceInput').value = '';
+      document.getElementById('sentenceFeedback').classList.add('hidden');
+    }
+
+    async function checkMySentence() {
+      if (!currentMissionCard) return;
+      const sentence = document.getElementById('missionSentenceInput').value.trim();
+      if (!sentence) return alert('Escribe tu oración en inglés.');
+
+      if (!sentence.toLowerCase().includes(currentMissionCard.english.toLowerCase())) {
+        return alert(`Incluye "${currentMissionCard.english}" en tu oración.`);
+      }
+
+      const btn = document.getElementById('btnCheckSentence');
+      btn.textContent = 'Revisando...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sentence)}&langpair=en|es`);
+        const data = await res.json();
+        const backTranslation = data?.responseData?.translatedText || '';
+
+        document.getElementById('sentenceFeedback').classList.remove('hidden');
+        document.getElementById('feedbackText').innerHTML = `
+          <span class="text-slate-300">Un nativo entiende esto:</span>
+          <p class="text-amber-300 font-extrabold mt-0.5">"${backTranslation}"</p>
+        `;
+        speakText(sentence, 0.92);
+      } catch (e) {
+        alert('Error de conexión.');
+      } finally {
+        btn.textContent = '✅ Revisar Gramática';
+        btn.disabled = false;
+      }
+    }
+
+    function approveAndLevelUpMission() {
+      if (!currentMissionCard) return;
+      const sentence = document.getElementById('missionSentenceInput').value.trim();
+      currentMissionCard.stage = Math.min(3, (currentMissionCard.stage || 0) + 1);
+      const days = STAGE_INFO[currentMissionCard.stage].days;
+      currentMissionCard.nextReview = Date.now() + (days * DAY_MS);
+      if (sentence) currentMissionCard.example = sentence;
+      saveDeck();
+      alert(`🔥 "${currentMissionCard.english}" subió de nivel en tu calendario SRS.`);
+      pickNewDailyMission();
+    }
+
+    function sendMissionWhatsApp() {
+      const sentence = document.getElementById('missionSentenceInput').value.trim();
+      if (!sentence) return alert('Escribe tu frase antes de enviarla.');
+      window.open(`https://wa.me/?text=${encodeURIComponent(sentence)}`, '_blank');
+    }
+
+    async function fetchLiveQuote() {
+      const btn = document.getElementById('btnLiveQuote');
+      btn.textContent = '...';
+      try {
+        const res = await fetch('https://dummyjson.com/quotes/random');
+        const data = await res.json();
+        const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(data.quote)}&langpair=en|es`);
+        const transData = await transRes.json();
+        const quoteEs = transData?.responseData?.translatedText || '';
+
+        currentDynamicItem = { english: data.quote, spanish: quoteEs, title: data.author };
+        document.getElementById('cultBadge').textContent = '💡 Cita en Vivo';
+        document.getElementById('cultTitle').textContent = data.author;
+        document.getElementById('cultEnglish').textContent = `"${data.quote}"`;
+        document.getElementById('cultKeyTakeaway').textContent = userProfile.immersion ? 'Modo Inmersión ON' : quoteEs;
+      } catch (e) {
+        nextCuratedStory();
+      } finally {
+        btn.textContent = '💡 Cita Web';
+      }
+    }
+
+    async function fetchLiveJoke() {
+      const btn = document.getElementById('btnLiveJoke');
+      btn.textContent = '...';
+      try {
+        const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+        const data = await res.json();
+        const fullEn = `${data.setup} — ${data.punchline}`;
+        const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(fullEn)}&langpair=en|es`);
+        const transData = await transRes.json();
+        const fullEs = transData?.responseData?.translatedText || '';
+
+        currentDynamicItem = { english: fullEn, spanish: fullEs, title: 'Humor Nativo' };
+        document.getElementById('cultBadge').textContent = '😄 Humor Web';
+        document.getElementById('cultTitle').textContent = 'Doble sentido en inglés:';
+        document.getElementById('cultEnglish').textContent = fullEn;
+        document.getElementById('cultKeyTakeaway').textContent = userProfile.immersion ? 'Modo Inmersión ON' : fullEs;
+      } catch (e) {
+        nextCuratedStory();
+      } finally {
+        btn.textContent = '😄 Chiste Web';
+      }
+    }
+
+    function nextCuratedStory() {
+      const story = CURATED_STORIES[currentStoryIndex];
+      currentStoryIndex = (currentStoryIndex + 1) % CURATED_STORIES.length;
+      currentDynamicItem = { english: story.english, spanish: story.spanish, title: story.title };
+      document.getElementById('cultBadge').textContent = story.badge;
+      document.getElementById('cultTitle').textContent = story.title;
+      document.getElementById('cultEnglish').textContent = story.english;
+      document.getElementById('cultKeyTakeaway').textContent = userProfile.immersion ? 'Modo Inmersión ON' : story.spanish;
+    }
+
+    function speakCultureItem() {
+      if (currentDynamicItem?.english) speakText(currentDynamicItem.english, 0.92);
+    }
+
+    function saveDynamicItemToDeck() {
+      if (!currentDynamicItem?.english) return;
+      deck.unshift({
+        id: 'card_' + Date.now(),
+        english: currentDynamicItem.english,
+        spanish: currentDynamicItem.spanish || 'Inmersión Web',
+        phonetic: '',
+        category: currentDynamicItem.title || 'Inmersión',
+        definitionEn: 'Saved from live immersion feed.',
+        example: currentDynamicItem.english,
+        stage: 0,
+        nextReview: Date.now()
+      });
+      saveDeck();
+      alert('🌱 ¡Guardada en tu Motor SRS!');
+    }
+
+    // =========================================================
+    // SECCIÓN 4: LISTA COMPLETA Y RESPALDO
+    // =========================================================
+    function renderDeckList() {
+      const container = document.getElementById('deckListContainer');
+      container.innerHTML = '';
+
+      if (deck.length === 0) {
+        container.innerHTML = `<div class="glass-card rounded-2xl p-6 text-center text-xs text-slate-400">Tu mazo está vacío.</div>`;
+        return;
+      }
+
+      const now = Date.now();
+      deck.forEach(card => {
+        const st = STAGE_INFO[card.stage || 0];
+        const isDue = !card.nextReview || card.nextReview <= now;
+        const dueLabel = isDue ? '⏰ Hoy' : `En ${Math.ceil((card.nextReview - now) / DAY_MS)}d`;
+
+        const div = document.createElement('div');
+        div.className = 'glass-card rounded-2xl p-3 flex items-center justify-between gap-2';
+        div.innerHTML = `
+          <div class="space-y-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button onclick="speakText('${card.english.replace(/'/g, "\\'")}', 0.95)" class="text-xs px-2 py-0.5 rounded-lg bg-slate-800 text-white">🔊</button>
+              <h4 class="text-xs sm:text-sm font-bold text-white truncate">${card.english}</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border ${st.badgeClass}">${st.icon} ${st.name}</span>
+              <span class="text-[10px] text-slate-400">${dueLabel}</span>
+            </div>
+            <p class="text-xs font-semibold text-emerald-400 ${userProfile.immersion ? 'hidden' : ''}">${card.spanish}</p>
+            <p class="text-[11px] text-slate-400 italic truncate">"${card.example || ''}"</p>
+          </div>
+          <button onclick="deleteCard('${card.id}')" class="text-slate-500 hover:text-rose-400 text-xs p-1.5 shrink-0">🗑️</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteCard(id) {
+      if (!confirm('¿Eliminar esta tarjeta?')) return;
+      deck = deck.filter(c => c.id !== id);
+      saveDeck();
+      renderDeckList();
+    }
+
+    function openManualModal() {
+      document.getElementById('manEn').value = '';
+      document.getElementById('manEs').value = '';
+      document.getElementById('manEx').value = '';
+      document.getElementById('manualModal').classList.remove('hidden');
+      document.getElementById('manualModal').classList.add('flex');
+    }
+
+    function closeManualModal() {
+      document.getElementById('manualModal').classList.add('hidden');
+      document.getElementById('manualModal').classList.remove('flex');
+    }
+
+    function saveManualCard() {
+      const english = document.getElementById('manEn').value.trim();
+      const spanish = document.getElementById('manEs').value.trim();
+      const example = document.getElementById('manEx').value.trim();
+      if (!english || !spanish) return alert('Completa los campos.');
+
+      deck.unshift({
+        id: 'card_' + Date.now(),
+        english,
+        spanish,
+        phonetic: '',
+        category: 'Personal',
+        definitionEn: 'Personal contextual card.',
+        example: example || `Using "${english}" in context.`,
+        stage: 0,
+        nextReview: Date.now()
+      });
+
+      saveDeck();
+      closeManualModal();
+      renderDeckList();
+    }
+
+    function exportDeck() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(deck, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "mazo_daviex_srs.json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importDeck(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported)) {
+            deck = imported;
+            saveDeck();
+            renderDeckList();
+            alert('¡Mazo importado con éxito!');
+          }
+        } catch (err) {
+          alert('Archivo inválido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function shareAppWhatsApp() {
+      const url = window.location.href;
+      const msg = `¡Hola! 👋 Te comparto *Daviex*, la app de inmersión en inglés con repetición espaciada (SRS), práctica de voz (Shadowing) y método Feynman: ${url}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    loadApp();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
