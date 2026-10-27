@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Daviex – Gimnasio Mental de Inglés</title>
+  <title>Eihwaz – Gimnasio Mental de Inglés</title>
 
   <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#090d16" />
+  <meta name="theme-color" content="#0b101b" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Daviex" />
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3898/3898082.png" />
+  <meta name="apple-mobile-web-app-title" content="Eihwaz" />
+  <link rel="apple-touch-icon" href="logo.jpg" />
 
   <!-- Tailwind CSS & Fuente Inter -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,13 +20,13 @@
 
   <style>
     :root {
-      --bg-main: #090d16;
-      --card-bg: rgba(17, 24, 39, 0.94);
+      --bg-main: #0b101b;
+      --card-bg: rgba(17, 24, 39, 0.95);
     }
 
     body.theme-pink {
       --bg-main: #140810;
-      --card-bg: rgba(34, 12, 26, 0.94);
+      --card-bg: rgba(34, 12, 26, 0.95);
     }
 
     * {
@@ -49,6 +49,16 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    /* Botones táctiles 3D estilo Duolingo */
+    .btn-duo {
+      transition: all 0.12s ease;
+      border-bottom-width: 4px;
+    }
+    .btn-duo:active:not(:disabled) {
+      transform: translateY(2px);
+      border-bottom-width: 1px;
+    }
+
     /* Adaptación automática al Tema Rosado */
     body.theme-pink .bg-indigo-600 { background-color: #db2777 !important; }
     body.theme-pink .hover\:bg-indigo-500:hover { background-color: #ec4899 !important; }
@@ -62,6 +72,7 @@
     body.theme-pink .to-cyan-600 { --tw-gradient-to: #e11d48 !important; }
     body.theme-pink .from-indigo-500 { --tw-gradient-from: #ec4899 !important; }
     body.theme-pink .to-cyan-500 { --tw-gradient-to: #f43f5e !important; }
+    body.theme-pink .border-indigo-800 { border-color: #9d174d !important; }
 
     @keyframes pulse-ring {
       0% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
@@ -72,193 +83,291 @@
       animation: pulse-ring 1.4s infinite;
     }
 
+    @keyframes splash-zoom {
+      0% { transform: scale(0.92); opacity: 0; }
+      20% { transform: scale(1); opacity: 1; }
+      85% { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1.06); opacity: 0; }
+    }
+    .splash-animate {
+      animation: splash-zoom 3s ease-in-out forwards;
+    }
+
+    @keyframes load-bar {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .splash-bar {
+      animation: load-bar 2.8s ease-out forwards;
+    }
+
     .safe-bottom {
-      padding-bottom: calc(5.8rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(5.2rem + env(safe-area-inset-bottom, 0px));
     }
   </style>
 </head>
 <body class="min-h-screen safe-bottom">
 
-  <!-- CABECERA ULTRA COMPACTA -->
-  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-4 py-3">
+  <!-- =========================================================
+       PANTALLA DE BIENVENIDA (SPLASH SCREEN DE 3 SEGUNDOS)
+       ========================================================= -->
+  <div id="splashScreen" class="fixed inset-0 z-50 bg-[#0b101b] flex flex-col items-center justify-center px-6 transition-opacity duration-500">
+    <div class="splash-animate flex flex-col items-center max-w-xs w-full">
+      <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz Logo" class="w-full max-h-56 object-contain rounded-3xl shadow-2xl border border-cyan-500/20" />
+      <p class="text-xs font-bold tracking-widest uppercase text-cyan-400/90 mt-4">Gimnasio Mental & Voz</p>
+      <div class="w-40 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-4">
+        <div class="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 splash-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       CABECERA COMPACTA CON TU LOGO + NOMBRE EIHWAZ
+       ========================================================= -->
+  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-4 py-2.5">
     <div class="max-w-md mx-auto flex items-center justify-between">
-      <div onclick="switchTab('home')" class="flex items-center gap-2 cursor-pointer">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-base shadow-md">
-          🚀
-        </div>
+      <div onclick="switchTab('home')" class="flex items-center gap-2.5 cursor-pointer">
+        <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-9 h-9 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
         <div>
-          <h1 class="text-sm font-black tracking-tight text-white leading-none">Daviex</h1>
-          <span class="text-[10px] text-slate-400 font-medium">Gimnasio Mental</span>
+          <h1 class="text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
+          <span class="text-[10px] text-slate-400 font-semibold">Gimnasio Mental</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="toggleThemeColor()" class="px-2.5 py-1 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1 active:scale-95 transition">
+      <div class="flex items-center gap-1.5">
+        <button onclick="toggleThemeColor()" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-extrabold text-slate-200 flex items-center gap-1 active:scale-95 transition">
           <span id="themeColorIcon">💙</span>
           <span id="themeColorText">Azul</span>
         </button>
 
-        <button onclick="resetAllZero()" title="Empezar de cero" class="px-2 py-1 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-slate-400 hover:text-rose-400 active:scale-95 transition">
+        <button onclick="resetAllZero()" title="Empezar de cero" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-bold text-slate-400 hover:text-rose-400 active:scale-95 transition">
           🔄
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-md mx-auto px-4 pt-3.5 space-y-4">
+  <main class="max-w-md mx-auto px-3.5 pt-3 space-y-3">
 
     <!-- =========================================================
-         SECCIÓN 1: 🏠 INICIO (COMPACTO Y SIN SCROLL INNECESARIO)
+         SECCIÓN 1: 🏠 INICIO (COMPACTO ESTILO DUOLINGO)
          ========================================================= -->
-    <section id="view-home" class="space-y-4">
-      <div class="glass-card rounded-2xl p-4.5 border border-indigo-500/30 space-y-3 shadow-lg">
-        <span class="inline-block text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">
-          ✨ 100% Gratuito • Rápido y Elegante
-        </span>
+    <section id="view-home" class="space-y-3">
 
-        <h2 class="text-xl font-black text-white leading-tight">
-          ¡Tu mente no tiene límites! 🚀
-        </h2>
-
-        <p class="text-xs text-slate-300 leading-relaxed">
-          Dominar el inglés desbloquea tu memoria, agilidad mental y crecimiento profesional diario.
-        </p>
-
-        <div class="grid grid-cols-3 gap-2 text-center pt-1">
-          <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
-            <span class="text-sm block">🧠</span>
-            <span class="text-[10px] text-slate-300 font-bold block mt-1">Memoria</span>
-          </div>
-          <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
-            <span class="text-sm block">🚀</span>
-            <span class="text-[10px] text-slate-300 font-bold block mt-1">Futuro</span>
-          </div>
-          <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
-            <span class="text-sm block">🤝</span>
-            <span class="text-[10px] text-slate-300 font-bold block mt-1">100% Libre</span>
-          </div>
+      <!-- Banner de Unidad -->
+      <div class="rounded-2xl p-4 bg-gradient-to-r from-indigo-600 to-cyan-600 border-b-4 border-indigo-800 shadow-lg flex items-center justify-between gap-3">
+        <div class="space-y-0.5">
+          <span class="text-[10px] font-black uppercase tracking-wider text-white/80 block">
+            ETAPA 1 • 100% GRATUITO
+          </span>
+          <h2 class="text-base sm:text-lg font-black text-white leading-tight">
+            ¡Tu mente no tiene límites!
+          </h2>
+          <p class="text-[11px] text-white/90 font-medium leading-snug">
+            Entrena tu oído, memoria y fluidez a tu propio ritmo.
+          </p>
         </div>
-
-        <button onclick="scrollToOnboarding()" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 text-xs font-black text-white shadow-md active:scale-[0.98] transition">
-          🔥 ¡Entrar a ganar!
-        </button>
+        <div class="w-11 h-11 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-xl shrink-0">
+          🚀
+        </div>
       </div>
 
-      <!-- Prueba Interactiva "Hi, Maria!" -->
-      <div id="onboardingCard" class="glass-card rounded-2xl p-4.5 border border-cyan-500/40 space-y-3.5 shadow-lg">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">
-            🎯 Reto Inicial (30s)
-          </span>
-          <span class="text-xs font-mono text-cyan-400">/haɪ/</span>
+      <!-- 3 Cajas de Estadísticas -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="rounded-2xl border-2 border-amber-500/40 bg-slate-900/90 overflow-hidden text-center">
+          <div class="bg-amber-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-300">
+            MEMORIA
+          </div>
+          <div class="py-2 px-1 flex items-center justify-center gap-1">
+            <span class="text-sm">🧠</span>
+            <span class="text-xs font-black text-white">Activa</span>
+          </div>
         </div>
 
-        <div class="space-y-1">
-          <h3 class="text-2xl font-black text-white">"Hi!"</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            Saludo natural y cercano. Hermano fluido de <i>"Hello"</i> para la vida real.
+        <div class="rounded-2xl border-2 border-cyan-500/40 bg-slate-900/90 overflow-hidden text-center">
+          <div class="bg-cyan-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-cyan-300">
+            FUTURO
+          </div>
+          <div class="py-2 px-1 flex items-center justify-center gap-1">
+            <span class="text-sm">⚡</span>
+            <span class="text-xs font-black text-white">Sin límites</span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border-2 border-emerald-500/40 bg-slate-900/90 overflow-hidden text-center">
+          <div class="bg-emerald-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-300">
+            ACCESO
+          </div>
+          <div class="py-2 px-1 flex items-center justify-center gap-1">
+            <span class="text-sm">🔓</span>
+            <span class="text-xs font-black text-white">Libre</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Reto Inicial "Hi, Maria!" -->
+      <div id="onboardingCard" class="glass-card rounded-2xl p-4 border-2 border-slate-800 space-y-3 shadow-lg">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 font-black">
+            🎯 Reto Inicial • 30s
+          </span>
+          <span class="text-xs font-mono font-bold text-cyan-300 bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-700">
+            /haɪ/
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+          <div class="space-y-0.5">
+            <div class="flex items-baseline gap-2">
+              <h3 class="text-2xl font-black text-white">"Hi!"</h3>
+              <span class="text-xs font-bold text-emerald-400">= ¡Hola!</span>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-snug">
+              Hermano natural de <i>"Hello"</i>. Rompe el miedo a hablar hoy.
+            </p>
+          </div>
+          <button onclick="globalStopAudio(); speakText('Hi!', 0.9)" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-base flex items-center justify-center shrink-0 active:scale-95">
+            🔊
+          </button>
+        </div>
+
+        <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-1">
+          <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-black block">
+            🔥 Frase para entrenar tu voz:
+          </span>
+          <p class="text-xs sm:text-sm font-black text-white leading-snug">
+            "Hi, Maria! I am learning English and growing every day."
+          </p>
+          <p class="text-[11px] text-slate-400">
+            ¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.
           </p>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-          <span class="text-[9px] uppercase tracking-wider text-emerald-400 font-extrabold block">Frase de Poder:</span>
-          <p class="text-xs font-black text-white">"Hi, Maria! I am learning English and growing every day."</p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="globalStopAudio(); speakText('Hi, Maria! I am learning English and growing every day.', 0.92)" class="py-3 px-2 rounded-xl bg-slate-800 border border-slate-700 text-xs font-extrabold text-white active:scale-95 transition">
+        <div class="grid grid-cols-2 gap-2 pt-0.5">
+          <button onclick="globalStopAudio(); speakText('Hi, Maria! I am learning English and growing every day.', 0.92)" 
+            class="btn-duo py-3 px-3 rounded-xl bg-slate-800 border-slate-950 text-xs font-black text-white flex items-center justify-center gap-1.5">
             🔊 1. Oír Nativo
           </button>
-          <button onclick="startQuickTestInStudio()" class="py-3 px-2 rounded-xl bg-cyan-600 text-xs font-extrabold text-white shadow active:scale-95 transition">
-            🎙️ 2. Probar mi Voz
+          <button onclick="startQuickTestInStudio()" 
+            class="btn-duo py-3 px-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 flex items-center justify-center gap-1.5 shadow">
+            🎙️ 2. Probar Voz
           </button>
         </div>
       </div>
+
     </section>
 
     <!-- =========================================================
-         SECCIÓN 2: 🔍 EXPLORAR (OPTIMIZADO)
+         SECCIÓN 2: 🔍 EXPLORAR (CON BORRADO RÁPIDO Y ASISTENTE ORTOGRÁFICO)
          ========================================================= -->
-    <section id="view-explore" class="hidden space-y-4">
-      <div class="glass-card rounded-2xl p-4.5 space-y-3 shadow-lg">
+    <section id="view-explore" class="hidden space-y-3.5">
+      <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg">
         <div>
           <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">
             🧠 Crecimiento Personal
           </span>
-          <h2 class="text-lg font-black text-white mt-1.5">Busca una palabra</h2>
+          <h2 class="text-base font-black text-white mt-1">Busca cualquier palabra</h2>
         </div>
 
-        <div class="space-y-2.5">
-          <input id="exploreInput" type="text" placeholder="Ej: Dog, Time, Friend, Courage..." 
-            onkeydown="if(event.key==='Enter') analyzeWordGrowth()"
-            class="w-full px-3.5 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500" />
+        <!-- Barra con Botón "X" de Borrado estilo Google -->
+        <div class="space-y-2">
+          <div class="relative flex items-center">
+            <input id="exploreInput" type="text" placeholder="Ej: Dog, Time, Friend, Courage..." 
+              oninput="handleInputClearBtn('exploreInput', 'clearExploreBtn')"
+              onkeydown="if(event.key==='Enter') analyzeWordGrowth()"
+              class="w-full pl-3.5 pr-10 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            
+            <button id="clearExploreBtn" onclick="clearInputAndRefocus('exploreInput', 'clearExploreBtn')" 
+              class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">
+              ✖
+            </button>
+          </div>
 
-          <button id="btnExplore" onclick="analyzeWordGrowth()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-black text-white shadow active:scale-[0.98] transition">
+          <!-- Sugerencia inteligente de corrección de tipeo -->
+          <div id="spellingCorrectionNotice" class="hidden p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between gap-2">
+            <div class="text-[11px] text-amber-200">
+              <span>💡 ¿Quisiste decir: </span><b id="suggestedWordText" class="text-white underline"></b>?
+            </div>
+            <button id="btnAcceptSuggestion" onclick="acceptSuggestedWord()" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-[10px] shrink-0">
+              Corregir
+            </button>
+          </div>
+
+          <button id="btnExplore" onclick="analyzeWordGrowth()" class="btn-duo w-full py-3 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-black text-white shadow">
             🔍 Generar Afirmación
           </button>
         </div>
 
-        <div class="flex flex-wrap gap-1.5 pt-1">
-          <button onclick="quickExplore('Dog')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700">Dog</button>
-          <button onclick="quickExplore('Friend')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700">Friend</button>
-          <button onclick="quickExplore('Time')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700">Time</button>
-          <button onclick="quickExplore('Discipline')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700">Discipline</button>
+        <div class="flex flex-wrap gap-1.5 pt-0.5">
+          <button onclick="quickExplore('Dog')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Dog</button>
+          <button onclick="quickExplore('Friend')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Friend</button>
+          <button onclick="quickExplore('Time')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Time</button>
+          <button onclick="quickExplore('Discipline')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Discipline</button>
         </div>
       </div>
 
-      <div id="exploreResultCard" class="hidden glass-card rounded-2xl p-4.5 border border-indigo-500/40 space-y-3.5 shadow-lg">
+      <div id="exploreResultCard" class="hidden glass-card rounded-2xl p-4 border border-indigo-500/40 space-y-3 shadow-lg">
         <div class="flex items-start justify-between gap-2">
           <div>
-            <h3 id="expWordEn" class="text-xl font-black text-white"></h3>
+            <h3 id="expWordEn" class="text-lg font-black text-white"></h3>
             <p id="expWordEs" class="text-xs font-bold text-emerald-400"></p>
           </div>
           <div class="flex gap-1.5">
-            <button onclick="speakCurrentExploreWord()" class="p-2.5 rounded-xl bg-slate-800 text-white text-xs">🔊</button>
-            <button onclick="saveCurrentExploreToPlaylist(true)" id="btnStarIndecisive" class="px-3 py-2 rounded-xl bg-slate-800 text-amber-300 text-xs font-extrabold border border-amber-500/30">⭐ Guardar</button>
+            <button onclick="speakCurrentExploreWord()" class="p-2 rounded-xl bg-slate-800 text-white text-xs">🔊</button>
+            <button onclick="saveCurrentExploreToPlaylist(true)" id="btnStarIndecisive" class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-amber-300 text-xs font-extrabold border border-amber-500/30">⭐ Guardar</button>
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
           <p id="expFamilyNote" class="text-[11px] text-slate-200 leading-relaxed"></p>
         </div>
 
         <div class="p-3 rounded-xl bg-indigo-950/50 border border-indigo-500/40 space-y-1">
           <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-extrabold block">🔥 Frase de Poder:</span>
-          <p id="expGrowthEn" class="text-sm font-black text-white"></p>
+          <p id="expGrowthEn" class="text-xs sm:text-sm font-black text-white"></p>
           <p id="expGrowthEs" class="text-[11px] text-slate-300 italic"></p>
         </div>
 
-        <button onclick="trainExploreNow()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 text-xs font-black text-white shadow active:scale-[0.98] transition">
+        <button onclick="trainExploreNow()" class="btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 shadow">
           🎙️ Entrenar en Voz Ahora
         </button>
       </div>
     </section>
 
     <!-- =========================================================
-         SECCIÓN 3: 🎵 MÚSICA & FRASES (VERSOS ESPECÍFICOS Y CLAROS)
+         SECCIÓN 3: 🎵 MÚSICA & FRASES (CON BORRADO RÁPIDO)
          ========================================================= -->
-    <section id="view-music" class="hidden space-y-4">
-      <div class="glass-card rounded-2xl p-4.5 space-y-3 shadow-lg border border-cyan-500/30">
+    <section id="view-music" class="hidden space-y-3.5">
+      <div class="glass-card rounded-2xl p-4 space-y-2.5 shadow-lg border border-cyan-500/30">
         <div>
           <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">
             🎵 Buscador Global por Título
           </span>
-          <h2 class="text-lg font-black text-white mt-1.5">Aprende con tu Música</h2>
+          <h2 class="text-base font-black text-white mt-1">Aprende con tu Música</h2>
         </div>
 
+        <!-- Barra con Botón "X" de Borrado -->
         <div class="space-y-2">
-          <input id="songTitleQueryInput" type="text" placeholder="Escribe un título (ej: Perfect, Yellow, So Will I)..." 
-            onkeydown="if(event.key==='Enter') searchSongByTitleOnly()"
-            class="w-full px-3.5 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500" />
+          <div class="relative flex items-center">
+            <input id="songTitleQueryInput" type="text" placeholder="Escribe un título (ej: Perfect, Yellow, So Will I)..." 
+              oninput="handleInputClearBtn('songTitleQueryInput', 'clearSongBtn')"
+              onkeydown="if(event.key==='Enter') searchSongByTitleOnly()"
+              class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500" />
+            
+            <button id="clearSongBtn" onclick="clearInputAndRefocus('songTitleQueryInput', 'clearSongBtn')" 
+              class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">
+              ✖
+            </button>
+          </div>
           
-          <button id="btnSearchByTitle" onclick="searchSongByTitleOnly()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-xs font-black text-white shadow active:scale-[0.98] transition">
+          <button id="btnSearchByTitle" onclick="searchSongByTitleOnly()" class="btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 shadow">
             🔎 Buscar Canción y Verso Exacto
           </button>
         </div>
 
         <div id="globalSongSearchResults" class="hidden space-y-2.5 pt-1"></div>
 
-        <div id="songApologyBox" class="hidden p-4 rounded-2xl bg-rose-950/50 border border-rose-500/40 space-y-2">
+        <div id="songApologyBox" class="hidden p-3.5 rounded-2xl bg-rose-950/50 border border-rose-500/40 space-y-1.5">
           <div class="flex items-center justify-between">
             <span class="text-[10px] uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-extrabold">Message</span>
             <button onclick="globalStopAudio(); speakText(document.getElementById('apologyEnText').textContent, 0.92)" class="text-[11px] text-rose-200 underline font-bold">🔊 Audio</button>
@@ -268,24 +377,22 @@
         </div>
       </div>
 
-      <!-- Nota del Creador -->
-      <div class="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-2.5">
-        <span class="text-base mt-0.5">🎧</span>
-        <p class="text-[11px] text-slate-300 leading-relaxed">
-          Estas canciones están aquí porque <b>a mi creador le encantan</b> (Benjamin Hastings, Hillsong, Adele, Evan Craft). ¡Busca arriba cualquier título tuyo!
+      <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-2">
+        <span class="text-sm mt-0.5">🎧</span>
+        <p class="text-[11px] text-slate-300 leading-snug">
+          Estas canciones están aquí porque <b>a mi creador le encantan</b> (Benjamin Hastings, Hillsong, Adele, Evan Craft). ¡Busca arriba cualquier título que te guste!
         </p>
       </div>
 
-      <div class="space-y-3" id="curatedSongsContainer"></div>
+      <div class="space-y-2.5" id="curatedSongsContainer"></div>
     </section>
 
     <!-- =========================================================
-         SECCIÓN 4: 🎙️ MI PLAYLIST & ESTUDIO DE SHADOWING PRO
+         SECCIÓN 4: 🎙️ MI PLAYLIST & ESTUDIO DE SHADOWING PRO (30s)
          ========================================================= -->
-    <section id="view-playlist" class="hidden space-y-4">
+    <section id="view-playlist" class="hidden space-y-3.5">
 
-      <!-- ESTUDIO DE VOZ ACTIVO -->
-      <div class="glass-card rounded-2xl p-4.5 border border-cyan-500/40 space-y-4 shadow-lg">
+      <div class="glass-card rounded-2xl p-4 border border-cyan-500/40 space-y-3 shadow-lg">
         <div class="flex items-center justify-between">
           <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">
             🎙️ Estudio de Voz Activo
@@ -293,8 +400,8 @@
           <span id="studioTrackTag" class="text-[11px] font-bold text-slate-400">Pista Lista</span>
         </div>
 
-        <div class="text-center py-1 space-y-1.5">
-          <h2 id="studioEnglish" class="text-lg sm:text-xl font-black text-white leading-snug">
+        <div class="text-center py-1 space-y-1">
+          <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug">
             "Hi, Maria! I am learning English and growing every day."
           </h2>
           <p id="studioSpanish" class="text-xs font-bold text-emerald-400">
@@ -302,55 +409,55 @@
           </p>
         </div>
 
-        <div class="space-y-2.5">
+        <div class="space-y-2">
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="speakStudioCurrent(0.94)" class="py-3 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-extrabold text-white flex items-center justify-center gap-1 active:scale-95 transition">
+            <button onclick="speakStudioCurrent(0.94)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white flex items-center justify-center gap-1">
               ▶️ Oír Nativo
             </button>
-            <button onclick="speakStudioCurrent(0.6)" class="py-3 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1 active:scale-95 transition">
-              🐢 Oír Lento (0.6x)
+            <button onclick="speakStudioCurrent(0.6)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1">
+              🐢 Lento (0.6x)
             </button>
           </div>
 
-          <div id="micMeterBox" class="hidden p-3 rounded-xl bg-rose-950/50 border border-rose-500/40 space-y-1.5">
+          <!-- Indicador de 30 segundos -->
+          <div id="micMeterBox" class="hidden p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 space-y-1">
             <div class="flex justify-between text-[11px] text-rose-300 font-extrabold">
-              <span>🔴 Grabando tu voz...</span>
+              <span>🔴 Grabando tu voz (hasta 30s)... ¡Habla sin miedo!</span>
               <span id="micVolumePct">0%</span>
             </div>
-            <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+            <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
               <div id="micLevelBar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400" style="width: 6%;"></div>
             </div>
           </div>
 
-          <button id="btnRecordShadow" onclick="toggleShadowRecording()" class="w-full py-3.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-black tracking-wide active:scale-[0.98] transition">
+          <button id="btnRecordShadow" onclick="toggleShadowRecording()" class="btn-duo w-full py-3 rounded-xl bg-rose-600/20 border-rose-900/60 text-rose-300 text-xs font-black tracking-wide">
             🎙️ 2. Toca para Grabar tu Voz
           </button>
 
-          <button id="btnCompareShadow" onclick="compareShadowAudio()" disabled class="w-full py-3.5 rounded-xl bg-slate-800/50 text-slate-500 border border-slate-800 text-xs font-black transition">
+          <button id="btnCompareShadow" onclick="compareShadowAudio()" disabled class="w-full py-3 rounded-xl bg-slate-800/50 text-slate-500 border border-slate-800 text-xs font-black transition">
             🎧 3. Comparar (Nativo ➔ Tu Voz)
           </button>
         </div>
 
-        <!-- ESCUDO PSICOLÓGICO -->
-        <div id="fearlessCoachBox" class="hidden p-3.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 space-y-2.5">
+        <div id="fearlessCoachBox" class="hidden p-3 rounded-xl bg-indigo-950/80 border border-indigo-500/40 space-y-2">
           <div class="flex items-start gap-2">
-            <span class="text-base">🛡️</span>
-            <p id="fearlessCoachText" class="text-[11px] text-indigo-100 leading-relaxed font-semibold"></p>
+            <span class="text-sm">🛡️</span>
+            <p id="fearlessCoachText" class="text-[11px] text-indigo-100 leading-snug font-semibold"></p>
           </div>
           <button onclick="toggleShadowRecording()" class="w-full py-2 rounded-lg bg-indigo-600 text-[11px] font-black text-white active:scale-95 transition">
             🔁 Otra toma con más fuerza
           </button>
         </div>
 
-        <div id="userAudioWrapper" class="hidden pt-1 border-t border-slate-800/80 space-y-1.5">
+        <div id="userAudioWrapper" class="hidden pt-1 border-t border-slate-800/80 space-y-1">
           <div class="flex items-center justify-between text-[11px] text-cyan-300 font-bold">
             <span>✅ Tu toma grabada:</span>
             <button onclick="playOnlyUserAudio()" class="underline text-emerald-400 font-extrabold">▶️ Oír mi voz</button>
           </div>
-          <audio id="userAudioPlayer" controls class="w-full h-9 rounded-lg"></audio>
+          <audio id="userAudioPlayer" controls class="w-full h-8 rounded-lg"></audio>
         </div>
 
-        <details class="text-[11px] text-slate-400 pt-0.5">
+        <details class="text-[11px] text-slate-400">
           <summary class="cursor-pointer font-semibold hover:text-slate-200">⚙️ Ajustes de micrófono</summary>
           <div class="flex items-center gap-2 mt-2">
             <select id="micSelectDropdown" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200">
@@ -361,20 +468,19 @@
         </details>
       </div>
 
-      <!-- LISTA MANUAL -->
-      <div class="glass-card rounded-2xl p-4.5 space-y-3 shadow-lg">
+      <div class="glass-card rounded-2xl p-4 space-y-2.5 shadow-lg">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-sm font-black text-white">🎵 Tu Playlist de Voz</h3>
-            <p class="text-[10px] text-slate-400">Toca cualquier pista para cargarla arriba.</p>
+            <p class="text-[10px] text-slate-400">Toca cualquier pista para practicarla arriba.</p>
           </div>
           <span id="playlistCountBadge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
             0 pistas
           </span>
         </div>
 
-        <div id="emptyPlaylistState" class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 text-center space-y-2">
-          <span class="text-xl block">🌱</span>
+        <div id="emptyPlaylistState" class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center space-y-1">
+          <span class="text-lg block">🌱</span>
           <p class="text-xs text-slate-300 font-semibold">Tu Playlist empieza limpia desde cero.</p>
         </div>
 
@@ -385,25 +491,24 @@
 
   </main>
 
-  <!-- BARRA INFERIOR DE 4 SECCIONES -->
-  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-3 py-2">
+  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-3 py-1.5">
     <div class="max-w-md mx-auto grid grid-cols-4 gap-2">
-      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-2 rounded-2xl bg-indigo-600 text-white font-extrabold shadow">
+      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow">
         <span class="text-sm leading-none">🏠</span>
         <span class="text-[10px] mt-1">Inicio</span>
       </button>
 
-      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-2 rounded-2xl text-slate-400 font-semibold">
+      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
         <span class="text-sm leading-none">🔍</span>
         <span class="text-[10px] mt-1">Explorar</span>
       </button>
 
-      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-2 rounded-2xl text-slate-400 font-semibold">
+      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
         <span class="text-sm leading-none">🎵</span>
         <span class="text-[10px] mt-1">Música</span>
       </button>
 
-      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-2 rounded-2xl text-slate-400 font-semibold">
+      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
         <span class="text-sm leading-none">🎙️</span>
         <span class="text-[10px] mt-1">Mi Playlist</span>
       </button>
@@ -411,8 +516,57 @@
   </nav>
 
   <script>
-    const PLAYLIST_KEY = 'daviex_playlist_zero_v4';
-    const SETTINGS_KEY = 'daviex_settings_v4';
+    const PLAYLIST_KEY = 'eihwaz_playlist_zero_v1';
+    const SETTINGS_KEY = 'eihwaz_settings_v1';
+
+    // Diccionario de errores tipográficos y corrección ortográfica frecuente
+    const COMMON_TYPOS = {
+      'dgo': 'dog',
+      'doog': 'dog',
+      'freind': 'friend',
+      'frend': 'friend',
+      'tym': 'time',
+      'tiem': 'time',
+      'disipline': 'discipline',
+      'disciplin': 'discipline',
+      'curage': 'courage',
+      'corage': 'courage',
+      'feare': 'fear',
+      'fer': 'fear',
+      'beleive': 'believe',
+      'habbit': 'habit',
+      'lenguage': 'language',
+      'writting': 'writing',
+      'tomorow': 'tomorrow',
+      'becuse': 'because'
+    };
+
+    const FAMOUS_SONG_VERSES = {
+      'perfect': {
+        en: 'I see my future in your eyes.',
+        es: 'Veo mi futuro en tus ojos.'
+      },
+      'yellow': {
+        en: 'Look at the stars, look how they shine for you.',
+        es: 'Mira las estrellas, mira cómo brillan por ti.'
+      },
+      'so will i': {
+        en: 'If the stars were made to worship, so will I.',
+        es: 'Si las estrellas fueron hechas para adorar, yo también lo haré.'
+      },
+      'oceans': {
+        en: 'Spirit lead me where my trust is without borders.',
+        es: 'Espíritu guíame donde mi confianza no tenga fronteras.'
+      },
+      'easy on me': {
+        en: 'Go easy on me, I was still a child.',
+        es: 'Ten paciencia conmigo, aún era un niño.'
+      },
+      'be alright': {
+        en: 'Everything is going to be alright.',
+        es: 'Todo va a estar bien.'
+      }
+    };
 
     const PSYCH_WORD_BANK = {
       'hi': {
@@ -465,35 +619,35 @@
         title: 'Perfect',
         tag: '💖 Verso Clásico',
         ytQuery: 'Ed Sheeran Perfect lyrics',
-        practiceEn: 'I see my future in your eyes; we are fighting for our dreams.',
-        practiceEs: 'Veo mi futuro en tus ojos; estamos luchando por nuestros sueños.',
-        note: 'Verso inspirado en Perfect para memorizar expresiones de afecto y futuro.'
+        practiceEn: 'I see my future in your eyes.',
+        practiceEs: 'Veo mi futuro en tus ojos.',
+        note: 'Frase real de Perfect ideal para practicar fluidez y enlace de sonidos.'
       },
       {
         artist: 'Benjamin William Hastings',
         title: "That's the Thing About Praise",
         tag: '🎸 Favorita del Creador',
         ytQuery: 'Benjamin William Hastings Thats the Thing About Praise',
-        practiceEn: 'Choosing gratitude in difficult moments gives me strength to keep going.',
-        practiceEs: 'Elegir la gratitud en momentos difíciles me da fuerza para seguir adelante.',
-        note: 'Practica cómo pronunciar "gratitude" y "strength".'
+        practiceEn: 'Sometimes the only way through the dark is to sing anyway.',
+        practiceEs: 'A veces la única forma de cruzar la oscuridad es cantar de todos modos.',
+        note: 'Practica cómo pronunciar "through" y "anyway" con naturalidad.'
       },
       {
         artist: 'Hillsong United',
         title: 'Oceans',
         tag: '🌊 Favorita del Creador',
         ytQuery: 'Hillsong United Oceans',
-        practiceEn: 'My trust is stronger than my fear when I step into the unknown.',
-        practiceEs: 'Mi confianza es más fuerte que mi miedo cuando doy un paso al vacío.',
-        note: 'Ideal para entrenar el sonido "th" en "than" y "the".'
+        practiceEn: 'My trust is without borders when I step into the unknown.',
+        practiceEs: 'Mi confianza no tiene fronteras cuando doy un paso a lo desconocido.',
+        note: 'Ideal para entrenar el sonido "th" en "without" y "the".'
       },
       {
         artist: 'Adele',
         title: 'Easy On Me',
         tag: '🎹 Favorita del Creador',
         ytQuery: 'Adele Easy On Me',
-        practiceEn: 'I am patient with myself because learning takes time and dedication.',
-        practiceEs: 'Soy paciente conmigo mismo porque aprender toma tiempo y dedicación.',
+        practiceEn: 'Go easy on me, I needed time to grow.',
+        practiceEs: 'Ten paciencia conmigo, necesitaba tiempo para crecer.',
         note: 'Entrena la entonación suave y unida de Adele.'
       }
     ];
@@ -508,10 +662,11 @@
     let playlist = [];
     let settings = { theme: 'default' };
     let currentExploreObj = null;
+    let pendingSuggestedWord = null;
     let currentStudioTrack = {
       english: 'Hi, Maria! I am learning English and growing every day.',
       spanish: '¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.',
-      source: 'Prueba Inicial'
+      source: 'Reto Inicial'
     };
 
     let mediaRecorder = null;
@@ -521,11 +676,42 @@
     let audioContext = null;
     let analyserNode = null;
     let meterAnimId = null;
-    let activeAudioElements = [];
 
     // =========================================================
-    // CONTROL GLOBAL DE AUDIO (ANTI-SOLAPAMIENTO)
+    // BOTÓN DE BORRADO "X" ESTILO GOOGLE
     // =========================================================
+    function handleInputClearBtn(inputId, btnId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (input && btn) {
+        btn.classList.toggle('hidden', input.value.trim().length === 0);
+      }
+    }
+
+    function clearInputAndRefocus(inputId, btnId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      if (btn) btn.classList.add('hidden');
+      if (inputId === 'exploreInput') {
+        document.getElementById('spellingCorrectionNotice').classList.add('hidden');
+      }
+    }
+
+    function runSplashScreen() {
+      const splash = document.getElementById('splashScreen');
+      if (!splash) return;
+      setTimeout(() => {
+        splash.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          splash.style.display = 'none';
+        }, 500);
+      }, 3000);
+    }
+
     function globalStopAudio() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -534,13 +720,9 @@
       if (userPlayer) {
         userPlayer.pause();
       }
-      activeAudioElements.forEach(audio => {
-        try {
-          audio.pause();
-          audio.currentTime = 0;
-        } catch (e) {}
+      document.querySelectorAll('audio').forEach(a => {
+        try { a.pause(); } catch (e) {}
       });
-      activeAudioElements = [];
     }
 
     function speakText(text, rate = 0.94) {
@@ -553,8 +735,7 @@
     }
 
     function initApp() {
-      localStorage.removeItem('daviex_vocab_deck_v2');
-      localStorage.removeItem('daviex_vocab_deck_v3');
+      runSplashScreen();
 
       const rawList = localStorage.getItem(PLAYLIST_KEY);
       if (rawList) {
@@ -600,18 +781,14 @@
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`tab-${t}`);
         if (t === tab) {
-          btn.className = 'flex flex-col items-center justify-center py-2 rounded-2xl bg-indigo-600 text-white font-extrabold shadow';
+          btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow';
         } else {
-          btn.className = 'flex flex-col items-center justify-center py-2 rounded-2xl text-slate-400 font-semibold';
+          btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold';
         }
       });
 
       if (tab === 'playlist') renderPlaylistUI();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function scrollToOnboarding() {
-      document.getElementById('onboardingCard').scrollIntoView({ behavior: 'smooth' });
     }
 
     function startQuickTestInStudio() {
@@ -623,21 +800,70 @@
       );
     }
 
-    // =========================================================
-    // EXPLORAR
-    // =========================================================
     function quickExplore(word) {
       document.getElementById('exploreInput').value = word;
+      handleInputClearBtn('exploreInput', 'clearExploreBtn');
+      analyzeWordGrowth();
+    }
+
+    // =========================================================
+    // ASISTENTE DE TIPEO Y CORRECCIÓN GRAMATICAL
+    // =========================================================
+    async function checkWordSpelling(inputWord) {
+      const lower = inputWord.toLowerCase().trim();
+      
+      // 1. Verificación en mapa de errores de tipeo comunes
+      if (COMMON_TYPOS[lower]) {
+        return COMMON_TYPOS[lower];
+      }
+
+      // 2. Si tiene más de 3 letras y no está en banco, verificar con motor ortográfico Datamuse
+      if (lower.length >= 3 && !PSYCH_WORD_BANK[lower]) {
+        try {
+          const res = await fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(lower)}&max=1`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.length > 0 && data[0].word.toLowerCase() !== lower) {
+              return data[0].word;
+            }
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function acceptSuggestedWord() {
+      if (!pendingSuggestedWord) return;
+      document.getElementById('exploreInput').value = pendingSuggestedWord;
+      handleInputClearBtn('exploreInput', 'clearExploreBtn');
+      document.getElementById('spellingCorrectionNotice').classList.add('hidden');
       analyzeWordGrowth();
     }
 
     async function analyzeWordGrowth() {
-      const rawInput = document.getElementById('exploreInput').value.trim();
+      let rawInput = document.getElementById('exploreInput').value.trim();
       if (!rawInput) return alert('Escribe una palabra para explorarla.');
 
       const btn = document.getElementById('btnExplore');
-      btn.textContent = 'Creando ejemplo...';
+      const correctionBox = document.getElementById('spellingCorrectionNotice');
+      btn.textContent = 'Revisando ortografía y creando frase...';
       btn.disabled = true;
+
+      // Detección automática de error de tipeo
+      const suggested = await checkWordSpelling(rawInput);
+      if (suggested && suggested.toLowerCase() !== rawInput.toLowerCase()) {
+        pendingSuggestedWord = suggested;
+        document.getElementById('suggestedWordText').textContent = suggested;
+        correctionBox.classList.remove('hidden');
+        // Si es un error obvio directo de tipeo (ej: dgo -> dog), auto-corregimos de inmediato
+        if (COMMON_TYPOS[rawInput.toLowerCase()]) {
+          rawInput = suggested;
+          document.getElementById('exploreInput').value = suggested;
+        }
+      } else {
+        correctionBox.classList.add('hidden');
+        pendingSuggestedWord = null;
+      }
 
       const cleanKey = rawInput.toLowerCase();
 
@@ -669,7 +895,7 @@
         currentExploreObj = {
           wordEn: capWordEn,
           wordEs: wordEs,
-          familyNote: `"${capWordEn}" es clave para expresarte con seguridad. Úsala hoy en voz alta.`,
+          familyNote: `"${capWordEn}" es una palabra clave. Úsala hoy en voz alta para soltar la lengua.`,
           growthEn: `${capWordEn} reminds me that I am learning English and growing stronger every day.`,
           growthEs: `"${capWordEn}" me recuerda que estoy aprendiendo inglés y haciéndome más fuerte cada día.`
         };
@@ -714,7 +940,7 @@
       if (!currentExploreObj) return;
       addTrackToPlaylist(currentExploreObj.growthEn, currentExploreObj.growthEs, `Palabra: ${currentExploreObj.wordEn}`);
       if (showFeedback) {
-        document.getElementById('btnStarIndecisive').textContent = '✅ En tu Playlist';
+        document.getElementById('btnStarIndecisive').textContent = '✅ Guardada';
       }
     }
 
@@ -728,9 +954,6 @@
       );
     }
 
-    // =========================================================
-    // MÚSICA (VERSOS ESPECÍFICOS Y FRASES EXACTAS)
-    // =========================================================
     function renderCuratedSongs() {
       const container = document.getElementById('curatedSongsContainer');
       container.innerHTML = '';
@@ -741,33 +964,32 @@
         const safeArtist = s.artist.replace(/'/g, "\\'");
 
         const card = document.createElement('div');
-        card.className = 'glass-card rounded-2xl p-4 border border-slate-800 space-y-3';
+        card.className = 'glass-card rounded-2xl p-3.5 border border-slate-800 space-y-2.5';
         card.innerHTML = `
           <div class="flex items-start justify-between gap-2">
             <div>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">${s.tag}</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">${s.tag}</span>
               <h3 class="text-sm font-black text-white mt-1">${s.title}</h3>
               <p class="text-[11px] text-cyan-400 font-bold">${s.artist}</p>
             </div>
             <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(s.ytQuery)}" target="_blank"
-              class="px-2.5 py-1 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[11px] font-extrabold shrink-0">
+              class="px-2.5 py-1 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-extrabold shrink-0">
               ▶️ YouTube
             </a>
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span class="text-[9px] text-slate-400 uppercase font-bold block">Verso exacto para memorizar:</span>
+          <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-0.5">
+            <span class="text-[9px] text-slate-400 uppercase font-bold block">Esta frase para practicar es genial:</span>
             <p class="text-xs font-black text-white leading-snug">"${s.practiceEn}"</p>
             <p class="text-[11px] text-emerald-400 font-semibold">${s.practiceEs}</p>
-            <p class="text-[10px] text-slate-400 pt-0.5">💡 ${s.note}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="speakText('${safeEn}', 0.92)" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-extrabold text-white active:scale-95 transition">
-              🔊 Oír Verso
+            <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white">
+              🔊 Oír Frase
             </button>
-            <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeArtist}', true)" class="py-2.5 rounded-xl bg-indigo-600 text-xs font-extrabold text-white shadow active:scale-95 transition">
-              🎙️ Entrenar en Voz
+            <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeArtist}', true)" class="btn-duo py-2 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-extrabold text-white shadow">
+              🎙️ Practicarla
             </button>
           </div>
         `;
@@ -783,7 +1005,7 @@
       const resultsBox = document.getElementById('globalSongSearchResults');
       const apologyBox = document.getElementById('songApologyBox');
 
-      btn.textContent = 'Buscando verso exacto...';
+      btn.textContent = 'Buscando canción y frase...';
       btn.disabled = true;
       resultsBox.classList.add('hidden');
       apologyBox.classList.add('hidden');
@@ -806,34 +1028,54 @@
           }
         } catch (e) {}
 
-        if (foundTracks.length === 0) {
-          try {
-            const lrcRes = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
-            if (lrcRes.ok) {
-              const lrcData = await lrcRes.json();
-              if (Array.isArray(lrcData) && lrcData.length > 0) {
+        let lrcFirstLine = null;
+        try {
+          const lrcRes = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+          if (lrcRes.ok) {
+            const lrcData = await lrcRes.json();
+            if (Array.isArray(lrcData) && lrcData.length > 0) {
+              if (foundTracks.length === 0) {
                 foundTracks = lrcData.slice(0, 3).map(item => ({
                   title: item.trackName || item.name,
                   artist: item.artistName,
                   previewUrl: null
                 }));
               }
+              const plain = lrcData[0].plainLyrics || '';
+              const validLines = plain.split('\n').map(l => l.trim()).filter(l => l.length > 14 && l.length < 75 && !l.startsWith('['));
+              if (validLines.length > 0) {
+                lrcFirstLine = validLines[Math.min(2, validLines.length - 1)];
+              }
             }
-          } catch (e) {}
-        }
+          }
+        } catch (e) {}
 
         if (foundTracks.length === 0) throw new Error('Not found');
 
+        const cleanQueryKey = query.toLowerCase().trim();
+
         for (const track of foundTracks) {
           const cleanTitle = track.title.replace(/\s*\(.*?\)\s*/g, '').trim() || track.title;
-          
-          // Generar frase específica y bonita inspirada en el título buscado
-          const practiceSentenceEn = `Singing "${cleanTitle}" by ${track.artist} helps me express my feelings and memorize natural English.`;
-          const practiceSentenceEs = `Cantar "${cleanTitle}" de ${track.artist} me ayuda a expresar mis sentimientos y memorizar inglés natural.`;
+          const titleKey = cleanTitle.toLowerCase();
+
+          let practiceSentenceEn = '';
+          let practiceSentenceEs = '';
+
+          if (FAMOUS_SONG_VERSES[titleKey] || FAMOUS_SONG_VERSES[cleanQueryKey]) {
+            const match = FAMOUS_SONG_VERSES[titleKey] || FAMOUS_SONG_VERSES[cleanQueryKey];
+            practiceSentenceEn = match.en;
+            practiceSentenceEs = match.es;
+          } else if (lrcFirstLine) {
+            practiceSentenceEn = lrcFirstLine;
+            practiceSentenceEs = `Verso real de "${cleanTitle}" (${track.artist})`;
+          } else {
+            practiceSentenceEn = `I love every word of "${cleanTitle}" by ${track.artist}.`;
+            practiceSentenceEs = `Me encanta cada palabra de "${cleanTitle}" de ${track.artist}.`;
+          }
 
           const safeEn = practiceSentenceEn.replace(/'/g, "\\'").replace(/"/g, '&quot;');
           const safeEs = practiceSentenceEs.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-          const safeSrc = `${track.title} - ${track.artist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          const safeSrc = `${cleanTitle} - ${track.artist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
           const itemDiv = document.createElement('div');
           itemDiv.className = 'p-3.5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-2.5';
@@ -842,8 +1084,8 @@
           if (track.previewUrl) {
             audioHtml = `
               <div class="pt-0.5">
-                <span class="text-[9px] text-slate-400 block mb-1">🎧 Muestra de audio (30s):</span>
-                <audio controls src="${track.previewUrl}" class="w-full h-8 rounded-lg song-preview-audio" onplay="handleSongAudioPlay(this)"></audio>
+                <span class="text-[9px] text-slate-400 block mb-1">🎧 Muestra de 30s (se apaga sola si pones otra):</span>
+                <audio controls src="${track.previewUrl}" class="w-full h-8 rounded-lg" onplay="handleExclusiveAudioPlay(this)"></audio>
               </div>
             `;
           }
@@ -864,17 +1106,17 @@
             ${audioHtml}
 
             <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-0.5">
-              <span class="text-[9px] text-indigo-300 font-bold block">🎵 Verso para memorizar y practicar:</span>
-              <p class="text-xs font-bold text-white leading-snug">"${practiceSentenceEn}"</p>
+              <span class="text-[9px] text-indigo-300 font-bold block">✨ Esta frase para practicar es genial y bonita:</span>
+              <p class="text-xs font-black text-white leading-snug">"${practiceSentenceEn}"</p>
               <p class="text-[10px] text-emerald-400">${practiceSentenceEs}</p>
             </div>
 
             <div class="grid grid-cols-2 gap-1.5">
-              <button onclick="speakText('${safeEn}', 0.92)" class="py-2 rounded-lg bg-slate-800 text-[11px] font-extrabold text-white">
-                🔊 Oír Verso
+              <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-lg bg-slate-800 border-slate-950 text-[11px] font-extrabold text-white">
+                🔊 Oír Frase
               </button>
-              <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', true)" class="py-2 rounded-lg bg-cyan-600 text-[11px] font-black text-white">
-                🎙️ Practicar en Voz
+              <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', true)" class="btn-duo py-2 rounded-lg bg-cyan-500 border-cyan-700 text-[11px] font-black text-slate-950">
+                🎙️ Practicarla
               </button>
             </div>
           `;
@@ -896,16 +1138,16 @@
       }
     }
 
-    // Gestionar exclusividad de audio al reproducir muestras de canciones
-    function handleSongAudioPlay(audioEl) {
-      globalStopAudio();
-      activeAudioElements.push(audioEl);
-      audioEl.play().catch(() => {});
+    function handleExclusiveAudioPlay(currentAudio) {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      document.querySelectorAll('audio').forEach(audioEl => {
+        if (audioEl !== currentAudio) {
+          audioEl.pause();
+          audioEl.currentTime = 0;
+        }
+      });
     }
 
-    // =========================================================
-    // MI PLAYLIST & SHADOWING PRO
-    // =========================================================
     function addTrackToPlaylist(english, spanish, source) {
       const exists = playlist.some(item => item.english.toLowerCase() === english.toLowerCase());
       if (!exists) {
@@ -960,7 +1202,7 @@
         const safeSrc = (item.source || '').replace(/'/g, "\\'");
 
         const row = document.createElement('div');
-        row.className = `p-3.5 rounded-xl border transition flex items-center justify-between gap-2.5 ${
+        row.className = `p-3 rounded-xl border transition flex items-center justify-between gap-2.5 ${
           isCurrent ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/90 border-slate-800'
         }`;
 
@@ -996,9 +1238,6 @@
       speakText(currentStudioTrack.english, rate);
     }
 
-    // =========================================================
-    // GRABADOR DE VOZ & COMPARADOR ANTI-MIEDO
-    // =========================================================
     async function populateMicListSilent() {
       if (!navigator.mediaDevices?.enumerateDevices) return;
       try {
@@ -1029,6 +1268,9 @@
       }
     }
 
+    // =========================================================
+    // GRABADOR DE VOZ (HASTA 30 SEGUNDOS COMPLETOS)
+    // =========================================================
     async function toggleShadowRecording() {
       globalStopAudio();
       const btn = document.getElementById('btnRecordShadow');
@@ -1078,25 +1320,27 @@
           const player = document.getElementById('userAudioPlayer');
           player.src = recordedAudioUrl;
           player.volume = 1.0;
+          player.onplay = () => handleExclusiveAudioPlay(player);
           document.getElementById('userAudioWrapper').classList.remove('hidden');
 
           addTrackToPlaylist(currentStudioTrack.english, currentStudioTrack.spanish, currentStudioTrack.source);
 
           const compBtn = document.getElementById('btnCompareShadow');
           compBtn.disabled = false;
-          compBtn.className = 'w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-xs font-black shadow active:scale-[0.98] transition';
+          compBtn.className = 'btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-slate-950 text-xs font-black shadow';
 
           player.play().catch(() => {});
         };
 
         mediaRecorder.start(200);
         isRecordingShadow = true;
-        btn.textContent = '⏹️ Detener Grabación (Habla ahora)';
+        btn.textContent = '⏹️ Detener Grabación (Habla o canta)';
         btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
 
+        // Grabación extendida a 30 segundos (30000 ms)
         setTimeout(() => {
           if (isRecordingShadow) toggleShadowRecording();
-        }, 7500);
+        }, 30000);
       } catch (err) {
         alert('Permite el acceso al micrófono para grabar tu voz.');
       }
@@ -1136,7 +1380,6 @@
       globalStopAudio();
       const player = document.getElementById('userAudioPlayer');
       if (player?.src) {
-        activeAudioElements.push(player);
         player.currentTime = 0;
         player.play().catch(() => {});
       }
@@ -1165,14 +1408,12 @@
         utter.rate = 0.92;
         utter.onend = () => {
           setTimeout(() => {
-            activeAudioElements.push(player);
             player.currentTime = 0;
             player.play().catch(() => {});
           }, 300);
         };
         window.speechSynthesis.speak(utter);
       } else {
-        activeAudioElements.push(player);
         player.currentTime = 0;
         player.play().catch(() => {});
       }
