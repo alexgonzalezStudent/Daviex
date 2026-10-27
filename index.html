@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Eihwaz – Gimnasio Mental de Inglés</title>
 
-  <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0b101b" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -14,7 +13,6 @@
   <meta name="apple-mobile-web-app-title" content="Eihwaz" />
   <link rel="apple-touch-icon" href="logo.jpg" />
 
-  <!-- Tailwind CSS & Fuente Inter -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
@@ -29,119 +27,86 @@
       --card-bg: rgba(34, 12, 26, 0.95);
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: #f8fafc; overscroll-behavior-y: contain; transition: background-color 0.25s ease; }
+    
+    .glass-card { background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .btn-duo { transition: all 0.12s ease; border-bottom-width: 4px; }
+    .btn-duo:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 1px; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-main);
-      color: #f8fafc;
-      overscroll-behavior-y: contain;
-      transition: background-color 0.25s ease;
-    }
-
-    .glass-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* Botones táctiles 3D estilo Duolingo */
-    .btn-duo {
-      transition: all 0.12s ease;
-      border-bottom-width: 4px;
-    }
-    .btn-duo:active:not(:disabled) {
-      transform: translateY(2px);
-      border-bottom-width: 1px;
-    }
-
-    /* Adaptación automática al Tema Rosado */
     body.theme-pink .bg-indigo-600 { background-color: #db2777 !important; }
     body.theme-pink .hover\:bg-indigo-500:hover { background-color: #ec4899 !important; }
-    body.theme-pink .text-indigo-400,
-    body.theme-pink .text-indigo-300 { color: #f472b6 !important; }
-    body.theme-pink .border-indigo-500\/30,
-    body.theme-pink .border-indigo-500\/40 { border-color: rgba(236, 72, 153, 0.45) !important; }
-    body.theme-pink .bg-indigo-500\/15,
-    body.theme-pink .bg-indigo-500\/20 { background-color: rgba(236, 72, 153, 0.2) !important; }
+    body.theme-pink .text-indigo-400, body.theme-pink .text-indigo-300 { color: #f472b6 !important; }
+    body.theme-pink .border-indigo-500\/30, body.theme-pink .border-indigo-500\/40 { border-color: rgba(236, 72, 153, 0.45) !important; }
+    body.theme-pink .bg-indigo-500\/15, body.theme-pink .bg-indigo-500\/20 { background-color: rgba(236, 72, 153, 0.2) !important; }
     body.theme-pink .from-indigo-600 { --tw-gradient-from: #db2777 !important; }
     body.theme-pink .to-cyan-600 { --tw-gradient-to: #e11d48 !important; }
     body.theme-pink .from-indigo-500 { --tw-gradient-from: #ec4899 !important; }
     body.theme-pink .to-cyan-500 { --tw-gradient-to: #f43f5e !important; }
     body.theme-pink .border-indigo-800 { border-color: #9d174d !important; }
 
-    @keyframes pulse-ring {
-      0% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); }
-      100% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
-    }
-    .recording-pulse {
-      animation: pulse-ring 1.4s infinite;
-    }
-
-    @keyframes splash-zoom {
-      0% { transform: scale(0.92); opacity: 0; }
-      20% { transform: scale(1); opacity: 1; }
-      85% { transform: scale(1.03); opacity: 1; }
-      100% { transform: scale(1.06); opacity: 0; }
-    }
-    .splash-animate {
-      animation: splash-zoom 3s ease-in-out forwards;
-    }
-
-    @keyframes load-bar {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
-    .splash-bar {
-      animation: load-bar 2.8s ease-out forwards;
-    }
-
-    .safe-bottom {
-      padding-bottom: calc(5.2rem + env(safe-area-inset-bottom, 0px));
-    }
+    @keyframes pulse-ring { 0% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); } 100% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); } }
+    .recording-pulse { animation: pulse-ring 1.4s infinite; }
+    @keyframes splash-zoom { 0% { transform: scale(0.92); opacity: 0; } 20% { transform: scale(1); opacity: 1; } 85% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1.06); opacity: 0; } }
+    .splash-animate { animation: splash-zoom 3s ease-in-out forwards; }
+    @keyframes load-bar { 0% { width: 0%; } 100% { width: 100%; } }
+    .splash-bar { animation: load-bar 2.8s ease-out forwards; }
+    .safe-bottom { padding-bottom: calc(5.2rem + env(safe-area-inset-bottom, 0px)); }
   </style>
 </head>
 <body class="min-h-screen safe-bottom">
 
-  <!-- =========================================================
-       PANTALLA DE BIENVENIDA (SPLASH SCREEN DE 3 SEGUNDOS)
-       ========================================================= -->
+  <!-- SPLASH SCREEN -->
   <div id="splashScreen" class="fixed inset-0 z-50 bg-[#0b101b] flex flex-col items-center justify-center px-6 transition-opacity duration-500">
     <div class="splash-animate flex flex-col items-center max-w-xs w-full">
       <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz Logo" class="w-full max-h-56 object-contain rounded-3xl shadow-2xl border border-cyan-500/20" />
-      <p class="text-xs font-bold tracking-widest uppercase text-cyan-400/90 mt-4">Gimnasio Mental & Voz</p>
       <div class="w-40 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-4">
         <div class="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 splash-bar"></div>
       </div>
     </div>
   </div>
 
-  <!-- =========================================================
-       CABECERA COMPACTA CON TU LOGO + NOMBRE EIHWAZ
-       ========================================================= -->
+  <!-- MODAL DE CONEXIÓN DE EIHWAZ -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-[#0b101b]/90 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="glass-card w-full max-w-sm rounded-3xl p-5 border border-indigo-500/40 shadow-2xl space-y-4 relative">
+      <div class="text-center space-y-1.5">
+        <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-14 h-14 mx-auto rounded-2xl object-cover border border-cyan-500/40 shadow-md" />
+        <h3 class="text-lg font-black text-white">Despierta a Eihwaz</h3>
+        <p class="text-xs text-slate-300 leading-snug">
+          Si estás en modo desarrollador local y aún no has conectado el puente en la nube, ingresa aquí tu llave de activación.
+        </p>
+      </div>
+      
+      <div class="space-y-1.5">
+        <input id="apiKeyInput" type="password" placeholder="Clave de activación..." class="w-full px-3.5 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono" />
+        <p class="text-[9px] text-slate-400 text-center font-semibold">🔒 Guardada localmente en este dispositivo.</p>
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeApiModal()" class="w-1/3 py-3 rounded-xl bg-slate-800 text-xs font-bold text-white active:scale-95 transition">Cerrar</button>
+        <button onclick="saveApiKey()" class="btn-duo w-2/3 py-3 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-black text-white shadow">Activar a Eihwaz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CABECERA -->
   <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-4 py-2.5">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div onclick="switchTab('home')" class="flex items-center gap-2.5 cursor-pointer">
         <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-9 h-9 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
         <div>
           <h1 class="text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
-          <span class="text-[10px] text-slate-400 font-semibold">Gimnasio Mental</span>
+          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5">
-        <button onclick="toggleThemeColor()" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-extrabold text-slate-200 flex items-center gap-1 active:scale-95 transition">
-          <span id="themeColorIcon">💙</span>
-          <span id="themeColorText">Azul</span>
+        <button id="eihwazStatusBtn" onclick="openApiModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-extrabold text-slate-200 hover:text-indigo-400 active:scale-95 transition flex items-center gap-1">
+          <span id="aiBrainStatus">🦬 Eihwaz</span>
         </button>
 
-        <button onclick="resetAllZero()" title="Empezar de cero" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-bold text-slate-400 hover:text-rose-400 active:scale-95 transition">
-          🔄
+        <button onclick="toggleThemeColor()" class="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] flex items-center justify-center active:scale-95 transition">
+          <span id="themeColorIcon">💙</span>
         </button>
       </div>
     </div>
@@ -149,71 +114,21 @@
 
   <main class="max-w-md mx-auto px-3.5 pt-3 space-y-3">
 
-    <!-- =========================================================
-         SECCIÓN 1: 🏠 INICIO (COMPACTO ESTILO DUOLINGO)
-         ========================================================= -->
+    <!-- SECCIÓN 1: INICIO -->
     <section id="view-home" class="space-y-3">
-
-      <!-- Banner de Unidad -->
       <div class="rounded-2xl p-4 bg-gradient-to-r from-indigo-600 to-cyan-600 border-b-4 border-indigo-800 shadow-lg flex items-center justify-between gap-3">
         <div class="space-y-0.5">
-          <span class="text-[10px] font-black uppercase tracking-wider text-white/80 block">
-            ETAPA 1 • 100% GRATUITO
-          </span>
-          <h2 class="text-base sm:text-lg font-black text-white leading-tight">
-            ¡Tu mente no tiene límites!
-          </h2>
-          <p class="text-[11px] text-white/90 font-medium leading-snug">
-            Entrena tu oído, memoria y fluidez a tu propio ritmo.
-          </p>
+          <span class="text-[10px] font-black uppercase tracking-wider text-white/80 block">ENTRENA CON EIHWAZ</span>
+          <h2 class="text-base sm:text-lg font-black text-white leading-tight">¡Tu mente no tiene límites!</h2>
+          <p class="text-[11px] text-white/90 font-medium leading-snug">Eihwaz te guía paso a paso para dominar tu oído, memoria y voz.</p>
         </div>
-        <div class="w-11 h-11 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-xl shrink-0">
-          🚀
-        </div>
+        <div class="w-11 h-11 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-xl shrink-0">🦬</div>
       </div>
 
-      <!-- 3 Cajas de Estadísticas -->
-      <div class="grid grid-cols-3 gap-2">
-        <div class="rounded-2xl border-2 border-amber-500/40 bg-slate-900/90 overflow-hidden text-center">
-          <div class="bg-amber-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-300">
-            MEMORIA
-          </div>
-          <div class="py-2 px-1 flex items-center justify-center gap-1">
-            <span class="text-sm">🧠</span>
-            <span class="text-xs font-black text-white">Activa</span>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border-2 border-cyan-500/40 bg-slate-900/90 overflow-hidden text-center">
-          <div class="bg-cyan-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-cyan-300">
-            FUTURO
-          </div>
-          <div class="py-2 px-1 flex items-center justify-center gap-1">
-            <span class="text-sm">⚡</span>
-            <span class="text-xs font-black text-white">Sin límites</span>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border-2 border-emerald-500/40 bg-slate-900/90 overflow-hidden text-center">
-          <div class="bg-emerald-500/20 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-300">
-            ACCESO
-          </div>
-          <div class="py-2 px-1 flex items-center justify-center gap-1">
-            <span class="text-sm">🔓</span>
-            <span class="text-xs font-black text-white">Libre</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tarjeta Reto Inicial "Hi, Maria!" -->
-      <div id="onboardingCard" class="glass-card rounded-2xl p-4 border-2 border-slate-800 space-y-3 shadow-lg">
+      <div id="onboardingCard" class="glass-card rounded-2xl p-4 border-2 border-slate-800 space-y-3 shadow-lg mt-3">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 font-black">
-            🎯 Reto Inicial • 30s
-          </span>
-          <span class="text-xs font-mono font-bold text-cyan-300 bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-700">
-            /haɪ/
-          </span>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 font-black">🎯 Reto de Eihwaz • 30s</span>
+          <span class="text-xs font-mono font-bold text-cyan-300 bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-700">/haɪ/</span>
         </div>
 
         <div class="flex items-center justify-between gap-3 bg-slate-900/90 p-3 rounded-xl border border-slate-800">
@@ -222,87 +137,59 @@
               <h3 class="text-2xl font-black text-white">"Hi!"</h3>
               <span class="text-xs font-bold text-emerald-400">= ¡Hola!</span>
             </div>
-            <p class="text-[11px] text-slate-300 leading-snug">
-              Hermano natural de <i>"Hello"</i>. Rompe el miedo a hablar hoy.
-            </p>
+            <p class="text-[11px] text-slate-300 leading-snug">Hermano natural de <i>"Hello"</i>. Rompe el hielo sin miedo.</p>
           </div>
-          <button onclick="globalStopAudio(); speakText('Hi!', 0.9)" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-base flex items-center justify-center shrink-0 active:scale-95">
-            🔊
-          </button>
+          <button onclick="globalStopAudio(); speakText('Hi!', 0.9)" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-base flex items-center justify-center shrink-0 active:scale-95">🔊</button>
         </div>
 
         <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-1">
-          <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-black block">
-            🔥 Frase para entrenar tu voz:
-          </span>
-          <p class="text-xs sm:text-sm font-black text-white leading-snug">
-            "Hi, Maria! I am learning English and growing every day."
-          </p>
-          <p class="text-[11px] text-slate-400">
-            ¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.
-          </p>
+          <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-black block">🔥 Frase para entrenar tu voz:</span>
+          <p class="text-xs sm:text-sm font-black text-white leading-snug">"Hi! I am learning English with Eihwaz and growing every day."</p>
+          <p class="text-[11px] text-slate-400">¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.</p>
         </div>
 
         <div class="grid grid-cols-2 gap-2 pt-0.5">
-          <button onclick="globalStopAudio(); speakText('Hi, Maria! I am learning English and growing every day.', 0.92)" 
-            class="btn-duo py-3 px-3 rounded-xl bg-slate-800 border-slate-950 text-xs font-black text-white flex items-center justify-center gap-1.5">
-            🔊 1. Voz Modelo
+          <button onclick="globalStopAudio(); speakText('Hi! I am learning English with Eihwaz and growing every day.', 0.92)" class="btn-duo py-3 px-3 rounded-xl bg-slate-800 border-slate-950 text-xs font-black text-white flex items-center justify-center gap-1.5">
+            🔊 1. Oír a Eihwaz
           </button>
-          <button onclick="startQuickTestInStudio()" 
-            class="btn-duo py-3 px-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 flex items-center justify-center gap-1.5 shadow">
+          <button onclick="startQuickTestInStudio()" class="btn-duo py-3 px-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 flex items-center justify-center gap-1.5 shadow">
             🎙️ 2. Probar Voz
           </button>
         </div>
       </div>
 
+      <!-- ACCESOS RÁPIDOS DE PALABRAS EN INICIO -->
+      <div class="glass-card rounded-2xl p-4 space-y-2.5 border border-slate-800">
+        <span class="text-[10px] uppercase tracking-wider text-indigo-300 font-extrabold block">⚡ Pregúntale rápido a Eihwaz:</span>
+        <div class="flex flex-wrap gap-1.5">
+          <button onclick="quickExploreWord('Unstoppable')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-slate-200 hover:border-indigo-500 active:scale-95 transition">🔥 Unstoppable</button>
+          <button onclick="quickExploreWord('Lean on me')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-slate-200 hover:border-indigo-500 active:scale-95 transition">🤝 Lean on me</button>
+          <button onclick="quickExploreWord('Relentless')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-slate-200 hover:border-indigo-500 active:scale-95 transition">⚡ Relentless</button>
+          <button onclick="quickExploreWord('Grace')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-slate-200 hover:border-indigo-500 active:scale-95 transition">✨ Grace</button>
+        </div>
+      </div>
     </section>
 
-    <!-- =========================================================
-         SECCIÓN 2: 🔍 EXPLORAR (CON BORRADO RÁPIDO Y ASISTENTE ORTOGRÁFICO)
-         ========================================================= -->
+    <!-- SECCIÓN 2: EXPLORAR CON EIHWAZ -->
     <section id="view-explore" class="hidden space-y-3.5">
       <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg">
         <div>
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">
-            🧠 Crecimiento Personal
-          </span>
-          <h2 class="text-base font-black text-white mt-1">Busca cualquier palabra</h2>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">🦬 Pregúntale a Eihwaz</span>
+          <h2 class="text-base font-black text-white mt-1">Busca cualquier palabra o expresión</h2>
         </div>
 
-        <!-- Barra con Botón "X" de Borrado estilo Google -->
         <div class="space-y-2">
           <div class="relative flex items-center">
-            <input id="exploreInput" type="text" placeholder="Ej: Dog, Time, Friend, Courage..." 
+            <input id="exploreInput" type="text" placeholder="Ej: Chill, Focus, Lean on me, Courage..." 
               oninput="handleInputClearBtn('exploreInput', 'clearExploreBtn')"
-              onkeydown="if(event.key==='Enter') analyzeWordGrowth()"
+              onkeydown="if(event.key==='Enter') analyzeWordGrowthAI()"
               class="w-full pl-3.5 pr-10 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500" />
-            
-            <button id="clearExploreBtn" onclick="clearInputAndRefocus('exploreInput', 'clearExploreBtn')" 
-              class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">
-              ✖
-            </button>
+            <button id="clearExploreBtn" onclick="clearInputAndRefocus('exploreInput', 'clearExploreBtn')" class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">✖</button>
           </div>
 
-          <!-- Sugerencia inteligente de corrección de tipeo -->
-          <div id="spellingCorrectionNotice" class="hidden p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between gap-2">
-            <div class="text-[11px] text-amber-200">
-              <span>💡 ¿Quisiste decir: </span><b id="suggestedWordText" class="text-white underline"></b>?
-            </div>
-            <button id="btnAcceptSuggestion" onclick="acceptSuggestedWord()" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-[10px] shrink-0">
-              Corregir
-            </button>
-          </div>
-
-          <button id="btnExplore" onclick="analyzeWordGrowth()" class="btn-duo w-full py-3 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-black text-white shadow">
-            🔍 Generar Afirmación
+          <button id="btnExplore" onclick="analyzeWordGrowthAI()" class="btn-duo w-full py-3 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-black text-white shadow">
+            ✨ Pedir explicación a Eihwaz
           </button>
-        </div>
-
-        <div class="flex flex-wrap gap-1.5 pt-0.5">
-          <button onclick="quickExplore('Dog')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Dog</button>
-          <button onclick="quickExplore('Friend')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Friend</button>
-          <button onclick="quickExplore('Time')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Time</button>
-          <button onclick="quickExplore('Discipline')" class="text-[11px] px-3 py-1 rounded-lg bg-slate-800 text-indigo-300 border border-slate-700 font-semibold">Discipline</button>
         </div>
       </div>
 
@@ -318,12 +205,20 @@
           </div>
         </div>
 
-        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs">🦬</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-cyan-400">Consejo de Eihwaz:</span>
+          </div>
           <p id="expFamilyNote" class="text-[11px] text-slate-200 leading-relaxed"></p>
+          <div class="pt-2 border-t border-slate-800 flex items-start gap-2">
+            <span class="text-sm">💡</span>
+            <p id="expPronunciationTip" class="text-[10px] text-slate-400 font-semibold leading-relaxed"></p>
+          </div>
         </div>
 
         <div class="p-3 rounded-xl bg-indigo-950/50 border border-indigo-500/40 space-y-1">
-          <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-extrabold block">🔥 Frase de Poder:</span>
+          <span class="text-[9px] uppercase tracking-wider text-indigo-300 font-extrabold block">🔥 Frase de Poder de Eihwaz:</span>
           <p id="expGrowthEn" class="text-xs sm:text-sm font-black text-white"></p>
           <p id="expGrowthEs" class="text-[11px] text-slate-300 italic"></p>
         </div>
@@ -334,95 +229,92 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         SECCIÓN 3: 🎵 MÚSICA & FRASES (CON BORRADO RÁPIDO)
-         ========================================================= -->
+    <!-- SECCIÓN 3: MÚSICA CON EIHWAZ + CANCIONES DE EJEMPLO -->
     <section id="view-music" class="hidden space-y-3.5">
-      <div class="glass-card rounded-2xl p-4 space-y-2.5 shadow-lg border border-cyan-500/30">
+      <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg border border-cyan-500/30">
         <div>
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">
-            🎵 Buscador Global por Título
-          </span>
-          <h2 class="text-base font-black text-white mt-1">Aprende con tu Música</h2>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">🎵 Puente Musical de Eihwaz</span>
+          <h2 class="text-base font-black text-white mt-1">Aprende con tus canciones favoritas</h2>
+          <p class="text-[11px] text-slate-400">Busca en inglés o español. Eihwaz extrae la emoción y te enseña a cantarla.</p>
         </div>
 
-        <!-- Barra con Botón "X" de Borrado -->
         <div class="space-y-2">
           <div class="relative flex items-center">
-            <input id="songTitleQueryInput" type="text" placeholder="Escribe un título (ej: Perfect, Yellow, So Will I)..." 
+            <input id="songTitleQueryInput" type="text" placeholder="Escribe cualquier canción o artista..." 
               oninput="handleInputClearBtn('songTitleQueryInput', 'clearSongBtn')"
-              onkeydown="if(event.key==='Enter') searchSongByTitleOnly()"
+              onkeydown="if(event.key==='Enter') searchSongByTitleOnlyAI()"
               class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500" />
-            
-            <button id="clearSongBtn" onclick="clearInputAndRefocus('songTitleQueryInput', 'clearSongBtn')" 
-              class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">
-              ✖
-            </button>
+            <button id="clearSongBtn" onclick="clearInputAndRefocus('songTitleQueryInput', 'clearSongBtn')" class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">✖</button>
           </div>
           
-          <button id="btnSearchByTitle" onclick="searchSongByTitleOnly()" class="btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 shadow">
-            🔎 Buscar Canción y Verso Exacto
+          <button id="btnSearchByTitle" onclick="searchSongByTitleOnlyAI()" class="btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 shadow">
+            🔎 Analizar Canción con Eihwaz
           </button>
         </div>
 
-        <div id="globalSongSearchResults" class="hidden space-y-2.5 pt-1"></div>
-
-        <div id="songApologyBox" class="hidden p-3.5 rounded-2xl bg-rose-950/50 border border-rose-500/40 space-y-1.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-extrabold">Message</span>
-            <button onclick="globalStopAudio(); speakText(document.getElementById('apologyEnText').textContent, 0.92)" class="text-[11px] text-rose-200 underline font-bold">🔊 Audio</button>
+        <!-- TUS CANCIONES DE EJEMPLO CLÁSICAS -->
+        <div class="pt-2 border-t border-slate-800/80 space-y-2">
+          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold block">🎸 Tus Favoritas (Toca una para que Eihwaz la analice):</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="quickSelectSong('Oceans Hillsong United')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">🌊 Oceans</p>
+              <p class="text-[9px] text-slate-400 truncate">Hillsong United</p>
+            </button>
+            <button onclick="quickSelectSong('Mi ultimo dia Tercer Cielo')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">🎸 Mi último día</p>
+              <p class="text-[9px] text-slate-400 truncate">Tercer Cielo (Puente ES➔EN)</p>
+            </button>
+            <button onclick="quickSelectSong('So Will I Benjamin William Hastings')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">✨ So Will I</p>
+              <p class="text-[9px] text-slate-400 truncate">Benjamin W. Hastings</p>
+            </button>
+            <button onclick="quickSelectSong('Easy On Me Adele')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">🎹 Easy On Me</p>
+              <p class="text-[9px] text-slate-400 truncate">Adele</p>
+            </button>
+            <button onclick="quickSelectSong('Oceano Evan Craft')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">🔥 Océano</p>
+              <p class="text-[9px] text-slate-400 truncate">Evan Craft</p>
+            </button>
+            <button onclick="quickSelectSong('Perfect Ed Sheeran')" class="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 text-left transition active:scale-95">
+              <p class="text-[11px] font-extrabold text-white truncate">🎶 Perfect</p>
+              <p class="text-[9px] text-slate-400 truncate">Ed Sheeran</p>
+            </button>
           </div>
+        </div>
+
+        <div id="globalSongSearchResults" class="hidden space-y-2.5 pt-1"></div>
+        <div id="songApologyBox" class="hidden p-3.5 rounded-2xl bg-rose-950/50 border border-rose-500/40 space-y-1.5 text-center">
           <p id="apologyEnText" class="text-xs font-black text-white"></p>
-          <p id="apologyEsText" class="text-[11px] text-slate-300 italic"></p>
         </div>
       </div>
-
-      <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-2">
-        <span class="text-sm mt-0.5">🎧</span>
-        <p class="text-[11px] text-slate-300 leading-snug">
-          Estas canciones están aquí porque <b>a mi creador le encantan</b> (Benjamin Hastings, Hillsong, Adele, Evan Craft). ¡Busca arriba cualquier título que te guste!
-        </p>
-      </div>
-
-      <div class="space-y-2.5" id="curatedSongsContainer"></div>
     </section>
 
-    <!-- =========================================================
-         SECCIÓN 4: 🎙️ MI PLAYLIST & ESTUDIO DE SHADOWING PRO (30s)
-         ========================================================= -->
+    <!-- SECCIÓN 4: ESTUDIO Y PLAYLIST -->
     <section id="view-playlist" class="hidden space-y-3.5">
-
       <div class="glass-card rounded-2xl p-4 border border-cyan-500/40 space-y-3 shadow-lg">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">
-            🎙️ Estudio de Voz Activo
-          </span>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">🎙️ Estudio de Voz de Eihwaz</span>
           <span id="studioTrackTag" class="text-[11px] font-bold text-slate-400">Pista Lista</span>
         </div>
 
         <div class="text-center py-1 space-y-1">
-          <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug">
-            "Hi, Maria! I am learning English and growing every day."
-          </h2>
-          <p id="studioSpanish" class="text-xs font-bold text-emerald-400">
-            ¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.
-          </p>
+          <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug">"Hi! I am learning English with Eihwaz and growing every day."</h2>
+          <p id="studioSpanish" class="text-xs font-bold text-emerald-400">¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.</p>
         </div>
+
+        <!-- SELECTOR DE MICRÓFONO SILENCIOSO PARA EVITAR FALLOS DE REFERENCIA -->
+        <select id="micSelectDropdown" class="hidden"><option value="">🎤 Micrófono predeterminado</option></select>
 
         <div class="space-y-2">
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="speakStudioCurrent(0.94)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white flex items-center justify-center gap-1">
-              ▶️ Oír Voz modelo
-            </button>
-            <button onclick="speakStudioCurrent(0.6)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1">
-              🐢 Lento (0.6x)
-            </button>
+            <button onclick="speakStudioCurrent(0.94)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white flex items-center justify-center gap-1">▶️ Oír a Eihwaz</button>
+            <button onclick="speakStudioCurrent(0.6)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1">🐢 Lento (0.6x)</button>
           </div>
 
-          <!-- Indicador de 30 segundos -->
           <div id="micMeterBox" class="hidden p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 space-y-1">
             <div class="flex justify-between text-[11px] text-rose-300 font-extrabold">
-              <span>🔴 Grabando tu voz (hasta 30s)... ¡Habla sin miedo!</span>
+              <span>🔴 Eihwaz te está escuchando (hasta 30s)...</span>
               <span id="micVolumePct">0%</span>
             </div>
             <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
@@ -435,18 +327,16 @@
           </button>
 
           <button id="btnCompareShadow" onclick="compareShadowAudio()" disabled class="w-full py-3 rounded-xl bg-slate-800/50 text-slate-500 border border-slate-800 text-xs font-black transition">
-            🎧 3. Comparar (Voz modelo ➔ Tu Voz)
+            🎧 3. Comparar (Eihwaz ➔ Tu Voz)
           </button>
         </div>
 
         <div id="fearlessCoachBox" class="hidden p-3 rounded-xl bg-indigo-950/80 border border-indigo-500/40 space-y-2">
           <div class="flex items-start gap-2">
-            <span class="text-sm">🛡️</span>
+            <span class="text-sm">🦬</span>
             <p id="fearlessCoachText" class="text-[11px] text-indigo-100 leading-snug font-semibold"></p>
           </div>
-          <button onclick="toggleShadowRecording()" class="w-full py-2 rounded-lg bg-indigo-600 text-[11px] font-black text-white active:scale-95 transition">
-            🔁 Otra toma con más fuerza
-          </button>
+          <button onclick="toggleShadowRecording()" class="w-full py-2 rounded-lg bg-indigo-600 text-[11px] font-black text-white active:scale-95 transition">🔁 Otra toma con más fuerza</button>
         </div>
 
         <div id="userAudioWrapper" class="hidden pt-1 border-t border-slate-800/80 space-y-1">
@@ -456,974 +346,414 @@
           </div>
           <audio id="userAudioPlayer" controls class="w-full h-8 rounded-lg"></audio>
         </div>
-
-        <details class="text-[11px] text-slate-400">
-          <summary class="cursor-pointer font-semibold hover:text-slate-200">⚙️ Ajustes de micrófono</summary>
-          <div class="flex items-center gap-2 mt-2">
-            <select id="micSelectDropdown" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200">
-              <option value="">🎤 Micrófono predeterminado</option>
-            </select>
-            <button onclick="refreshMicrophoneList()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs">🔄</button>
-          </div>
-        </details>
       </div>
 
       <div class="glass-card rounded-2xl p-4 space-y-2.5 shadow-lg">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-black text-white">🎵 Tu Playlist de Voz</h3>
-            <p class="text-[10px] text-slate-400">Toca cualquier pista para practicarla arriba.</p>
+            <h3 class="text-sm font-black text-white">🎵 Tu Playlist de Entrenamiento</h3>
+            <p class="text-[10px] text-slate-400">Toca cualquier pista para practicarla con Eihwaz.</p>
           </div>
-          <span id="playlistCountBadge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
-            0 pistas
-          </span>
+          <span id="playlistCountBadge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">0 pistas</span>
         </div>
-
         <div id="emptyPlaylistState" class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center space-y-1">
           <span class="text-lg block">🌱</span>
-          <p class="text-xs text-slate-300 font-semibold">Tu Playlist empieza limpia desde cero.</p>
+          <p class="text-xs text-slate-300 font-semibold">Tu Playlist empieza limpia.</p>
         </div>
-
         <div id="playlistTracksContainer" class="space-y-2"></div>
       </div>
-
     </section>
 
   </main>
 
+  <!-- NAV INFERIOR -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-3 py-1.5">
     <div class="max-w-md mx-auto grid grid-cols-4 gap-2">
-      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow">
-        <span class="text-sm leading-none">🏠</span>
-        <span class="text-[10px] mt-1">Inicio</span>
-      </button>
-
-      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
-        <span class="text-sm leading-none">🔍</span>
-        <span class="text-[10px] mt-1">Explorar</span>
-      </button>
-
-      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
-        <span class="text-sm leading-none">🎵</span>
-        <span class="text-[10px] mt-1">Música</span>
-      </button>
-
-      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold">
-        <span class="text-sm leading-none">🎙️</span>
-        <span class="text-[10px] mt-1">Mi Playlist</span>
-      </button>
+      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow"><span class="text-sm leading-none">🏠</span><span class="text-[10px] mt-1">Inicio</span></button>
+      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🔍</span><span class="text-[10px] mt-1">Explorar</span></button>
+      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎵</span><span class="text-[10px] mt-1">Música</span></button>
+      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎙️</span><span class="text-[10px] mt-1">Mi Playlist</span></button>
     </div>
   </nav>
 
+  <!-- MOTOR DE EIHWAZ -->
+  <script src="ai-tutor.js"></script>
+
+  <!-- LÓGICA PRINCIPAL UI -->
   <script>
     const PLAYLIST_KEY = 'eihwaz_playlist_zero_v1';
     const SETTINGS_KEY = 'eihwaz_settings_v1';
 
-    // Diccionario de errores tipográficos y corrección ortográfica frecuente
-    const COMMON_TYPOS = {
-      'dgo': 'dog',
-      'doog': 'dog',
-      'freind': 'friend',
-      'frend': 'friend',
-      'tym': 'time',
-      'tiem': 'time',
-      'disipline': 'discipline',
-      'disciplin': 'discipline',
-      'curage': 'courage',
-      'corage': 'courage',
-      'feare': 'fear',
-      'fer': 'fear',
-      'beleive': 'believe',
-      'habbit': 'habit',
-      'lenguage': 'language',
-      'writting': 'writing',
-      'tomorow': 'tomorrow',
-      'becuse': 'because'
-    };
-
-    const FAMOUS_SONG_VERSES = {
-      'perfect': {
-        en: 'I see my future in your eyes.',
-        es: 'Veo mi futuro en tus ojos.'
+    const DEFAULT_PLAYLIST = [
+      {
+        id: 'trk_default_1',
+        english: 'Spirit lead me where my trust is without borders.',
+        spanish: 'Espíritu guíame donde mi confianza no tenga límites.',
+        source: 'Oceans - Hillsong United'
       },
-      'yellow': {
-        en: 'Look at the stars, look how they shine for you.',
-        es: 'Mira las estrellas, mira cómo brillan por ti.'
-      },
-      'so will i': {
-        en: 'If the stars were made to worship, so will I.',
-        es: 'Si las estrellas fueron hechas para adorar, yo también lo haré.'
-      },
-      'oceans': {
-        en: 'Spirit lead me where my trust is without borders.',
-        es: 'Espíritu guíame donde mi confianza no tenga fronteras.'
-      },
-      'easy on me': {
-        en: 'Go easy on me, I was still a child.',
-        es: 'Ten paciencia conmigo, aún era un niño.'
-      },
-      'be alright': {
-        en: 'Everything is going to be alright.',
-        es: 'Todo va a estar bien.'
+      {
+        id: 'trk_default_2',
+        english: 'I will live today as if it were my last day.',
+        spanish: 'Viviré hoy como si fuera mi último día.',
+        source: 'Mi último día - Tercer Cielo'
       }
-    };
-
-    const PSYCH_WORD_BANK = {
-      'hi': {
-        wordEn: 'Hi',
-        wordEs: 'Hola (Saludo cercano)',
-        familyNote: 'Es familia directa de "Hello". "Hi" rompe el hielo con confianza y naturalidad.',
-        growthEn: 'Hi, Maria! I am learning English and growing every single day.',
-        growthEs: '¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.'
-      },
-      'hello': {
-        wordEn: 'Hello',
-        wordEs: 'Hola',
-        familyNote: 'Hermana formal de "Hi". Ideal para iniciar cualquier conversación con seguridad.',
-        growthEn: 'Hello world! Today I choose courage over fear when I speak.',
-        growthEs: '¡Hola mundo! Hoy elijo la valentía sobre el miedo al hablar.'
-      },
-      'dog': {
-        wordEn: 'Dog',
-        wordEs: 'Perro',
-        familyNote: 'Relacionada con "Puppy" y "Pet". Simboliza lealtad y constancia.',
-        growthEn: 'My dog is my loyal friend, and daily discipline is my superpower.',
-        growthEs: 'Mi perro es mi amigo leal, y la disciplina diaria es mi superpoder.'
-      },
-      'friend': {
-        wordEn: 'Friend',
-        wordEs: 'Amigo / Amiga',
-        familyNote: 'Familia de "Friendship" (amistad). En la calle también escucharás "Buddy".',
-        growthEn: 'I am grateful for the loyal friends I have found on my journey.',
-        growthEs: 'Estoy agradecido por los amigos leales que he encontrado en mi camino.'
-      },
-      'time': {
-        wordEn: 'Time',
-        wordEs: 'Tiempo',
-        familyNote: 'Vital en expresiones como "On time" (a tiempo) o "Take your time".',
-        growthEn: 'Time is my greatest asset; five minutes of focus changes my brain.',
-        growthEs: 'El tiempo es mi mayor activo; cinco minutos de enfoque cambian mi cerebro.'
-      },
-      'discipline': {
-        wordEn: 'Discipline',
-        wordEs: 'Disciplina',
-        familyNote: 'Conectada con "Habit" y "Consistency" (constancia).',
-        growthEn: 'Discipline builds my memory and opens every door in my life.',
-        growthEs: 'La disciplina construye mi memoria y abre cada puerta en mi vida.'
-      }
-    };
-
-    const CURATED_SONGS = [
-      {
-        artist: 'Ed Sheeran',
-        title: 'Perfect',
-        tag: '💖 Verso Clásico',
-        ytQuery: 'Ed Sheeran Perfect lyrics',
-        practiceEn: 'I see my future in your eyes.',
-        practiceEs: 'Veo mi futuro en tus ojos.',
-        note: 'Frase real de Perfect ideal para practicar fluidez y enlace de sonidos.'
-      },
-      {
-        artist: 'Benjamin William Hastings',
-        title: "That's the Thing About Praise",
-        tag: '🎸 Favorita del Creador',
-        ytQuery: 'Benjamin William Hastings Thats the Thing About Praise',
-        practiceEn: 'Sometimes the only way through the dark is to sing anyway.',
-        practiceEs: 'A veces la única forma de cruzar la oscuridad es cantar de todos modos.',
-        note: 'Practica cómo pronunciar "through" y "anyway" con naturalidad.'
-      },
-      {
-        artist: 'Hillsong United',
-        title: 'Oceans',
-        tag: '🌊 Favorita del Creador',
-        ytQuery: 'Hillsong United Oceans',
-        practiceEn: 'My trust is without borders when I step into the unknown.',
-        practiceEs: 'Mi confianza no tiene fronteras cuando doy un paso a lo desconocido.',
-        note: 'Ideal para entrenar el sonido "th" en "without" y "the".'
-      },
-      {
-        artist: 'Adele',
-        title: 'Easy On Me',
-        tag: '🎹 Favorita del Creador',
-        ytQuery: 'Adele Easy On Me',
-        practiceEn: 'Go easy on me, I needed time to grow.',
-        practiceEs: 'Ten paciencia conmigo, necesitaba tiempo para crecer.',
-        note: 'Entrena la entonación suave y unida de Adele.'
-      }
-    ];
-
-    const FEARLESS_COACH_MESSAGES = [
-      '¡Escúchate sin juzgarte! Cada vez que sueltas tu voz en voz alta, tus neuronas crean conexiones nuevas.',
-      '¡Esa es tu voz en inglés! Nadie nació hablando perfecto. La diferencia es perder la vergüenza.',
-      '¡Gran toma! Busca claridad y firmeza, no acento de película. Repítela con más volumen.',
-      '¡Lo hiciste! El 90% solo lee en silencio. Tú acabas de entrenar el músculo real del habla.'
     ];
 
     let playlist = [];
     let settings = { theme: 'default' };
     let currentExploreObj = null;
-    let pendingSuggestedWord = null;
     let currentStudioTrack = {
-      english: 'Hi, Maria! I am learning English and growing every day.',
-      spanish: '¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.',
-      source: 'Reto Inicial'
+      english: 'Hi! I am learning English with Eihwaz and growing every day.',
+      spanish: '¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.',
+      source: 'Reto de Eihwaz'
     };
 
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let recordedAudioUrl = null;
-    let isRecordingShadow = false;
-    let audioContext = null;
-    let analyserNode = null;
-    let meterAnimId = null;
+    let mediaRecorder = null; let audioChunks = []; let recordedAudioUrl = null; let isRecordingShadow = false;
+    let audioContext = null; let analyserNode = null; let meterAnimId = null;
 
-    // =========================================================
-    // BOTÓN DE BORRADO "X" ESTILO GOOGLE
-    // =========================================================
-    function handleInputClearBtn(inputId, btnId) {
-      const input = document.getElementById(inputId);
-      const btn = document.getElementById(btnId);
-      if (input && btn) {
-        btn.classList.toggle('hidden', input.value.trim().length === 0);
+    // --- MANEJO DE CONEXIÓN DE EIHWAZ ---
+    function openApiModal() {
+      if (window.aiTutor && window.aiTutor.hasProxy && window.aiTutor.hasProxy()) {
+        alert('🦬 ¡Eihwaz está conectado en la nube y listo para todos tus usuarios!');
+        return;
+      }
+      if (window.aiTutor) document.getElementById('apiKeyInput').value = window.aiTutor.getApiKey();
+      document.getElementById('apiKeyModal').classList.remove('hidden');
+    }
+    function closeApiModal() { document.getElementById('apiKeyModal').classList.add('hidden'); }
+    function saveApiKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      if (val && window.aiTutor) {
+        window.aiTutor.setApiKey(val);
+        closeApiModal();
+        updateAiStatusUI();
+      } else { alert('Ingresa una llave válida primero.'); }
+    }
+    function updateAiStatusUI() {
+      const badge = document.getElementById('aiBrainStatus');
+      if (window.aiTutor && window.aiTutor.isReady && window.aiTutor.isReady()) {
+        badge.innerHTML = '🦬 Eihwaz Activo';
+        badge.parentElement.classList.add('text-cyan-300');
+      } else if (window.aiTutor && window.aiTutor.hasKey()) {
+        badge.innerHTML = '🦬 Eihwaz Activo';
+        badge.parentElement.classList.add('text-indigo-300');
+      } else {
+        badge.innerHTML = '⚙️ Conectar a Eihwaz';
       }
     }
 
-    function clearInputAndRefocus(inputId, btnId) {
-      const input = document.getElementById(inputId);
+    // --- UTILIDADES UI ---
+    function handleInputClearBtn(inId, btnId) {
+      const input = document.getElementById(inId);
       const btn = document.getElementById(btnId);
-      if (input) {
-        input.value = '';
-        input.focus();
-      }
-      if (btn) btn.classList.add('hidden');
-      if (inputId === 'exploreInput') {
-        document.getElementById('spellingCorrectionNotice').classList.add('hidden');
-      }
+      if(input && btn) btn.classList.toggle('hidden', input.value.trim().length === 0);
     }
-
+    function clearInputAndRefocus(inId, btnId) {
+      document.getElementById(inId).value = ''; document.getElementById(inId).focus();
+      document.getElementById(btnId).classList.add('hidden');
+    }
     function runSplashScreen() {
-      const splash = document.getElementById('splashScreen');
-      if (!splash) return;
-      setTimeout(() => {
-        splash.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => {
-          splash.style.display = 'none';
-        }, 500);
-      }, 3000);
+      setTimeout(() => { document.getElementById('splashScreen').classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500); }, 2500);
     }
-
     function globalStopAudio() {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-      const userPlayer = document.getElementById('userAudioPlayer');
-      if (userPlayer) {
-        userPlayer.pause();
-      }
-      document.querySelectorAll('audio').forEach(a => {
-        try { a.pause(); } catch (e) {}
-      });
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      document.querySelectorAll('audio').forEach(a => { try { a.pause(); } catch (e) {} });
     }
-
     function speakText(text, rate = 0.94) {
       globalStopAudio();
       if (!('speechSynthesis' in window)) return;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = rate;
+      const utter = new SpeechSynthesisUtterance(text); utter.lang = 'en-US'; utter.rate = rate;
       window.speechSynthesis.speak(utter);
     }
 
+    // --- INICIALIZACIÓN ---
     function initApp() {
       runSplashScreen();
-
-      const rawList = localStorage.getItem(PLAYLIST_KEY);
-      if (rawList) {
-        try { playlist = JSON.parse(rawList); } catch (e) { playlist = []; }
-      }
-
-      const rawSet = localStorage.getItem(SETTINGS_KEY);
-      if (rawSet) {
-        try { settings = { theme: 'default', ...JSON.parse(rawSet) }; } catch (e) {}
-      }
-
-      applyThemeUI();
-      renderCuratedSongs();
-      renderPlaylistUI();
-      populateMicListSilent();
-    }
-
-    function resetAllZero() {
-      if (!confirm('¿Reiniciar tu Playlist en 0 para empezar desde cero?')) return;
-      globalStopAudio();
-      playlist = [];
-      localStorage.removeItem(PLAYLIST_KEY);
-      renderPlaylistUI();
-      switchTab('home');
+      try {
+        const saved = JSON.parse(localStorage.getItem(PLAYLIST_KEY));
+        playlist = (Array.isArray(saved) && saved.length > 0) ? saved : DEFAULT_PLAYLIST;
+      } catch (e) { playlist = DEFAULT_PLAYLIST; }
+      try { settings = { theme: 'default', ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) }; } catch (e) {}
+      applyThemeUI(); renderPlaylistUI(); populateMicListSilent(); updateAiStatusUI();
     }
 
     function toggleThemeColor() {
       settings.theme = settings.theme === 'pink' ? 'default' : 'pink';
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      applyThemeUI();
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); applyThemeUI();
     }
-
     function applyThemeUI() {
       const isPink = settings.theme === 'pink';
       document.body.classList.toggle('theme-pink', isPink);
       document.getElementById('themeColorIcon').textContent = isPink ? '🌸' : '💙';
-      document.getElementById('themeColorText').textContent = isPink ? 'Rosado' : 'Azul';
     }
-
     function switchTab(tab) {
       globalStopAudio();
       ['home', 'explore', 'music', 'playlist'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
-        const btn = document.getElementById(`tab-${t}`);
-        if (t === tab) {
-          btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow';
-        } else {
-          btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold';
-        }
+        document.getElementById(`tab-${t}`).className = t === tab 
+          ? 'flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow'
+          : 'flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold';
       });
-
-      if (tab === 'playlist') renderPlaylistUI();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (tab === 'playlist') renderPlaylistUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function startQuickTestInStudio() {
-      loadTrackIntoStudio(
-        'Hi, Maria! I am learning English and growing every day.',
-        '¡Hola, María! Estoy aprendiendo inglés y creciendo cada día.',
-        'Reto Inicial',
-        true
-      );
-    }
-
-    function quickExplore(word) {
-      document.getElementById('exploreInput').value = word;
+    // --- ATAJOS RÁPIDOS ---
+    function quickExploreWord(word) {
+      switchTab('explore');
+      const input = document.getElementById('exploreInput');
+      input.value = word;
       handleInputClearBtn('exploreInput', 'clearExploreBtn');
-      analyzeWordGrowth();
+      analyzeWordGrowthAI();
     }
 
-    // =========================================================
-    // ASISTENTE DE TIPEO Y CORRECCIÓN GRAMATICAL
-    // =========================================================
-    async function checkWordSpelling(inputWord) {
-      const lower = inputWord.toLowerCase().trim();
-      
-      // 1. Verificación en mapa de errores de tipeo comunes
-      if (COMMON_TYPOS[lower]) {
-        return COMMON_TYPOS[lower];
-      }
-
-      // 2. Si tiene más de 3 letras y no está en banco, verificar con motor ortográfico Datamuse
-      if (lower.length >= 3 && !PSYCH_WORD_BANK[lower]) {
-        try {
-          const res = await fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(lower)}&max=1`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.length > 0 && data[0].word.toLowerCase() !== lower) {
-              return data[0].word;
-            }
-          }
-        } catch (e) {}
-      }
-      return null;
+    function quickSelectSong(songQuery) {
+      const input = document.getElementById('songTitleQueryInput');
+      input.value = songQuery;
+      handleInputClearBtn('songTitleQueryInput', 'clearSongBtn');
+      searchSongByTitleOnlyAI();
     }
 
-    function acceptSuggestedWord() {
-      if (!pendingSuggestedWord) return;
-      document.getElementById('exploreInput').value = pendingSuggestedWord;
-      handleInputClearBtn('exploreInput', 'clearExploreBtn');
-      document.getElementById('spellingCorrectionNotice').classList.add('hidden');
-      analyzeWordGrowth();
-    }
-
-    async function analyzeWordGrowth() {
-      let rawInput = document.getElementById('exploreInput').value.trim();
-      if (!rawInput) return alert('Escribe una palabra para explorarla.');
+    // --- EXPLORADOR CON EIHWAZ ---
+    async function analyzeWordGrowthAI() {
+      const rawInput = document.getElementById('exploreInput').value.trim();
+      if (!rawInput) return alert('Escribe una palabra para que Eihwaz la analice.');
+      const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
+      if (!ready) return openApiModal();
 
       const btn = document.getElementById('btnExplore');
-      const correctionBox = document.getElementById('spellingCorrectionNotice');
-      btn.textContent = 'Revisando ortografía y creando frase...';
-      btn.disabled = true;
-
-      // Detección automática de error de tipeo
-      const suggested = await checkWordSpelling(rawInput);
-      if (suggested && suggested.toLowerCase() !== rawInput.toLowerCase()) {
-        pendingSuggestedWord = suggested;
-        document.getElementById('suggestedWordText').textContent = suggested;
-        correctionBox.classList.remove('hidden');
-        // Si es un error obvio directo de tipeo (ej: dgo -> dog), auto-corregimos de inmediato
-        if (COMMON_TYPOS[rawInput.toLowerCase()]) {
-          rawInput = suggested;
-          document.getElementById('exploreInput').value = suggested;
-        }
-      } else {
-        correctionBox.classList.add('hidden');
-        pendingSuggestedWord = null;
-      }
-
-      const cleanKey = rawInput.toLowerCase();
-
-      if (PSYCH_WORD_BANK[cleanKey]) {
-        currentExploreObj = PSYCH_WORD_BANK[cleanKey];
-        displayExploreResult(currentExploreObj);
-        btn.textContent = '🔍 Generar Afirmación';
-        btn.disabled = false;
-        return;
-      }
+      btn.textContent = '🦬 Eihwaz está pensando...'; btn.disabled = true;
 
       try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(rawInput)}&langpair=en|es`);
-        const data = await res.json();
-        let translated = data?.responseData?.translatedText || rawInput;
-
-        let wordEn = rawInput;
-        let wordEs = translated;
-
-        if (cleanKey === translated.toLowerCase()) {
-          const resRev = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(rawInput)}&langpair=es|en`);
-          const dataRev = await resRev.json();
-          wordEn = dataRev?.responseData?.translatedText || rawInput;
-          wordEs = rawInput;
-        }
-
-        const capWordEn = wordEn.charAt(0).toUpperCase() + wordEn.slice(1);
-
+        const response = await window.aiTutor.exploreWord(rawInput);
         currentExploreObj = {
-          wordEn: capWordEn,
-          wordEs: wordEs,
-          familyNote: `"${capWordEn}" es una palabra clave. Úsala hoy en voz alta para soltar la lengua.`,
-          growthEn: `${capWordEn} reminds me that I am learning English and growing stronger every day.`,
-          growthEs: `"${capWordEn}" me recuerda que estoy aprendiendo inglés y haciéndome más fuerte cada día.`
+          wordEn: response.word_en, wordEs: response.word_es,
+          familyNote: response.real_life_context,
+          pronunciationTip: response.pronunciation_tip,
+          growthEn: response.power_phrase_en, growthEs: response.power_phrase_es
         };
-
-        displayExploreResult(currentExploreObj);
+        
+        document.getElementById('expWordEn').textContent = currentExploreObj.wordEn;
+        document.getElementById('expWordEs').textContent = currentExploreObj.wordEs;
+        document.getElementById('expFamilyNote').textContent = currentExploreObj.familyNote;
+        document.getElementById('expPronunciationTip').textContent = currentExploreObj.pronunciationTip;
+        document.getElementById('expGrowthEn').textContent = `"${currentExploreObj.growthEn}"`;
+        document.getElementById('expGrowthEs').textContent = currentExploreObj.growthEs;
+        document.getElementById('btnStarIndecisive').textContent = '⭐ Guardar';
+        document.getElementById('exploreResultCard').classList.remove('hidden');
+        speakText(currentExploreObj.growthEn, 0.94);
       } catch (e) {
-        currentExploreObj = {
-          wordEn: rawInput,
-          wordEs: 'Palabra activa',
-          familyNote: 'Practícala en voz alta sin miedo a equivocarte.',
-          growthEn: `With "${rawInput}", I express myself clearly and without fear.`,
-          growthEs: `Con "${rawInput}", me expreso claramente y sin miedo.`
-        };
-        displayExploreResult(currentExploreObj);
+        alert("Eihwaz tuvo un percance: " + e.message);
       } finally {
-        btn.textContent = '🔍 Generar Afirmación';
-        btn.disabled = false;
+        btn.textContent = '✨ Pedir explicación a Eihwaz'; btn.disabled = false;
       }
     }
-
-    function displayExploreResult(obj) {
-      document.getElementById('expWordEn').textContent = obj.wordEn;
-      document.getElementById('expWordEs').textContent = obj.wordEs;
-      document.getElementById('expFamilyNote').textContent = obj.familyNote;
-      document.getElementById('expGrowthEn').textContent = `"${obj.growthEn}"`;
-      document.getElementById('expGrowthEs').textContent = obj.growthEs;
-
-      document.getElementById('btnStarIndecisive').textContent = '⭐ Guardar';
-      document.getElementById('exploreResultCard').classList.remove('hidden');
-      speakText(obj.growthEn, 0.94);
-    }
-
-    function speakCurrentExploreWord() {
-      if (currentExploreObj) speakText(currentExploreObj.wordEn, 0.9);
-    }
-
-    function speakCurrentExploreSentence() {
-      if (currentExploreObj) speakText(currentExploreObj.growthEn, 0.94);
-    }
-
+    function speakCurrentExploreWord() { if (currentExploreObj) speakText(currentExploreObj.wordEn, 0.9); }
     function saveCurrentExploreToPlaylist(showFeedback = false) {
       if (!currentExploreObj) return;
-      addTrackToPlaylist(currentExploreObj.growthEn, currentExploreObj.growthEs, `Palabra: ${currentExploreObj.wordEn}`);
-      if (showFeedback) {
-        document.getElementById('btnStarIndecisive').textContent = '✅ Guardada';
-      }
+      addTrackToPlaylist(currentExploreObj.growthEn, currentExploreObj.growthEs, `Eihwaz: ${currentExploreObj.wordEn}`);
+      if (showFeedback) document.getElementById('btnStarIndecisive').textContent = '✅ Guardada';
     }
-
     function trainExploreNow() {
-      if (!currentExploreObj) return;
-      loadTrackIntoStudio(
-        currentExploreObj.growthEn,
-        currentExploreObj.growthEs,
-        `Palabra: ${currentExploreObj.wordEn}`,
-        true
-      );
+      if (currentExploreObj) loadTrackIntoStudio(currentExploreObj.growthEn, currentExploreObj.growthEs, `Eihwaz: ${currentExploreObj.wordEn}`, true);
     }
 
-    function renderCuratedSongs() {
-      const container = document.getElementById('curatedSongsContainer');
-      container.innerHTML = '';
-
-      CURATED_SONGS.forEach((s) => {
-        const safeEn = s.practiceEn.replace(/'/g, "\\'");
-        const safeEs = s.practiceEs.replace(/'/g, "\\'");
-        const safeArtist = s.artist.replace(/'/g, "\\'");
-
-        const card = document.createElement('div');
-        card.className = 'glass-card rounded-2xl p-3.5 border border-slate-800 space-y-2.5';
-        card.innerHTML = `
-          <div class="flex items-start justify-between gap-2">
-            <div>
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-extrabold">${s.tag}</span>
-              <h3 class="text-sm font-black text-white mt-1">${s.title}</h3>
-              <p class="text-[11px] text-cyan-400 font-bold">${s.artist}</p>
-            </div>
-            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(s.ytQuery)}" target="_blank"
-              class="px-2.5 py-1 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-extrabold shrink-0">
-              ▶️ YouTube
-            </a>
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-0.5">
-            <span class="text-[9px] text-slate-400 uppercase font-bold block">Esta frase para practicar es genial:</span>
-            <p class="text-xs font-black text-white leading-snug">"${s.practiceEn}"</p>
-            <p class="text-[11px] text-emerald-400 font-semibold">${s.practiceEs}</p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white">
-              🔊 Oír Frase
-            </button>
-            <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeArtist}', true)" class="btn-duo py-2 rounded-xl bg-indigo-600 border-indigo-800 text-xs font-extrabold text-white shadow">
-              🎙️ Practicarla
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    async function searchSongByTitleOnly() {
+    // --- PUENTE MUSICAL CON EIHWAZ ---
+    async function searchSongByTitleOnlyAI() {
       const query = document.getElementById('songTitleQueryInput').value.trim();
-      if (!query) return alert('Escribe el título de una canción primero.');
+      if (!query) return alert('Escribe o selecciona una canción primero.');
+      const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
+      if (!ready) return openApiModal();
 
       const btn = document.getElementById('btnSearchByTitle');
       const resultsBox = document.getElementById('globalSongSearchResults');
       const apologyBox = document.getElementById('songApologyBox');
 
-      btn.textContent = 'Buscando canción y frase...';
-      btn.disabled = true;
-      resultsBox.classList.add('hidden');
-      apologyBox.classList.add('hidden');
-      resultsBox.innerHTML = '';
+      btn.textContent = '🦬 Eihwaz está escuchando y pensando...'; btn.disabled = true;
+      resultsBox.classList.add('hidden'); apologyBox.classList.add('hidden'); resultsBox.innerHTML = '';
 
       try {
-        let foundTracks = [];
-
+        // 1. Buscar muestra de audio en iTunes (30s)
+        let trackPreview = null; let trackTitle = query; let trackArtist = "Artista";
         try {
-          const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=3`);
+          const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
           if (itunesRes.ok) {
             const itunesData = await itunesRes.json();
             if (itunesData.results && itunesData.results.length > 0) {
-              foundTracks = itunesData.results.map(item => ({
-                title: item.trackName,
-                artist: item.artistName,
-                previewUrl: item.previewUrl || null
-              }));
+              trackTitle = itunesData.results[0].trackName;
+              trackArtist = itunesData.results[0].artistName;
+              trackPreview = itunesData.results[0].previewUrl;
             }
           }
         } catch (e) {}
 
-        let lrcFirstLine = null;
-        try {
-          const lrcRes = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
-          if (lrcRes.ok) {
-            const lrcData = await lrcRes.json();
-            if (Array.isArray(lrcData) && lrcData.length > 0) {
-              if (foundTracks.length === 0) {
-                foundTracks = lrcData.slice(0, 3).map(item => ({
-                  title: item.trackName || item.name,
-                  artist: item.artistName,
-                  previewUrl: null
-                }));
-              }
-              const plain = lrcData[0].plainLyrics || '';
-              const validLines = plain.split('\n').map(l => l.trim()).filter(l => l.length > 14 && l.length < 75 && !l.startsWith('['));
-              if (validLines.length > 0) {
-                lrcFirstLine = validLines[Math.min(2, validLines.length - 1)];
-              }
-            }
-          }
-        } catch (e) {}
+        // 2. Eihwaz analiza la canción
+        const aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
 
-        if (foundTracks.length === 0) throw new Error('Not found');
+        const safeEn = aiLesson.power_phrase_en.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeEs = aiLesson.power_phrase_es.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeSrc = `${aiLesson.song_title} - ${aiLesson.artist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-        const cleanQueryKey = query.toLowerCase().trim();
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'p-3.5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-3';
+        
+        let audioHtml = trackPreview ? `
+          <div class="pt-1">
+            <span class="text-[9px] text-slate-400 block mb-1">🎧 Muestra Oficial (30s):</span>
+            <audio controls src="${trackPreview}" class="w-full h-8 rounded-lg" onplay="handleExclusiveAudioPlay(this)"></audio>
+          </div>
+        ` : `<p class="text-[9px] text-amber-400/80 italic">Audio previo no disponible, pero Eihwaz preparó tu lección:</p>`;
 
-        for (const track of foundTracks) {
-          const cleanTitle = track.title.replace(/\s*\(.*?\)\s*/g, '').trim() || track.title;
-          const titleKey = cleanTitle.toLowerCase();
-
-          let practiceSentenceEn = '';
-          let practiceSentenceEs = '';
-
-          if (FAMOUS_SONG_VERSES[titleKey] || FAMOUS_SONG_VERSES[cleanQueryKey]) {
-            const match = FAMOUS_SONG_VERSES[titleKey] || FAMOUS_SONG_VERSES[cleanQueryKey];
-            practiceSentenceEn = match.en;
-            practiceSentenceEs = match.es;
-          } else if (lrcFirstLine) {
-            practiceSentenceEn = lrcFirstLine;
-            practiceSentenceEs = `Verso real de "${cleanTitle}" (${track.artist})`;
-          } else {
-            practiceSentenceEn = `I love every word of "${cleanTitle}" by ${track.artist}.`;
-            practiceSentenceEs = `Me encanta cada palabra de "${cleanTitle}" de ${track.artist}.`;
-          }
-
-          const safeEn = practiceSentenceEn.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-          const safeEs = practiceSentenceEs.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-          const safeSrc = `${cleanTitle} - ${track.artist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'p-3.5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-2.5';
-          
-          let audioHtml = '';
-          if (track.previewUrl) {
-            audioHtml = `
-              <div class="pt-0.5">
-                <span class="text-[9px] text-slate-400 block mb-1">🎧 Muestra de 30s (se apaga sola si pones otra):</span>
-                <audio controls src="${track.previewUrl}" class="w-full h-8 rounded-lg" onplay="handleExclusiveAudioPlay(this)"></audio>
-              </div>
-            `;
-          }
-
-          itemDiv.innerHTML = `
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <span class="text-[9px] text-cyan-400 font-extrabold uppercase">✅ Canción Encontrada</span>
-                <h4 class="text-xs font-black text-white mt-0.5">${track.title}</h4>
-                <p class="text-[11px] text-slate-300 font-semibold">${track.artist}</p>
-              </div>
-              <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}" target="_blank"
-                class="px-2.5 py-1 rounded-xl bg-rose-500/20 text-rose-300 text-[10px] font-extrabold shrink-0">
-                ▶️ YouTube
-              </a>
+        itemDiv.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[9px] text-cyan-400 font-extrabold uppercase">🦬 ${aiLesson.is_spanish ? 'Puente Español ➔ Inglés' : 'Canción Analizada por Eihwaz'}</span>
+              <h4 class="text-xs font-black text-white mt-0.5">${aiLesson.song_title}</h4>
+              <p class="text-[11px] text-slate-300 font-semibold">${aiLesson.artist}</p>
             </div>
-
-            ${audioHtml}
-
-            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-0.5">
-              <span class="text-[9px] text-indigo-300 font-bold block">✨ Esta frase para practicar es genial y bonita:</span>
-              <p class="text-xs font-black text-white leading-snug">"${practiceSentenceEn}"</p>
-              <p class="text-[10px] text-emerald-400">${practiceSentenceEs}</p>
+          </div>
+          ${audioHtml}
+          <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+            <p class="text-[10px] text-slate-300 leading-snug">🦬 <b>Eihwaz:</b> ${aiLesson.tutor_insight} <br><br>${aiLesson.bridge_explanation}</p>
+            <div class="pt-2 border-t border-slate-800 space-y-0.5">
+              <span class="text-[9px] text-indigo-300 font-bold block">✨ Verso elegido por Eihwaz para tu voz:</span>
+              <p class="text-xs font-black text-white leading-snug">"${aiLesson.power_phrase_en}"</p>
+              <p class="text-[10px] text-emerald-400">${aiLesson.power_phrase_es}</p>
             </div>
-
-            <div class="grid grid-cols-2 gap-1.5">
-              <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-lg bg-slate-800 border-slate-950 text-[11px] font-extrabold text-white">
-                🔊 Oír Frase
-              </button>
-              <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', true)" class="btn-duo py-2 rounded-lg bg-cyan-500 border-cyan-700 text-[11px] font-black text-slate-950">
-                🎙️ Practicarla
-              </button>
-            </div>
-          `;
-          resultsBox.appendChild(itemDiv);
-        }
-
+            <p class="text-[9px] text-cyan-400 mt-1">💡 <b>Tip de Eihwaz:</b> ${aiLesson.pronunciation_tip}</p>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-lg bg-slate-800 border-slate-950 text-[11px] font-extrabold text-white">🔊 Oír a Eihwaz</button>
+            <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', true)" class="btn-duo py-2 rounded-lg bg-cyan-500 border-cyan-700 text-[11px] font-black text-slate-950">🎙️ Practicarla</button>
+          </div>
+        `;
+        resultsBox.appendChild(itemDiv);
         resultsBox.classList.remove('hidden');
-      } catch (err) {
-        const apologyEn = `I deeply apologize, I couldn't find a track titled "${query}" in our catalog. Please try another title!`;
-        const apologyEs = `¡Te pido una disculpa! No pude encontrar una pista titulada "${query}" en nuestro catálogo. ¡Intenta con otro título!`;
 
-        document.getElementById('apologyEnText').textContent = `"${apologyEn}"`;
-        document.getElementById('apologyEsText').textContent = apologyEs;
+      } catch (err) {
+        document.getElementById('apologyEnText').textContent = `Eihwaz no pudo conectar en este momento: ${err.message}`;
         apologyBox.classList.remove('hidden');
-        speakText(apologyEn, 0.94);
       } finally {
-        btn.textContent = '🔎 Buscar Canción y Verso Exacto';
-        btn.disabled = false;
+        btn.textContent = '🔎 Analizar Canción con Eihwaz'; btn.disabled = false;
       }
     }
 
+    // --- ESTUDIO DE VOZ ---
+    function startQuickTestInStudio() {
+      loadTrackIntoStudio(
+        'Hi! I am learning English with Eihwaz and growing every day.',
+        '¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.',
+        'Reto de Eihwaz',
+        true
+      );
+    }
     function handleExclusiveAudioPlay(currentAudio) {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      document.querySelectorAll('audio').forEach(audioEl => {
-        if (audioEl !== currentAudio) {
-          audioEl.pause();
-          audioEl.currentTime = 0;
-        }
-      });
+      document.querySelectorAll('audio').forEach(audioEl => { if (audioEl !== currentAudio) { audioEl.pause(); audioEl.currentTime = 0; } });
     }
-
     function addTrackToPlaylist(english, spanish, source) {
-      const exists = playlist.some(item => item.english.toLowerCase() === english.toLowerCase());
-      if (!exists) {
-        playlist.unshift({
-          id: 'trk_' + Date.now(),
-          english,
-          spanish,
-          source: source || 'Práctica Personal'
-        });
-        localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist));
+      if (!playlist.some(item => item.english.toLowerCase() === english.toLowerCase())) {
+        playlist.unshift({ id: 'trk_' + Date.now(), english, spanish, source: source || 'Práctica con Eihwaz' });
+        localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI();
       }
-      renderPlaylistUI();
     }
-
     function loadTrackIntoStudio(english, spanish, source, autoSwitchTab = false) {
-      globalStopAudio();
-      currentStudioTrack = { english, spanish, source };
-      addTrackToPlaylist(english, spanish, source);
-
-      document.getElementById('studioEnglish').textContent = `"${english}"`;
-      document.getElementById('studioSpanish').textContent = spanish;
-      document.getElementById('studioTrackTag').textContent = source || 'Pista Activa';
-      document.getElementById('fearlessCoachBox').classList.add('hidden');
-
-      if (autoSwitchTab) {
-        switchTab('playlist');
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      globalStopAudio(); currentStudioTrack = { english, spanish, source }; addTrackToPlaylist(english, spanish, source);
+      document.getElementById('studioEnglish').textContent = `"${english}"`; document.getElementById('studioSpanish').textContent = spanish;
+      document.getElementById('studioTrackTag').textContent = source || 'Pista Activa'; document.getElementById('fearlessCoachBox').classList.add('hidden');
+      if (autoSwitchTab) switchTab('playlist'); else window.scrollTo({ top: 0, behavior: 'smooth' });
       speakText(english, 0.94);
     }
-
     function renderPlaylistUI() {
-      const badge = document.getElementById('playlistCountBadge');
-      const emptyBox = document.getElementById('emptyPlaylistState');
       const container = document.getElementById('playlistTracksContainer');
-
-      badge.textContent = `${playlist.length} ${playlist.length === 1 ? 'pista' : 'pistas'}`;
+      document.getElementById('playlistCountBadge').textContent = `${playlist.length} pistas`;
       container.innerHTML = '';
-
-      if (playlist.length === 0) {
-        emptyBox.classList.remove('hidden');
-        return;
-      }
-
-      emptyBox.classList.add('hidden');
-
+      if (playlist.length === 0) { document.getElementById('emptyPlaylistState').classList.remove('hidden'); return; }
+      document.getElementById('emptyPlaylistState').classList.add('hidden');
       playlist.forEach((item) => {
         const isCurrent = item.english === currentStudioTrack.english;
-        const safeEn = item.english.replace(/'/g, "\\'");
-        const safeEs = item.spanish.replace(/'/g, "\\'");
-        const safeSrc = (item.source || '').replace(/'/g, "\\'");
-
+        const safeEn = item.english.replace(/'/g, "\\'"); const safeEs = item.spanish.replace(/'/g, "\\'"); const safeSrc = (item.source || '').replace(/'/g, "\\'");
         const row = document.createElement('div');
-        row.className = `p-3 rounded-xl border transition flex items-center justify-between gap-2.5 ${
-          isCurrent ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/90 border-slate-800'
-        }`;
-
+        row.className = `p-3 rounded-xl border transition flex items-center justify-between gap-2.5 ${isCurrent ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/90 border-slate-800'}`;
         row.innerHTML = `
           <div onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', false)" class="space-y-0.5 min-w-0 flex-1 cursor-pointer">
             <span class="text-[9px] text-cyan-400 font-bold uppercase block">${item.source || 'Pista'}</span>
-            <p class="text-xs font-extrabold text-white truncate">"${item.english}"</p>
-            <p class="text-[10px] text-slate-400 truncate">${item.spanish}</p>
+            <p class="text-xs font-extrabold text-white truncate">"${item.english}"</p><p class="text-[10px] text-slate-400 truncate">${item.spanish}</p>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button onclick="speakText('${safeEn}', 0.94)" title="Escuchar" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-white text-xs flex items-center justify-center active:scale-95">
-              ▶️
-            </button>
-            <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', false)" title="Cargar" class="w-8 h-8 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center shadow active:scale-95">
-              🎙️
-            </button>
-            <button onclick="removeTrack('${item.id}')" title="Quitar" class="w-7 h-8 rounded-full text-slate-500 hover:text-rose-400 text-xs flex items-center justify-center">
-              ✖
-            </button>
+            <button onclick="removeTrack('${item.id}')" class="w-7 h-8 rounded-full text-slate-500 hover:text-rose-400 text-xs flex items-center justify-center">✖</button>
           </div>
         `;
         container.appendChild(row);
       });
     }
+    function removeTrack(id) { playlist = playlist.filter(t => t.id !== id); localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI(); }
+    function speakStudioCurrent(rate) { speakText(currentStudioTrack.english, rate); }
 
-    function removeTrack(id) {
-      playlist = playlist.filter(t => t.id !== id);
-      localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist));
-      renderPlaylistUI();
-    }
-
-    function speakStudioCurrent(rate) {
-      speakText(currentStudioTrack.english, rate);
-    }
-
+    // --- MICRÓFONO Y GRABACIÓN (30s) ---
     async function populateMicListSilent() {
       if (!navigator.mediaDevices?.enumerateDevices) return;
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const mics = devices.filter(d => d.kind === 'audioinput');
-        const select = document.getElementById('micSelectDropdown');
+        const devices = await navigator.mediaDevices.enumerateDevices(); const mics = devices.filter(d => d.kind === 'audioinput');
+        const select = document.getElementById('micSelectDropdown'); if (!select) return;
         const currentVal = select.value;
-
         select.innerHTML = `<option value="">🎤 Micrófono predeterminado</option>`;
-        mics.forEach((m, idx) => {
-          const opt = document.createElement('option');
-          opt.value = m.deviceId;
-          opt.textContent = m.label ? `🎙️ ${m.label}` : `🎙️ Micrófono #${idx + 1}`;
-          select.appendChild(opt);
-        });
+        mics.forEach((m, idx) => { const opt = document.createElement('option'); opt.value = m.deviceId; opt.textContent = m.label ? `🎙️ ${m.label}` : `🎙️ Micrófono #${idx + 1}`; select.appendChild(opt); });
         if (currentVal) select.value = currentVal;
       } catch (e) {}
     }
-
-    async function refreshMicrophoneList() {
-      try {
-        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        tempStream.getTracks().forEach(t => t.stop());
-        await populateMicListSilent();
-        alert('✅ Micrófonos listos.');
-      } catch (e) {
-        alert('Autoriza el permiso de micrófono en tu navegador.');
-      }
-    }
-
-    // =========================================================
-    // GRABADOR DE VOZ (HASTA 30 SEGUNDOS COMPLETOS)
-    // =========================================================
     async function toggleShadowRecording() {
-      globalStopAudio();
-      const btn = document.getElementById('btnRecordShadow');
-      const meterBox = document.getElementById('micMeterBox');
-
+      globalStopAudio(); const btn = document.getElementById('btnRecordShadow'); const meterBox = document.getElementById('micMeterBox');
       if (isRecordingShadow) {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-          mediaRecorder.stop();
-        }
-        isRecordingShadow = false;
-        btn.textContent = '🎙️ 2. Toca para Grabar tu Voz';
-        btn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white');
-        meterBox.classList.add('hidden');
-        if (meterAnimId) cancelAnimationFrame(meterAnimId);
-        return;
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+        isRecordingShadow = false; btn.textContent = '🎙️ 2. Toca para Grabar tu Voz'; btn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white');
+        meterBox.classList.add('hidden'); if (meterAnimId) cancelAnimationFrame(meterAnimId); return;
       }
-
       try {
-        const selectedMicId = document.getElementById('micSelectDropdown').value;
-        const rawAudioConstraints = {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false
-        };
-        if (selectedMicId) rawAudioConstraints.deviceId = { exact: selectedMicId };
-
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: rawAudioConstraints });
-        await populateMicListSilent();
-        startMicVolumeMeter(stream);
-        meterBox.classList.remove('hidden');
-
-        audioChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) audioChunks.push(e.data);
-        };
-
+        const selectEl = document.getElementById('micSelectDropdown');
+        const selectedMicId = selectEl ? selectEl.value : '';
+        const constraints = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
+        if (selectedMicId) constraints.deviceId = { exact: selectedMicId };
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints }); await populateMicListSilent();
+        startMicVolumeMeter(stream); meterBox.classList.remove('hidden'); audioChunks = []; mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || '' });
-          if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
-          recordedAudioUrl = URL.createObjectURL(blob);
-
-          stream.getTracks().forEach(t => t.stop());
-          if (audioContext) audioContext.close().catch(() => {});
-
-          const player = document.getElementById('userAudioPlayer');
-          player.src = recordedAudioUrl;
-          player.volume = 1.0;
-          player.onplay = () => handleExclusiveAudioPlay(player);
-          document.getElementById('userAudioWrapper').classList.remove('hidden');
-
-          addTrackToPlaylist(currentStudioTrack.english, currentStudioTrack.spanish, currentStudioTrack.source);
-
-          const compBtn = document.getElementById('btnCompareShadow');
-          compBtn.disabled = false;
-          compBtn.className = 'btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-slate-950 text-xs font-black shadow';
-
+          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || '' }); if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
+          recordedAudioUrl = URL.createObjectURL(blob); stream.getTracks().forEach(t => t.stop()); if (audioContext) audioContext.close().catch(() => {});
+          const player = document.getElementById('userAudioPlayer'); player.src = recordedAudioUrl; player.volume = 1.0; player.onplay = () => handleExclusiveAudioPlay(player);
+          document.getElementById('userAudioWrapper').classList.remove('hidden'); addTrackToPlaylist(currentStudioTrack.english, currentStudioTrack.spanish, currentStudioTrack.source);
+          const compBtn = document.getElementById('btnCompareShadow'); compBtn.disabled = false; compBtn.className = 'btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-slate-950 text-xs font-black shadow';
           player.play().catch(() => {});
         };
-
-        mediaRecorder.start(200);
-        isRecordingShadow = true;
-        btn.textContent = '⏹️ Detener Grabación (Habla o canta)';
-        btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
-
-        // Grabación extendida a 30 segundos (30000 ms)
-        setTimeout(() => {
-          if (isRecordingShadow) toggleShadowRecording();
-        }, 30000);
-      } catch (err) {
-        alert('Permite el acceso al micrófono para grabar tu voz.');
-      }
+        mediaRecorder.start(200); isRecordingShadow = true; btn.textContent = '⏹️ Detener Grabación (Eihwaz te escucha)'; btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
+        setTimeout(() => { if (isRecordingShadow) toggleShadowRecording(); }, 30000);
+      } catch (err) { alert('Permite el acceso al micrófono para entrenar tu voz con Eihwaz.'); }
     }
-
     function startMicVolumeMeter(stream) {
       try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioCtx();
-        const source = audioContext.createMediaStreamSource(stream);
-        analyserNode = audioContext.createAnalyser();
-        analyserNode.fftSize = 256;
-        source.connect(analyserNode);
-
-        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-        const bar = document.getElementById('micLevelBar');
-        const pct = document.getElementById('micVolumePct');
-
+        audioContext = new (window.AudioContext || window.webkitAudioContext)(); const source = audioContext.createMediaStreamSource(stream);
+        analyserNode = audioContext.createAnalyser(); analyserNode.fftSize = 256; source.connect(analyserNode);
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount); const bar = document.getElementById('micLevelBar'); const pct = document.getElementById('micVolumePct');
         function updateMeter() {
-          if (!isRecordingShadow) return;
-          analyserNode.getByteTimeDomainData(dataArray);
-          let maxPeak = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            const v = Math.abs(dataArray[i] - 128);
-            if (v > maxPeak) maxPeak = v;
-          }
-          const level = Math.min(100, Math.round((maxPeak / 64) * 100));
-          bar.style.width = `${Math.max(6, level)}%`;
-          pct.textContent = `${level}%`;
+          if (!isRecordingShadow) return; analyserNode.getByteTimeDomainData(dataArray); let maxPeak = 0;
+          for (let i = 0; i < dataArray.length; i++) { const v = Math.abs(dataArray[i] - 128); if (v > maxPeak) maxPeak = v; }
+          const level = Math.min(100, Math.round((maxPeak / 64) * 100)); bar.style.width = `${Math.max(6, level)}%`; pct.textContent = `${level}%`;
           meterAnimId = requestAnimationFrame(updateMeter);
         }
         updateMeter();
       } catch (e) {}
     }
-
-    function playOnlyUserAudio() {
-      globalStopAudio();
-      const player = document.getElementById('userAudioPlayer');
-      if (player?.src) {
-        player.currentTime = 0;
-        player.play().catch(() => {});
-      }
-    }
-
-    function showFearlessCoachFeedback() {
-      const box = document.getElementById('fearlessCoachBox');
-      const textEl = document.getElementById('fearlessCoachText');
-      const msg = FEARLESS_COACH_MESSAGES[Math.floor(Math.random() * FEARLESS_COACH_MESSAGES.length)];
-      textEl.textContent = msg;
-      box.classList.remove('hidden');
-    }
-
+    function playOnlyUserAudio() { globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (player?.src) { player.currentTime = 0; player.play().catch(() => {}); } }
     function compareShadowAudio() {
-      globalStopAudio();
-      const player = document.getElementById('userAudioPlayer');
-      if (!recordedAudioUrl || !player) return;
-      const phrase = currentStudioTrack.english;
-
-      showFearlessCoachFeedback();
-
+      globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (!recordedAudioUrl || !player) return;
+      document.getElementById('fearlessCoachText').textContent = "Eihwaz dice: ¡Esa es tu voz real en inglés! Nadie nace hablando perfecto. La clave es soltar la lengua sin miedo."; document.getElementById('fearlessCoachBox').classList.remove('hidden');
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(phrase);
-        utter.lang = 'en-US';
-        utter.rate = 0.92;
-        utter.onend = () => {
-          setTimeout(() => {
-            player.currentTime = 0;
-            player.play().catch(() => {});
-          }, 300);
-        };
-        window.speechSynthesis.speak(utter);
-      } else {
-        player.currentTime = 0;
-        player.play().catch(() => {});
-      }
+        window.speechSynthesis.cancel(); const utter = new SpeechSynthesisUtterance(currentStudioTrack.english); utter.lang = 'en-US'; utter.rate = 0.92;
+        utter.onend = () => { setTimeout(() => { player.currentTime = 0; player.play().catch(() => {}); }, 300); }; window.speechSynthesis.speak(utter);
+      } else { player.currentTime = 0; player.play().catch(() => {}); }
     }
 
     initApp();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
-    }
   </script>
 </body>
 </html>
