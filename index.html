@@ -296,7 +296,69 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 4: ESTUDIO Y PLAYLIST -->
+    <!-- SECCIÓN 4: REELS & STARMAKER KARAOKE -->
+    <section id="view-reels" class="hidden space-y-3.5">
+      <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg border border-pink-500/30">
+        <div>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-extrabold">🎬 Eihwaz Reels • Karaoke StarMaker</span>
+          <h2 class="text-base font-black text-white mt-1">Busca tu canción y canta sobre la pista</h2>
+          <p class="text-[11px] text-slate-400">Escribe cualquier canción. Eihwaz abrirá el video vertical y activará tu micrófono con la música de fondo.</p>
+        </div>
+
+        <!-- BUSCADOR LIBRE DE REELS -->
+        <div class="space-y-2">
+          <div class="relative flex items-center">
+            <input id="reelSearchQueryInput" type="text" placeholder="Ej: Oceans, Perfect, Adele, Luis Fonsi..." 
+              oninput="handleInputClearBtn('reelSearchQueryInput', 'clearReelBtn')"
+              onkeydown="if(event.key==='Enter') searchReelByTitleAI()"
+              class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-pink-500" />
+            <button id="clearReelBtn" onclick="clearInputAndRefocus('reelSearchQueryInput', 'clearReelBtn')" class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">✖</button>
+          </div>
+          
+          <button id="btnSearchReel" onclick="searchReelByTitleAI()" class="btn-duo w-full py-3 rounded-xl bg-pink-600 border-pink-800 text-xs font-black text-white shadow">
+            🎬 Buscar Reel y Activar Karaoke
+          </button>
+        </div>
+
+        <!-- CONTENEDOR DINÁMICO DEL REEL BUSCADO -->
+        <div id="dynamicReelResultContainer" class="hidden space-y-3 pt-1">
+          <div id="reelVideoWrapper" class="space-y-2">
+            <!-- Video vertical y/o audio de respaldo se cargan aquí -->
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-center">
+            <span id="reelAiSongTitle" class="text-[10px] uppercase tracking-wider text-pink-400 font-extrabold block"></span>
+            <p id="reelAiLyricEn" class="text-xs font-black text-white"></p>
+            <p id="reelAiLyricEs" class="text-[11px] text-emerald-400"></p>
+          </div>
+
+          <!-- CABINA STARMAKER (Cantar sobre la pista) -->
+          <div class="space-y-2">
+            <div id="starMeterBox" class="hidden p-2.5 rounded-xl bg-pink-950/50 border border-pink-500/40 space-y-1">
+              <div class="flex justify-between text-[11px] text-pink-300 font-extrabold">
+                <span>🎙️ StarMaker activo (Canta con la pista)...</span>
+                <span id="starVolumePct">0%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                <div id="starLevelBar" class="h-full bg-gradient-to-r from-pink-400 to-indigo-400" style="width: 6%;"></div>
+              </div>
+            </div>
+
+            <button id="btnStarRecord" onclick="toggleStarMakerRecording()" class="btn-duo w-full py-3 rounded-xl bg-pink-600 border-pink-800 text-xs font-black text-white shadow">
+              🎤 Cantar con la Pista (StarMaker)
+            </button>
+
+            <div id="starAudioWrapper" class="hidden pt-1 space-y-1">
+              <span class="text-[10px] text-cyan-300 font-bold block">🎧 Tu interpretación grabada:</span>
+              <audio id="starAudioPlayer" controls class="w-full h-8 rounded-lg"></audio>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 5: ESTUDIO Y PLAYLIST -->
     <section id="view-playlist" class="hidden space-y-3.5">
       <div class="glass-card rounded-2xl p-4 border border-cyan-500/40 space-y-3 shadow-lg">
         <div class="flex items-center justify-between">
@@ -389,13 +451,14 @@
 
   </main>
 
-  <!-- NAV INFERIOR -->
-  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-3 py-1.5">
-    <div class="max-w-md mx-auto grid grid-cols-4 gap-2">
-      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow"><span class="text-sm leading-none">🏠</span><span class="text-[10px] mt-1">Inicio</span></button>
-      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🔍</span><span class="text-[10px] mt-1">Explorar</span></button>
-      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎵</span><span class="text-[10px] mt-1">Música</span></button>
-      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎙️</span><span class="text-[10px] mt-1">Mi Playlist</span></button>
+  <!-- NAV INFERIOR (5 Pestañas) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-card border-t border-slate-800/90 px-2 py-1.5">
+    <div class="max-w-md mx-auto grid grid-cols-5 gap-1.5">
+      <button onclick="switchTab('home')" id="tab-home" class="flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow"><span class="text-sm leading-none">🏠</span><span class="text-[9px] mt-1">Inicio</span></button>
+      <button onclick="switchTab('explore')" id="tab-explore" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🔍</span><span class="text-[9px] mt-1">Explorar</span></button>
+      <button onclick="switchTab('music')" id="tab-music" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎵</span><span class="text-[9px] mt-1">Música</span></button>
+      <button onclick="switchTab('reels')" id="tab-reels" class="flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎬</span><span class="text-[9px] mt-1">Reels</span></button>
+      <button onclick="switchTab('playlist')" id="tab-playlist" class="relative flex flex-col items-center justify-center py-1.5 rounded-2xl text-slate-400 font-semibold"><span class="text-sm leading-none">🎙️</span><span class="text-[9px] mt-1">Playlist</span></button>
     </div>
   </nav>
 
@@ -407,7 +470,6 @@
     const PLAYLIST_KEY = 'eihwaz_playlist_zero_v1';
     const SETTINGS_KEY = 'eihwaz_settings_v1';
 
-    // Diccionario de videos oficiales para que el modo de 1:30m (90s) cargue directo en tus favoritas
     const EXTENDED_SONG_VIDEOS = {
       "oceans": { ytId: "dy9nwe9_xzw", start: 60, end: 150 },
       "mi ultimo dia": { ytId: "f63fG5eW9E8", start: 42, end: 132 },
@@ -446,9 +508,6 @@
     let mediaRecorder = null; let audioChunks = []; let recordedAudioUrl = null; let isRecordingShadow = false;
     let audioContext = null; let analyserNode = null; let meterAnimId = null;
 
-    // =====================================================
-    // PASO 1: MOTOR DE VOZ NATURAL Y CALIBRACIÓN DE TONO
-    // =====================================================
     let availableEnglishVoices = [];
 
     function loadNaturalVoices() {
@@ -584,7 +643,6 @@
       }
     }
 
-    // --- MANEJO DE CONEXIÓN DE EIHWAZ ---
     function openApiModal() {
       if (window.aiTutor && window.aiTutor.hasProxy && window.aiTutor.hasProxy()) {
         alert('🦬 ¡Eihwaz está conectado en la nube y listo para todos tus usuarios!');
@@ -615,7 +673,6 @@
       }
     }
 
-    // --- UTILIDADES UI ---
     function handleInputClearBtn(inId, btnId) {
       const input = document.getElementById(inId);
       const btn = document.getElementById(btnId);
@@ -640,7 +697,6 @@
       window.speechSynthesis.speak(utter);
     }
 
-    // --- INICIALIZACIÓN ---
     function initApp() {
       runSplashScreen();
       try {
@@ -666,7 +722,7 @@
     }
     function switchTab(tab) {
       globalStopAudio();
-      ['home', 'explore', 'music', 'playlist'].forEach(t => {
+      ['home', 'explore', 'music', 'reels', 'playlist'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
         document.getElementById(`tab-${t}`).className = t === tab 
           ? 'flex flex-col items-center justify-center py-1.5 rounded-2xl bg-indigo-600 text-white font-extrabold shadow'
@@ -675,7 +731,6 @@
       if (tab === 'playlist') renderPlaylistUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- ATAJOS RÁPIDOS ---
     function quickExploreWord(word) {
       switchTab('explore');
       const input = document.getElementById('exploreInput');
@@ -691,7 +746,6 @@
       searchSongByTitleOnlyAI();
     }
 
-    // --- EXPLORADOR CON EIHWAZ ---
     async function analyzeWordGrowthAI() {
       const rawInput = document.getElementById('exploreInput').value.trim();
       if (!rawInput) return alert('Escribe una palabra para que Eihwaz la analice.');
@@ -735,7 +789,6 @@
       if (currentExploreObj) loadTrackIntoStudio(currentExploreObj.growthEn, currentExploreObj.growthEs, `Eihwaz: ${currentExploreObj.wordEn}`, true);
     }
 
-    // --- PUENTE MUSICAL CON EIHWAZ (30s a 1:30m) ---
     function findExtendedVideoConfig(title, query) {
       const combined = `${title} ${query}`.toLowerCase();
       for (const key in EXTENDED_SONG_VIDEOS) {
@@ -744,7 +797,7 @@
       return null;
     }
 
-   async function searchSongByTitleOnlyAI() {
+    async function searchSongByTitleOnlyAI() {
       const query = document.getElementById('songTitleQueryInput').value.trim();
       if (!query) return alert('Escribe o selecciona una canción primero.');
       const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
@@ -758,7 +811,6 @@
       resultsBox.classList.add('hidden'); apologyBox.classList.add('hidden'); resultsBox.innerHTML = '';
 
       try {
-        // 1. Buscar muestra en iTunes para el audio de respaldo
         let trackPreview = null; let trackTitle = query; let trackArtist = "Artista";
         try {
           const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
@@ -772,10 +824,8 @@
           }
         } catch (e) {}
 
-        // 2. Eihwaz analiza la canción
         const aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
 
-        // 3. Buscar video de YouTube para CUALQUIER canción en automático (100% gratis)
         let extVid = findExtendedVideoConfig(aiLesson.song_title, query);
         if (!extVid) {
           try {
@@ -784,7 +834,7 @@
             if (ytRes.ok) {
               const ytData = await ytRes.json();
               if (ytData.items && ytData.items.length > 0) {
-                const vidUrl = ytData.items[0].url || ''; // formato /watch?v=XXXX
+                const vidUrl = ytData.items[0].url || '';
                 const vidId = vidUrl.split('v=')[1]?.split('&')[0];
                 if (vidId) {
                   const startS = aiLesson.chorus_start_sec || 45;
@@ -862,7 +912,28 @@
       }
     }
 
-    // --- ESTUDIO DE VOZ ---
+    function handleExtendedAudio90s(audioEl) {
+      handleExclusiveAudioPlay(audioEl);
+      if (!audioEl.dataset.hooked90s) {
+        audioEl.dataset.hooked90s = "true";
+        audioEl.dataset.playCount = "1";
+        audioEl.addEventListener('ended', () => {
+          let count = parseInt(audioEl.dataset.playCount || "1", 10);
+          const badge = document.getElementById('audioLoopTimer');
+          if (count < 3) {
+            count++;
+            audioEl.dataset.playCount = String(count);
+            if (badge) badge.textContent = `Ciclo ${count}/3 (90s total)`;
+            audioEl.currentTime = 0;
+            audioEl.play().catch(() => {});
+          } else {
+            audioEl.dataset.playCount = "1";
+            if (badge) badge.textContent = `✅ 1:30m completado`;
+          }
+        });
+      }
+    }
+
     function startQuickTestInStudio() {
       loadTrackIntoStudio(
         'Hi! I am learning English with Eihwaz and growing every day.',
@@ -914,7 +985,6 @@
     function removeTrack(id) { playlist = playlist.filter(t => t.id !== id); localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI(); }
     function speakStudioCurrent(rate) { speakText(currentStudioTrack.english, rate); }
 
-    // --- MICRÓFONO Y GRABACIÓN (Hasta 1:30m = 90s) ---
     async function populateMicListSilent() {
       if (!navigator.mediaDevices?.enumerateDevices) return;
       try {
@@ -950,7 +1020,6 @@
           player.play().catch(() => {});
         };
         mediaRecorder.start(200); isRecordingShadow = true; btn.textContent = '⏹️ Detener Grabación (Eihwaz te escucha)'; btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
-        // Ampliado a 90,000 ms (1 minuto 30 segundos)
         setTimeout(() => { if (isRecordingShadow) toggleShadowRecording(); }, 90000);
       } catch (err) { alert('Permite el acceso al micrófono para entrenar tu voz con Eihwaz.'); }
     }
@@ -978,6 +1047,178 @@
         utter.onend = () => { setTimeout(() => { player.currentTime = 0; player.play().catch(() => {}); }, 300); };
         window.speechSynthesis.speak(utter);
       } else { player.currentTime = 0; player.play().catch(() => {}); }
+    }
+
+    // --- REELS & STARMAKER ---
+    let starMediaRecorder = null; let starChunks = []; let isRecordingStar = false; let starAudioUrl = null;
+
+    async function searchReelByTitleAI() {
+      const query = document.getElementById('reelSearchQueryInput').value.trim();
+      if (!query) return alert('Escribe el nombre de una canción para buscar su Reel.');
+      const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
+      if (!ready) return openApiModal();
+
+      const btn = document.getElementById('btnSearchReel');
+      btn.textContent = '🦬 Eihwaz está buscando el Reel y audio...'; btn.disabled = true;
+
+      try {
+        let trackPreview = null; let trackTitle = query; let trackArtist = "Artista";
+        try {
+          const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
+          if (itunesRes.ok) {
+            const itunesData = await itunesRes.json();
+            if (itunesData.results && itunesData.results.length > 0) {
+              trackTitle = itunesData.results[0].trackName;
+              trackArtist = itunesData.results[0].artistName;
+              trackPreview = itunesData.results[0].previewUrl;
+            }
+          }
+        } catch (e) {}
+
+        const aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
+
+        let extVid = findExtendedVideoConfig(aiLesson.song_title, query);
+        if (!extVid) {
+          try {
+            const ytSearch = encodeURIComponent(`${aiLesson.song_title} ${aiLesson.artist} official audio`);
+            const ytRes = await fetch(`https://pipedapi.kavin.rocks/search?q=${ytSearch}&filter=videos`);
+            if (ytRes.ok) {
+              const ytData = await ytRes.json();
+              if (ytData.items && ytData.items.length > 0) {
+                const vidUrl = ytData.items[0].url || '';
+                const vidId = vidUrl.split('v=')[1]?.split('&')[0];
+                if (vidId) {
+                  const startS = aiLesson.chorus_start_sec || 45;
+                  extVid = { ytId: vidId, start: startS, end: startS + 90 };
+                }
+              }
+            }
+          } catch (e) {}
+        }
+
+        let mediaHtml = '';
+        if (extVid) {
+          mediaHtml += `
+            <div class="rounded-2xl overflow-hidden border border-slate-700 aspect-[9/16] max-h-72 bg-black relative flex items-center justify-center">
+              <iframe class="w-full h-full pointer-events-none" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media"></iframe>
+            </div>
+          `;
+        } else {
+          mediaHtml += `<p class="text-[10px] text-amber-400 italic text-center">Video no disponible en este momento, usa el audio de respaldo para cantar:</p>`;
+        }
+
+        if (trackPreview) {
+          mediaHtml += `
+            <div class="pt-2">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[9px] text-slate-400">🎧 Audio de Respaldo (Bucle StarMaker de 1:30m):</span>
+                <span id="reelAudioTimer" class="text-[9px] font-mono text-pink-400 font-bold">Ciclo 1/3 (90s)</span>
+              </div>
+              <audio id="reelBackupAudio" controls src="${trackPreview}" class="w-full h-8 rounded-lg" onplay="handleReelAudioLoop(this)"></audio>
+            </div>
+          `;
+        }
+
+        document.getElementById('reelVideoWrapper').innerHTML = mediaHtml;
+        document.getElementById('reelAiSongTitle').textContent = `🎵 ${aiLesson.song_title} - ${aiLesson.artist}`;
+        document.getElementById('reelAiLyricEn').textContent = `"${aiLesson.power_phrase_en}"`;
+        document.getElementById('reelAiLyricEs').textContent = aiLesson.power_phrase_es;
+
+        document.getElementById('dynamicReelResultContainer').classList.remove('hidden');
+
+      } catch (err) {
+        alert("No se pudo cargar el Reel: " + err.message);
+      } finally {
+        btn.textContent = '🎬 Buscar Reel y Activar Karaoke'; btn.disabled = false;
+      }
+    }
+
+    function handleReelAudioLoop(audioEl) {
+      if (!audioEl.dataset.hookedReel) {
+        audioEl.dataset.hookedReel = "true";
+        audioEl.dataset.playCount = "1";
+        audioEl.addEventListener('ended', () => {
+          let count = parseInt(audioEl.dataset.playCount || "1", 10);
+          const badge = document.getElementById('reelAudioTimer');
+          if (count < 3) {
+            count++;
+            audioEl.dataset.playCount = String(count);
+            if (badge) badge.textContent = `Ciclo ${count}/3 (90s)`;
+            audioEl.currentTime = 0;
+            audioEl.play().catch(() => {});
+          } else {
+            audioEl.dataset.playCount = "1";
+            if (badge) badge.textContent = `✅ 1:30m completado`;
+          }
+        });
+      }
+    }
+
+    let starStartTime = 0;
+    let starTimerInterval = null;
+
+    async function toggleStarMakerRecording() {
+      const btn = document.getElementById('btnStarRecord');
+      const meterBox = document.getElementById('starMeterBox');
+      
+      if (isRecordingStar) {
+        if (starMediaRecorder && starMediaRecorder.state !== 'inactive') starMediaRecorder.stop();
+        isRecordingStar = false;
+        clearInterval(starTimerInterval);
+        btn.textContent = '🎤 Cantar con la Pista (StarMaker)';
+        btn.classList.remove('recording-pulse');
+        meterBox.classList.add('hidden');
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        starChunks = [];
+        starMediaRecorder = new MediaRecorder(stream);
+        starMediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) starChunks.push(e.data); };
+        
+        starMediaRecorder.onstop = () => {
+          clearInterval(starTimerInterval);
+          const blob = new Blob(starChunks, { type: starMediaRecorder.mimeType || '' });
+          if (starAudioUrl) URL.revokeObjectURL(starAudioUrl);
+          starAudioUrl = URL.createObjectURL(blob);
+          stream.getTracks().forEach(t => t.stop());
+          const player = document.getElementById('starAudioPlayer');
+          player.src = starAudioUrl;
+          document.getElementById('starAudioWrapper').classList.remove('hidden');
+          player.play().catch(() => {});
+        };
+
+        // Arranca sincronizado en el segundo 0
+        starMediaRecorder.start(200);
+        isRecordingStar = true;
+        starStartTime = Date.now();
+        
+        btn.textContent = '⏹️ Grabando... (0s / 30s)';
+        btn.classList.add('recording-pulse');
+        meterBox.classList.remove('hidden');
+
+        // Cronómetro visual sincronizado segundo a segundo
+        const pctBar = document.getElementById('starLevelBar');
+        const pctText = document.getElementById('starVolumePct');
+        
+        starTimerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - starStartTime) / 1000);
+          const maxDuration = 30; // Puedes ajustarlo a 90 si prefieres 1:30m
+          const progress = Math.min(100, Math.round((elapsed / maxDuration) * 100));
+          
+          if (pctBar) pctBar.style.width = `${progress}%`;
+          if (pctText) pctText.textContent = `${elapsed}s / ${maxDuration}s`;
+          btn.textContent = `⏹️ Grabando Karaoke... (${elapsed}s)`;
+
+          if (elapsed >= maxDuration) {
+            if (isRecordingStar) toggleStarMakerRecording();
+          }
+        }, 1000);
+
+      } catch (e) {
+        alert('Permite el acceso al micrófono para usar el modo StarMaker.');
+      }
     }
 
     initApp();
