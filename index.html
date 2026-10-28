@@ -102,7 +102,7 @@
         <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-9 h-9 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
         <div>
           <h1 class="text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
-          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés</span>
+          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés v1.1</span>
         </div>
       </div>
 
@@ -235,13 +235,13 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 3: MÚSICA CON EIHWAZ + CANCIONES DE EJEMPLO -->
+    <!-- SECCIÓN 3: MÚSICA CON EIHWAZ (30s a 1:30m) -->
     <section id="view-music" class="hidden space-y-3.5">
       <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg border border-cyan-500/30">
         <div>
-          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">🎵 Puente Musical de Eihwaz</span>
+          <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold">🎵 Puente Musical de Eihwaz (30s - 1:30m)</span>
           <h2 class="text-base font-black text-white mt-1">Aprende con tus canciones favoritas</h2>
-          <p class="text-[11px] text-slate-400">Busca en inglés o español. Eihwaz extrae la emoción y te enseña a cantarla.</p>
+          <p class="text-[11px] text-slate-400">Busca en inglés o español. Escucha la muestra o activa el coro extendido de hasta 1:30m.</p>
         </div>
 
         <div class="space-y-2">
@@ -304,6 +304,23 @@
           <span id="studioTrackTag" class="text-[11px] font-bold text-slate-400">Pista Lista</span>
         </div>
 
+        <!-- PASO 1: PANEL DE PERSONALIZACIÓN DE VOZ HUMANA Y TONO PROPIO -->
+        <div class="p-2.5 rounded-xl bg-slate-900/95 border border-indigo-500/30 space-y-2">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-300">🗣️ Voz de Eihwaz:</span>
+            <button id="btn-calibrate-voice" type="button" onclick="calibrateUserVoiceTone()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-[10px] font-black text-white active:scale-95 transition shadow">
+              🎙️ Capturar mi tono (3s)
+            </button>
+          </div>
+          <select id="voice-profile-select" onchange="saveVoiceProfileSetting()" class="w-full bg-slate-950 text-white border border-slate-700 px-2.5 py-2 rounded-lg text-xs font-bold focus:outline-none focus:border-cyan-500">
+            <option value="natural-male">🧔 Mentor Natural (Hombre fluido)</option>
+            <option value="natural-female">👩 Mentora Natural (Mujer fluida)</option>
+            <option value="deep-coach">🎙️ Voz Profunda de Estudio</option>
+            <option value="my-tone">🧬 Adaptada a mi propio tono de voz</option>
+          </select>
+          <p id="voice-status-msg" class="hidden text-[10px] font-bold text-cyan-300 leading-snug"></p>
+        </div>
+
         <div class="text-center py-1 space-y-1">
           <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug">"Hi! I am learning English with Eihwaz and growing every day."</h2>
           <p id="studioSpanish" class="text-xs font-bold text-emerald-400">¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.</p>
@@ -314,13 +331,13 @@
 
         <div class="space-y-2">
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="speakStudioCurrent(0.94)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white flex items-center justify-center gap-1">▶️ Oír a Eihwaz</button>
-            <button onclick="speakStudioCurrent(0.6)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1">🐢 Lento (0.6x)</button>
+            <button onclick="speakStudioCurrent(0.92)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-white flex items-center justify-center gap-1">▶️ Oír a Eihwaz</button>
+            <button onclick="speakStudioCurrent(0.65)" class="btn-duo py-2.5 px-2 rounded-xl bg-slate-800 border-slate-950 text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1">🐢 Lento (0.65x)</button>
           </div>
 
           <div id="micMeterBox" class="hidden p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 space-y-1">
             <div class="flex justify-between text-[11px] text-rose-300 font-extrabold">
-              <span>🔴 Eihwaz te está escuchando (hasta 30s)...</span>
+              <span>🔴 Eihwaz te escucha (30s a 1:30m)...</span>
               <span id="micVolumePct">0%</span>
             </div>
             <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
@@ -390,6 +407,18 @@
     const PLAYLIST_KEY = 'eihwaz_playlist_zero_v1';
     const SETTINGS_KEY = 'eihwaz_settings_v1';
 
+    // Diccionario de videos oficiales para que el modo de 1:30m (90s) cargue directo en tus favoritas
+    const EXTENDED_SONG_VIDEOS = {
+      "oceans": { ytId: "dy9nwe9_xzw", start: 60, end: 150 },
+      "mi ultimo dia": { ytId: "f63fG5eW9E8", start: 42, end: 132 },
+      "mi último día": { ytId: "f63fG5eW9E8", start: 42, end: 132 },
+      "so will i": { ytId: "C2U7ffUM5Ec", start: 65, end: 155 },
+      "easy on me": { ytId: "U3ASj1L6_sY", start: 45, end: 135 },
+      "oceano": { ytId: "1f9_s8G5Q5M", start: 55, end: 145 },
+      "océano": { ytId: "1f9_s8G5Q5M", start: 55, end: 145 },
+      "perfect": { ytId: "2Vv-BfVoq4g", start: 50, end: 140 }
+    };
+
     const DEFAULT_PLAYLIST = [
       {
         id: 'trk_default_1',
@@ -406,7 +435,7 @@
     ];
 
     let playlist = [];
-    let settings = { theme: 'default' };
+    let settings = { theme: 'default', voiceProfile: 'natural-male', userPitch: 0.94 };
     let currentExploreObj = null;
     let currentStudioTrack = {
       english: 'Hi! I am learning English with Eihwaz and growing every day.',
@@ -416,6 +445,144 @@
 
     let mediaRecorder = null; let audioChunks = []; let recordedAudioUrl = null; let isRecordingShadow = false;
     let audioContext = null; let analyserNode = null; let meterAnimId = null;
+
+    // =====================================================
+    // PASO 1: MOTOR DE VOZ NATURAL Y CALIBRACIÓN DE TONO
+    // =====================================================
+    let availableEnglishVoices = [];
+
+    function loadNaturalVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const allVoices = window.speechSynthesis.getVoices();
+      availableEnglishVoices = allVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+      availableEnglishVoices.sort((a, b) => {
+        const score = (v) => {
+          let s = 0;
+          const n = v.name || '';
+          if (/Natural|Online|Neural/i.test(n)) s += 6;
+          if (/Google|Premium|Enhanced|Siri/i.test(n)) s += 4;
+          if (v.lang === 'en-US') s += 2;
+          return s;
+        };
+        return score(b) - score(a);
+      });
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = loadNaturalVoices;
+      loadNaturalVoices();
+    }
+
+    function saveVoiceProfileSetting() {
+      const sel = document.getElementById('voice-profile-select');
+      if (sel) {
+        settings.voiceProfile = sel.value;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        speakText(currentStudioTrack.english, 0.92);
+      }
+    }
+
+    function buildNaturalUtterance(text, rate = 0.92) {
+      if (availableEnglishVoices.length === 0) loadNaturalVoices();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+
+      const profileSelect = document.getElementById('voice-profile-select');
+      const profile = profileSelect ? profileSelect.value : (settings.voiceProfile || 'natural-male');
+
+      let chosenVoice = availableEnglishVoices[0];
+
+      if (profile === 'natural-male' || profile === 'deep-coach') {
+        chosenVoice = availableEnglishVoices.find(v =>
+          /Guy|Christopher|Eric|Brian|Andrew|Steffan|Roger|David|Mark|Daniel|Alex|Male/i.test(v.name)
+        ) || availableEnglishVoices[0];
+      } else if (profile === 'natural-female') {
+        chosenVoice = availableEnglishVoices.find(v =>
+          /Aria|Jenny|Michelle|Ana|Ava|Emma|Samantha|Victoria|Zira|Google US English|Female/i.test(v.name)
+        ) || availableEnglishVoices[0];
+      }
+
+      if (chosenVoice) utter.voice = chosenVoice;
+
+      if (profile === 'natural-male') {
+        utter.pitch = 0.94;
+        utter.rate = rate;
+      } else if (profile === 'natural-female') {
+        utter.pitch = 1.06;
+        utter.rate = rate;
+      } else if (profile === 'deep-coach') {
+        utter.pitch = 0.82;
+        utter.rate = Math.min(rate, 0.88);
+      } else if (profile === 'my-tone') {
+        utter.pitch = settings.userPitch || 0.94;
+        utter.rate = rate;
+      }
+
+      return utter;
+    }
+
+    async function calibrateUserVoiceTone() {
+      globalStopAudio();
+      const statusEl = document.getElementById('voice-status-msg');
+      const selectEl = document.getElementById('voice-profile-select');
+      if (statusEl) {
+        statusEl.classList.remove('hidden');
+        statusEl.className = 'text-[10px] font-bold text-cyan-300 leading-snug';
+        statusEl.textContent = '🎙️ Di una frase con tu voz normal durante 3 segundos...';
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        let pitchSamples = [];
+
+        const timer = setInterval(() => {
+          analyser.getByteFrequencyData(data);
+          let maxVal = 0; let maxIdx = 0;
+          for (let i = 4; i < 38; i++) {
+            if (data[i] > maxVal) { maxVal = data[i]; maxIdx = i; }
+          }
+          if (maxVal > 110) {
+            const freq = (maxIdx * ctx.sampleRate) / analyser.fftSize;
+            pitchSamples.push(freq);
+          }
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(timer);
+          stream.getTracks().forEach(t => t.stop());
+          ctx.close().catch(() => {});
+
+          if (pitchSamples.length > 0) {
+            const avgFreq = pitchSamples.reduce((a, b) => a + b, 0) / pitchSamples.length;
+            settings.userPitch = Math.min(1.22, Math.max(0.78, Number((avgFreq / 145).toFixed(2))));
+          } else {
+            settings.userPitch = 0.92;
+          }
+
+          settings.voiceProfile = 'my-tone';
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+          if (selectEl) selectEl.value = 'my-tone';
+
+          if (statusEl) {
+            statusEl.className = 'text-[10px] font-bold text-emerald-400 leading-snug';
+            statusEl.textContent = `✅ ¡Tono capturado (${settings.userPitch}x)! Escucha cómo suena Eihwaz ahora:`;
+          }
+          speakText(currentStudioTrack.english, 0.92);
+        }, 3000);
+      } catch (e) {
+        if (statusEl) {
+          statusEl.className = 'text-[10px] font-bold text-rose-400 leading-snug';
+          statusEl.textContent = '⚠️ Permite el uso del micrófono para capturar tu tono.';
+        }
+      }
+    }
 
     // --- MANEJO DE CONEXIÓN DE EIHWAZ ---
     function openApiModal() {
@@ -466,10 +633,10 @@
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       document.querySelectorAll('audio').forEach(a => { try { a.pause(); } catch (e) {} });
     }
-    function speakText(text, rate = 0.94) {
+    function speakText(text, rate = 0.92) {
       globalStopAudio();
       if (!('speechSynthesis' in window)) return;
-      const utter = new SpeechSynthesisUtterance(text); utter.lang = 'en-US'; utter.rate = rate;
+      const utter = buildNaturalUtterance(text, rate);
       window.speechSynthesis.speak(utter);
     }
 
@@ -480,7 +647,11 @@
         const saved = JSON.parse(localStorage.getItem(PLAYLIST_KEY));
         playlist = (Array.isArray(saved) && saved.length > 0) ? saved : DEFAULT_PLAYLIST;
       } catch (e) { playlist = DEFAULT_PLAYLIST; }
-      try { settings = { theme: 'default', ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) }; } catch (e) {}
+      try {
+        settings = { theme: 'default', voiceProfile: 'natural-male', userPitch: 0.94, ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) };
+      } catch (e) {}
+      const selVoice = document.getElementById('voice-profile-select');
+      if (selVoice && settings.voiceProfile) selVoice.value = settings.voiceProfile;
       applyThemeUI(); renderPlaylistUI(); populateMicListSilent(); updateAiStatusUI();
     }
 
@@ -547,7 +718,7 @@
         document.getElementById('expGrowthEs').textContent = currentExploreObj.growthEs;
         document.getElementById('btnStarIndecisive').textContent = '⭐ Guardar';
         document.getElementById('exploreResultCard').classList.remove('hidden');
-        speakText(currentExploreObj.growthEn, 0.94);
+        speakText(currentExploreObj.growthEn, 0.92);
       } catch (e) {
         alert("Eihwaz tuvo un percance: " + e.message);
       } finally {
@@ -564,7 +735,15 @@
       if (currentExploreObj) loadTrackIntoStudio(currentExploreObj.growthEn, currentExploreObj.growthEs, `Eihwaz: ${currentExploreObj.wordEn}`, true);
     }
 
-    // --- PUENTE MUSICAL CON EIHWAZ ---
+    // --- PUENTE MUSICAL CON EIHWAZ (30s a 1:30m) ---
+    function findExtendedVideoConfig(title, query) {
+      const combined = `${title} ${query}`.toLowerCase();
+      for (const key in EXTENDED_SONG_VIDEOS) {
+        if (combined.includes(key)) return EXTENDED_SONG_VIDEOS[key];
+      }
+      return null;
+    }
+
     async function searchSongByTitleOnlyAI() {
       const query = document.getElementById('songTitleQueryInput').value.trim();
       if (!query) return alert('Escribe o selecciona una canción primero.');
@@ -579,7 +758,7 @@
       resultsBox.classList.add('hidden'); apologyBox.classList.add('hidden'); resultsBox.innerHTML = '';
 
       try {
-        // 1. Buscar muestra de audio en iTunes (30s)
+        // 1. Buscar muestra de audio en iTunes
         let trackPreview = null; let trackTitle = query; let trackArtist = "Artista";
         try {
           const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
@@ -600,15 +779,33 @@
         const safeEs = aiLesson.power_phrase_es.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const safeSrc = `${aiLesson.song_title} - ${aiLesson.artist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
+        const extVid = findExtendedVideoConfig(aiLesson.song_title, query);
+        const startSec = aiLesson.chorus_start_sec || (extVid ? extVid.start : 45);
+        const endSec = startSec + 90; // Formato de 1:30m (90 segundos exactos)
+
         const itemDiv = document.createElement('div');
         itemDiv.className = 'p-3.5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-3';
         
-        let audioHtml = trackPreview ? `
-          <div class="pt-1">
-            <span class="text-[9px] text-slate-400 block mb-1">🎧 Muestra Oficial (30s):</span>
-            <audio controls src="${trackPreview}" class="w-full h-8 rounded-lg" onplay="handleExclusiveAudioPlay(this)"></audio>
-          </div>
-        ` : `<p class="text-[9px] text-amber-400/80 italic">Audio previo no disponible, pero Eihwaz preparó tu lección:</p>`;
+        let mediaHtml = '';
+        if (extVid) {
+          mediaHtml += `
+            <div class="space-y-1.5">
+              <span class="text-[9px] text-cyan-300 font-bold block">🎬 Modo Extendido (1:30m en el Coro Clave):</span>
+              <div class="rounded-xl overflow-hidden border border-slate-700 aspect-video bg-black">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
+            </div>
+          `;
+        }
+
+        if (trackPreview) {
+          mediaHtml += `
+            <div class="pt-1">
+              <span class="text-[9px] text-slate-400 block mb-1">🎧 Pista Rápida de Audio (30s) • Activa el bucle para escuchar 1:30m:</span>
+              <audio id="songPreviewAudio" controls loop src="${trackPreview}" class="w-full h-8 rounded-lg" onplay="handleExclusiveAudioPlay(this)"></audio>
+            </div>
+          `;
+        }
 
         itemDiv.innerHTML = `
           <div class="flex items-start justify-between gap-2">
@@ -618,7 +815,7 @@
               <p class="text-[11px] text-slate-300 font-semibold">${aiLesson.artist}</p>
             </div>
           </div>
-          ${audioHtml}
+          ${mediaHtml}
           <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
             <p class="text-[10px] text-slate-300 leading-snug">🦬 <b>Eihwaz:</b> ${aiLesson.tutor_insight} <br><br>${aiLesson.bridge_explanation}</p>
             <div class="pt-2 border-t border-slate-800 space-y-0.5">
@@ -668,7 +865,7 @@
       document.getElementById('studioEnglish').textContent = `"${english}"`; document.getElementById('studioSpanish').textContent = spanish;
       document.getElementById('studioTrackTag').textContent = source || 'Pista Activa'; document.getElementById('fearlessCoachBox').classList.add('hidden');
       if (autoSwitchTab) switchTab('playlist'); else window.scrollTo({ top: 0, behavior: 'smooth' });
-      speakText(english, 0.94);
+      speakText(english, 0.92);
     }
     function renderPlaylistUI() {
       const container = document.getElementById('playlistTracksContainer');
@@ -696,7 +893,7 @@
     function removeTrack(id) { playlist = playlist.filter(t => t.id !== id); localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI(); }
     function speakStudioCurrent(rate) { speakText(currentStudioTrack.english, rate); }
 
-    // --- MICRÓFONO Y GRABACIÓN (30s) ---
+    // --- MICRÓFONO Y GRABACIÓN (Hasta 1:30m = 90s) ---
     async function populateMicListSilent() {
       if (!navigator.mediaDevices?.enumerateDevices) return;
       try {
@@ -732,7 +929,8 @@
           player.play().catch(() => {});
         };
         mediaRecorder.start(200); isRecordingShadow = true; btn.textContent = '⏹️ Detener Grabación (Eihwaz te escucha)'; btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
-        setTimeout(() => { if (isRecordingShadow) toggleShadowRecording(); }, 30000);
+        // Ampliado a 90,000 ms (1 minuto 30 segundos)
+        setTimeout(() => { if (isRecordingShadow) toggleShadowRecording(); }, 90000);
       } catch (err) { alert('Permite el acceso al micrófono para entrenar tu voz con Eihwaz.'); }
     }
     function startMicVolumeMeter(stream) {
@@ -752,10 +950,12 @@
     function playOnlyUserAudio() { globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (player?.src) { player.currentTime = 0; player.play().catch(() => {}); } }
     function compareShadowAudio() {
       globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (!recordedAudioUrl || !player) return;
-      document.getElementById('fearlessCoachText').textContent = "Eihwaz dice: ¡Esa es tu voz real en inglés! Nadie nace hablando perfecto. La clave es soltar la lengua sin miedo."; document.getElementById('fearlessCoachBox').classList.remove('hidden');
+      document.getElementById('fearlessCoachText').textContent = "Eihwaz dice: ¡Esa es tu voz real en inglés! Escucha la fluidez natural de Eihwaz y compárala enseguida con tu toma."; document.getElementById('fearlessCoachBox').classList.remove('hidden');
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); const utter = new SpeechSynthesisUtterance(currentStudioTrack.english); utter.lang = 'en-US'; utter.rate = 0.92;
-        utter.onend = () => { setTimeout(() => { player.currentTime = 0; player.play().catch(() => {}); }, 300); }; window.speechSynthesis.speak(utter);
+        window.speechSynthesis.cancel();
+        const utter = buildNaturalUtterance(currentStudioTrack.english, 0.92);
+        utter.onend = () => { setTimeout(() => { player.currentTime = 0; player.play().catch(() => {}); }, 300); };
+        window.speechSynthesis.speak(utter);
       } else { player.currentTime = 0; player.play().catch(() => {}); }
     }
 

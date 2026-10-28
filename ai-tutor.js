@@ -69,14 +69,8 @@ class AITutor {
     try {
       const cache = JSON.parse(localStorage.getItem(this.cacheKey) || '{}');
       cache[key.toLowerCase().trim()] = data;
-      localStorage.setItem(localStorageKey, JSON.stringify(cache));
-    } catch (e) {
-      try {
-        const cache = JSON.parse(localStorage.getItem(this.cacheKey) || '{}');
-        cache[key.toLowerCase().trim()] = data;
-        localStorage.setItem(this.cacheKey, JSON.stringify(cache));
-      } catch (err) {}
-    }
+      localStorage.setItem(this.cacheKey, JSON.stringify(cache));
+    } catch (err) {}
   }
 
   validateInput(text) {
@@ -190,6 +184,7 @@ Detecta si está en español o inglés y responde SOLO en JSON válido con estas
   "song_title": "${title}",
   "artist": "${artist}",
   "is_spanish": true,
+  "chorus_start_sec": 45,
   "tutor_insight": "Comentario cercano en primera persona como Eihwaz sobre el sentimiento de esta canción.",
   "bridge_explanation": "Cómo llevar esa idea al inglés natural (si es en español) o el secreto del verso clave (si es en inglés).",
   "power_phrase_en": "El verso en inglés más potente para cantar y practicar.",
