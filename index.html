@@ -102,7 +102,7 @@
         <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-9 h-9 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
         <div>
           <h1 class="text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
-          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés v1.1</span>
+          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés v1.2</span>
         </div>
       </div>
 
@@ -232,6 +232,30 @@
         <button onclick="trainExploreNow()" class="btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-xs font-black text-slate-950 shadow">
           🎙️ Entrenar en Voz Ahora
         </button>
+
+        <!-- MINI-CHAT INTERACTIVO EN EXPLORAR -->
+        <div class="p-3 rounded-xl bg-slate-900/95 border border-indigo-500/40 space-y-2.5 pt-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs">💬</span>
+              <span class="text-[10px] font-black uppercase tracking-wider text-indigo-300">Chatea con Eihwaz sobre esta palabra:</span>
+            </div>
+            <span class="text-[9px] text-emerald-400 font-bold">100% Inglés</span>
+          </div>
+          
+          <div id="exploreChatHistory" class="space-y-2 max-h-44 overflow-y-auto pr-1 text-[11px] font-medium text-slate-300">
+            <!-- Mensajes dinámicos -->
+          </div>
+
+          <div class="flex gap-1.5">
+            <input id="exploreChatInput" type="text" placeholder="Ej: Dame otro ejemplo o cómo usarla en pasado..." 
+              onkeydown="if(event.key==='Enter') sendExploreChatMessage()"
+              class="flex-1 px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            <button id="btnSendExploreChat" onclick="sendExploreChatMessage()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-black text-white active:scale-95 transition shadow">
+              Enviar
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -499,6 +523,7 @@
     let playlist = [];
     let settings = { theme: 'default', voiceProfile: 'natural-male', userPitch: 0.94 };
     let currentExploreObj = null;
+    let currentMusicObj = null;
     let currentStudioTrack = {
       english: 'Hi! I am learning English with Eihwaz and growing every day.',
       spanish: '¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.',
@@ -771,6 +796,17 @@
         document.getElementById('expGrowthEn').textContent = `"${currentExploreObj.growthEn}"`;
         document.getElementById('expGrowthEs').textContent = currentExploreObj.growthEs;
         document.getElementById('btnStarIndecisive').textContent = '⭐ Guardar';
+
+        // Reinicia el chat de Explorar con la nueva palabra
+        const chatHist = document.getElementById('exploreChatHistory');
+        if (chatHist) {
+          chatHist.innerHTML = `
+            <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 leading-relaxed">
+              🦬 <b>Eihwaz:</b> ¡Gran elección con <b>"${currentExploreObj.wordEn}"</b>! Pregúntame abajo si quieres más ejemplos, tiempos verbales o cómo usarla en una conversación real.
+            </div>
+          `;
+        }
+
         document.getElementById('exploreResultCard').classList.remove('hidden');
         speakText(currentExploreObj.growthEn, 0.92);
       } catch (e) {
@@ -787,6 +823,99 @@
     }
     function trainExploreNow() {
       if (currentExploreObj) loadTrackIntoStudio(currentExploreObj.growthEn, currentExploreObj.growthEs, `Eihwaz: ${currentExploreObj.wordEn}`, true);
+    }
+
+    // CHAT INTERACTIVO EN EXPLORAR
+    async function sendExploreChatMessage() {
+      const inputEl = document.getElementById('exploreChatInput');
+      const historyEl = document.getElementById('exploreChatHistory');
+      const btnEl = document.getElementById('btnSendExploreChat');
+      const userMsg = inputEl.value.trim();
+
+      if (!userMsg || !currentExploreObj) return;
+      const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
+      if (!ready) return openApiModal();
+
+      const userBubble = document.createElement('div');
+      userBubble.className = 'p-2.5 rounded-xl bg-indigo-950/70 border border-indigo-500/30 text-indigo-100 text-right ml-6';
+      userBubble.innerHTML = `<b>Tú:</b> ${userMsg}`;
+      historyEl.appendChild(userBubble);
+      inputEl.value = '';
+      historyEl.scrollTop = historyEl.scrollHeight;
+
+      const loadingBubble = document.createElement('div');
+      loadingBubble.id = 'tempExploreLoading';
+      loadingBubble.className = 'p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-cyan-300 italic';
+      loadingBubble.textContent = '🦬 Eihwaz está escribiendo...';
+      historyEl.appendChild(loadingBubble);
+      historyEl.scrollTop = historyEl.scrollHeight;
+      if (btnEl) btnEl.disabled = true;
+
+      try {
+        const contextStr = `Palabra o expresión: "${currentExploreObj.wordEn}" (${currentExploreObj.wordEs}). Frase de poder: "${currentExploreObj.growthEn}"`;
+        const reply = await window.aiTutor.askCustomQuestion(contextStr, userMsg);
+        document.getElementById('tempExploreLoading')?.remove();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = 'p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed mr-4';
+        aiBubble.innerHTML = `🦬 <b>Eihwaz:</b> ${reply}`;
+        historyEl.appendChild(aiBubble);
+      } catch (err) {
+        document.getElementById('tempExploreLoading')?.remove();
+        const errBubble = document.createElement('div');
+        errBubble.className = 'p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 text-rose-300';
+        errBubble.textContent = `🦬 ${err.message}`;
+        historyEl.appendChild(errBubble);
+      } finally {
+        if (btnEl) btnEl.disabled = false;
+        historyEl.scrollTop = historyEl.scrollHeight;
+      }
+    }
+
+    // CHAT INTERACTIVO EN MÚSICA
+    async function sendMusicChatMessage() {
+      const inputEl = document.getElementById('musicChatInput');
+      const historyEl = document.getElementById('musicChatHistory');
+      const btnEl = document.getElementById('btnSendMusicChat');
+      if (!inputEl || !historyEl || !currentMusicObj) return;
+
+      const userMsg = inputEl.value.trim();
+      if (!userMsg) return;
+
+      const userBubble = document.createElement('div');
+      userBubble.className = 'p-2.5 rounded-xl bg-cyan-950/70 border border-cyan-500/30 text-cyan-100 text-right ml-6';
+      userBubble.innerHTML = `<b>Tú:</b> ${userMsg}`;
+      historyEl.appendChild(userBubble);
+      inputEl.value = '';
+      historyEl.scrollTop = historyEl.scrollHeight;
+
+      const loadingBubble = document.createElement('div');
+      loadingBubble.id = 'tempMusicLoading';
+      loadingBubble.className = 'p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-cyan-300 italic';
+      loadingBubble.textContent = '🦬 Eihwaz está analizando tu duda musical...';
+      historyEl.appendChild(loadingBubble);
+      historyEl.scrollTop = historyEl.scrollHeight;
+      if (btnEl) btnEl.disabled = true;
+
+      try {
+        const contextStr = `Canción: "${currentMusicObj.song_title}" de ${currentMusicObj.artist}. Verso clave en inglés: "${currentMusicObj.power_phrase_en}" (${currentMusicObj.power_phrase_es})`;
+        const reply = await window.aiTutor.askCustomQuestion(contextStr, userMsg);
+        document.getElementById('tempMusicLoading')?.remove();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = 'p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 leading-relaxed mr-4';
+        aiBubble.innerHTML = `🦬 <b>Eihwaz:</b> ${reply}`;
+        historyEl.appendChild(aiBubble);
+      } catch (err) {
+        document.getElementById('tempMusicLoading')?.remove();
+        const errBubble = document.createElement('div');
+        errBubble.className = 'p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 text-rose-300';
+        errBubble.textContent = `🦬 ${err.message}`;
+        historyEl.appendChild(errBubble);
+      } finally {
+        if (btnEl) btnEl.disabled = false;
+        historyEl.scrollTop = historyEl.scrollHeight;
+      }
     }
 
     function findExtendedVideoConfig(title, query) {
@@ -825,6 +954,7 @@
         } catch (e) {}
 
         const aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
+        currentMusicObj = aiLesson;
 
         let extVid = findExtendedVideoConfig(aiLesson.song_title, query);
         if (!extVid) {
@@ -858,15 +988,11 @@
             <div class="space-y-1.5">
               <span class="text-[9px] text-cyan-300 font-bold block">🎬 Pista Extendida (1:30m en el Coro Clave):</span>
               <div class="rounded-xl overflow-hidden border border-slate-700 aspect-video bg-black">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&controls=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
               </div>
             </div>
           `;
-        } else {
-          mediaHtml += `<p class="text-[10px] text-amber-400 italic">Video en vivo no disponible, usando audio de sesión:</p>`;
-        }
-
-        if (trackPreview) {
+        } else if (trackPreview) {
           mediaHtml += `
             <div class="pt-1">
               <div class="flex justify-between items-center mb-1">
@@ -900,6 +1026,27 @@
             <button onclick="speakText('${safeEn}', 0.92)" class="btn-duo py-2 rounded-lg bg-slate-800 border-slate-950 text-[11px] font-extrabold text-white">🔊 Oír a Eihwaz</button>
             <button onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', true)" class="btn-duo py-2 rounded-lg bg-cyan-500 border-cyan-700 text-[11px] font-black text-slate-950">🎙️ Practicarla</button>
           </div>
+
+          <!-- MINI-CHAT INTERACTIVO SOBRE LA FRASE DE LA CANCIÓN -->
+          <div class="p-3 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-2 pt-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase tracking-wider text-cyan-300">💬 Hablar con Eihwaz sobre este verso:</span>
+              <span class="text-[9px] text-emerald-400 font-bold">Mentor Musical</span>
+            </div>
+            <div id="musicChatHistory" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-[11px] text-slate-300">
+              <div class="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                🦬 <b>Eihwaz:</b> ¿Tienes alguna duda sobre las palabras o pronunciación de <i>"${aiLesson.power_phrase_en}"</i>? ¡Pregúntame!
+              </div>
+            </div>
+            <div class="flex gap-1.5">
+              <input id="musicChatInput" type="text" placeholder="Ej: ¿Qué significa cada palabra aquí?" 
+                onkeydown="if(event.key==='Enter') sendMusicChatMessage()"
+                class="flex-1 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500" />
+              <button id="btnSendMusicChat" onclick="sendMusicChatMessage()" class="px-3 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-xs font-black text-slate-950 active:scale-95 transition shadow">
+                Enviar
+              </button>
+            </div>
+          </div>
         `;
         resultsBox.appendChild(itemDiv);
         resultsBox.classList.remove('hidden');
@@ -924,6 +1071,28 @@
             count++;
             audioEl.dataset.playCount = String(count);
             if (badge) badge.textContent = `Ciclo ${count}/3 (90s total)`;
+            audioEl.currentTime = 0;
+            audioEl.play().catch(() => {});
+          } else {
+            audioEl.dataset.playCount = "1";
+            if (badge) badge.textContent = `✅ 1:30m completado`;
+          }
+        });
+      }
+    }
+
+    function handleReelAudioLoop(audioEl) {
+      handleExclusiveAudioPlay(audioEl);
+      if (!audioEl.dataset.hookedReel) {
+        audioEl.dataset.hookedReel = "true";
+        audioEl.dataset.playCount = "1";
+        audioEl.addEventListener('ended', () => {
+          let count = parseInt(audioEl.dataset.playCount || "1", 10);
+          const badge = document.getElementById('reelAudioTimer');
+          if (count < 3) {
+            count++;
+            audioEl.dataset.playCount = String(count);
+            if (badge) badge.textContent = `Ciclo ${count}/3 (90s)`;
             audioEl.currentTime = 0;
             audioEl.play().catch(() => {});
           } else {
@@ -1111,15 +1280,17 @@
         if (extVid) {
           mediaHtml += `
             <div id="reelVideoPlayerBox" class="rounded-2xl overflow-hidden border border-slate-700 aspect-[9/16] max-h-72 bg-black relative flex items-center justify-center">
-              <iframe id="reelActiveIframe" class="w-full h-full pointer-events-none" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media"></iframe>
+              <iframe id="reelActiveIframe" class="w-full h-full" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&autoplay=1&mute=0&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
           `;
-        }
-
-        if (trackPreview) {
+        } else if (trackPreview) {
           mediaHtml += `
-            <div class="pt-2">
-              <audio id="reelBackupAudio" controls src="${trackPreview}" class="w-full h-8 rounded-lg"></audio>
+            <div class="rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 p-4 space-y-3 relative shadow-inner">
+              <div class="flex items-center justify-between text-[10px] text-pink-400 font-extrabold uppercase">
+                <span>🎵 Audio de Respaldo • StarMaker</span>
+                <span id="reelAudioTimer" class="font-mono text-cyan-400">Ciclo 1/3 (90s)</span>
+              </div>
+              <audio id="reelBackupAudio" controls src="${trackPreview}" class="w-full h-10 rounded-xl accent-pink-500" onplay="handleReelAudioLoop(this)"></audio>
             </div>
           `;
         }

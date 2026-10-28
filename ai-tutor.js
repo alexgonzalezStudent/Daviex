@@ -1,5 +1,5 @@
 /**
- * Eihwaz Tutor Service (Con Diccionario Semilla, Caché Inteligente y Escudo Anti-Spam)
+ * Eihwaz Tutor Service (Con Diccionario Semilla, Caché Inteligente, Escudo Anti-Spam y Chat Interactivo)
  */
 
 const CLOUDFLARE_WORKER_URL = "https://eihwaz-mentor.alexandergrf2003.workers.dev";
@@ -73,20 +73,20 @@ class AITutor {
     } catch (err) {}
   }
 
-  validateInput(text) {
+  validateInput(text, maxLen = 65) {
     const clean = text.trim();
     if (clean.length < 2) {
       throw new Error('Escribe al menos 2 letras para que Eihwaz pueda analizarlo.');
     }
-    if (clean.length > 65) {
-      throw new Error('Texto muy largo. Escribe solo una palabra, expresión o canción.');
+    if (clean.length > maxLen) {
+      throw new Error(`Texto muy largo (máximo ${maxLen} caracteres).`);
     }
     // Bloquea teclado loco, risas repetidas o símbolos sin letras
     if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(clean) || /^(?:[bcdfghjklmnpqrstvwxyz]{6,}|(?:ja|je|ji|ha|he){3,}|(.)\1{4,})$/i.test(clean)) {
-      throw new Error('Eihwaz detectó texto sin sentido. ¡Prueba con una palabra o canción real!');
+      throw new Error('Eihwaz detectó texto sin sentido. ¡Prueba con una palabra o pregunta real!');
     }
     const now = Date.now();
-    if (now - this.lastRequestTime < 2500) {
+    if (now - this.lastRequestTime < 2000) {
       throw new Error('¡Vas muy rápido! Espera 2 segundos antes de la siguiente consulta.');
     }
     this.lastRequestTime = now;
@@ -151,12 +151,12 @@ class AITutor {
     if (cached) return cached;
 
     // 3. Valida anti-spam antes de llamar a Cloudflare
-    this.validateInput(word);
+    this.validateInput(word, 65);
 
     const prompt = `
-Eres Eihwaz, el mentor de inglés cercano, sabio y directo. Analiza "${word}".
+Eres Eihwaz, el mentor de inglés cercano, apasionado, sabio y directo. Analiza "${word}".
 Si el usuario escribió algo ofensivo o bromas pesadas, redirígelo con sabiduría a una palabra de disciplina en inglés.
-Responde SOLO en JSON válido con estas claves exactas:
+Responde en formato JSON válido con estas claves exactas:
 {
   "word_en": "${word}",
   "word_es": "Traducción natural al español",
@@ -175,11 +175,11 @@ Responde SOLO en JSON válido con estas claves exactas:
     const cached = this.getFromCache(cleanKey);
     if (cached) return cached;
 
-    this.validateInput(title);
+    this.validateInput(title, 65);
 
     const prompt = `
 Eres Eihwaz, el mentor musical de inglés. Analiza la canción "${title}" de "${artist}".
-Detecta si está en español o inglés y responde SOLO en JSON válido con estas claves exactas:
+Detecta si está en español o inglés y responde en formato JSON válido con estas claves exactas:
 {
   "song_title": "${title}",
   "artist": "${artist}",
@@ -194,6 +194,26 @@ Detecta si está en español o inglés y responde SOLO en JSON válido con estas
     const result = await this.callGeminiWithFallback(prompt);
     this.saveToCache(cleanKey, result);
     return result;
+  }
+
+  // NUEVO: MOTOR DE CHAT INTERACTIVO ESTRICTO EN INGLÉS
+  async askCustomQuestion(contextTopic, userQuestion) {
+    this.validateInput(userQuestion, 180);
+
+  const prompt = `
+Eres Eihwaz 🦬, un mentor de inglés de élite, apasionado, sumamente motivador, adictivo y profesional.
+Contexto actual de estudio: ${contextTopic}.
+Pregunta del estudiante: "${userQuestion}".
+REGLA ESTRICTA: Tu ÚNICA misión es enseñar inglés (vocabulario, pronunciación, gramática práctica y frases de poder). Si el usuario pregunta sobre temas ajenos al inglés, niégate con carisma y redirígelo de inmediato.
+REGLA DE TRATO UNIVERSAL: No asumas género ni uses palabras masculinizadas como "campeón", "hermano" o "amigo". Usa siempre un tono neutro y universal que sirva igual para mujeres y hombres (ejemplos: "¡Vamos con todo!", "¡Excelente!", "¡Esa es la actitud!", "¡A dominarlo!").
+Responde en máximo 3 líneas llenas de energía, claridad y ejemplos reales.
+Responde SIEMPRE en formato JSON válido exactamente con esta estructura:
+{
+  "reply": "Tu respuesta motivadora y clara aquí con emojis (🦬, 🔥, ✨)"
+}`;
+
+    const result = await this.callGeminiWithFallback(prompt);
+    return result.reply || result.text_reply || "¡Sigue practicando esta estructura en voz alta! 🦬🔥";
   }
 }
 
