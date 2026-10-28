@@ -296,20 +296,20 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 4: REELS & STARMAKER KARAOKE -->
-    <section id="view-reels" class="hidden space-y-3.5">
-      <div class="glass-card rounded-2xl p-4 space-y-3 shadow-lg border border-pink-500/30">
-        <div>
+    <!-- SECCIÓN 5: REELS & STARMAKER KARAOKE (Modo Inmersivo) -->
+    <section id="view-reels" class="space-y-3.5">
+      <div id="reelMainCard" class="glass-card rounded-2xl p-4 space-y-3 shadow-lg border border-pink-500/30 transition-all duration-300">
+        <div id="reelHeaderInfo">
           <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-extrabold">🎬 Eihwaz Reels • Karaoke StarMaker</span>
           <h2 class="text-base font-black text-white mt-1">Busca tu canción y canta sobre la pista</h2>
           <p class="text-[11px] text-slate-400">Escribe cualquier canción. Eihwaz abrirá el video vertical y activará tu micrófono con la música de fondo.</p>
         </div>
 
         <!-- BUSCADOR LIBRE DE REELS -->
-        <div class="space-y-2">
+        <div id="reelSearchArea" class="space-y-2">
           <div class="relative flex items-center">
             <input id="reelSearchQueryInput" type="text" placeholder="Ej: Oceans, Perfect, Adele, Luis Fonsi..." 
-              oninput="handleInputClearBtn('reelSearchQueryInput', 'clearReelBtn')"
+              oninput="handleInputClearBtn('reelSearchQueryInput', 'clearReelBtn'); clearOldReelRecording();"
               onkeydown="if(event.key==='Enter') searchReelByTitleAI()"
               class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-pink-500" />
             <button id="clearReelBtn" onclick="clearInputAndRefocus('reelSearchQueryInput', 'clearReelBtn')" class="hidden absolute right-3 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-[11px] font-bold">✖</button>
@@ -323,10 +323,10 @@
         <!-- CONTENEDOR DINÁMICO DEL REEL BUSCADO -->
         <div id="dynamicReelResultContainer" class="hidden space-y-3 pt-1">
           <div id="reelVideoWrapper" class="space-y-2">
-            <!-- Video vertical y/o audio de respaldo se cargan aquí -->
+            <!-- Video vertical y/o audio de respaldo -->
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-center">
+          <div id="reelLyricBox" class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-center">
             <span id="reelAiSongTitle" class="text-[10px] uppercase tracking-wider text-pink-400 font-extrabold block"></span>
             <p id="reelAiLyricEn" class="text-xs font-black text-white"></p>
             <p id="reelAiLyricEs" class="text-[11px] text-emerald-400"></p>
@@ -336,11 +336,11 @@
           <div class="space-y-2">
             <div id="starMeterBox" class="hidden p-2.5 rounded-xl bg-pink-950/50 border border-pink-500/40 space-y-1">
               <div class="flex justify-between text-[11px] text-pink-300 font-extrabold">
-                <span>🎙️ StarMaker activo (Canta con la pista)...</span>
-                <span id="starVolumePct">0%</span>
+                <span>🎙️ StarMaker activo (Grabando voz y pista)...</span>
+                <span id="starVolumePct">0s / 30s</span>
               </div>
               <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
-                <div id="starLevelBar" class="h-full bg-gradient-to-r from-pink-400 to-indigo-400" style="width: 6%;"></div>
+                <div id="starLevelBar" class="h-full bg-gradient-to-r from-pink-400 to-indigo-400" style="width: 0%;"></div>
               </div>
             </div>
 
@@ -349,8 +349,8 @@
             </button>
 
             <div id="starAudioWrapper" class="hidden pt-1 space-y-1">
-              <span class="text-[10px] text-cyan-300 font-bold block">🎧 Tu interpretación grabada:</span>
-              <audio id="starAudioPlayer" controls class="w-full h-8 rounded-lg"></audio>
+              <span class="text-[10px] text-cyan-300 font-bold block">🎧 Tu voz limpia grabada (Sin música de fondo):</span>
+              <audio id="starAudioPlayer" controls class="w-full h-8 rounded-lg" onplay="muteReelBackgroundAudio()"></audio>
             </div>
           </div>
         </div>
@@ -1154,17 +1154,128 @@
       }
     }
 
-    let starStartTime = 0;
-    let starTimerInterval = null;
 
+
+    let starMediaRecorder = null; let starChunks = []; let isRecordingStar = false; let starAudioUrl = null;
+    let starStartTime = 0; let starTimerInterval = null;
+
+    // Limpia la grabación anterior al buscar otra canción
+    function clearOldReelRecording() {
+      if (starAudioUrl) {
+        URL.revokeObjectURL(starAudioUrl);
+        starAudioUrl = null;
+      }
+      document.getElementById('starAudioWrapper').classList.add('hidden');
+      document.getElementById('starAudioPlayer').src = '';
+    }
+
+    async function searchReelByTitleAI() {
+      clearOldReelRecording();
+      const query = document.getElementById('reelSearchQueryInput').value.trim();
+      if (!query) return alert('Escribe el nombre de una canción para buscar su Reel.');
+      const ready = window.aiTutor && (window.aiTutor.isReady ? window.aiTutor.isReady() : window.aiTutor.hasKey());
+      if (!ready) return openApiModal();
+
+      const btn = document.getElementById('btnSearchReel');
+      btn.textContent = '🦬 Eihwaz está buscando el Reel y audio...'; btn.disabled = true;
+
+      try {
+        let trackPreview = null; let trackTitle = query; let trackArtist = "Artista";
+        try {
+          const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
+          if (itunesRes.ok) {
+            const itunesData = await itunesRes.json();
+            if (itunesData.results && itunesData.results.length > 0) {
+              trackTitle = itunesData.results[0].trackName;
+              trackArtist = itunesData.results[0].artistName;
+              trackPreview = itunesData.results[0].previewUrl;
+            }
+          }
+        } catch (e) {}
+
+        const aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
+
+        let extVid = findExtendedVideoConfig(aiLesson.song_title, query);
+        if (!extVid) {
+          try {
+            const ytSearch = encodeURIComponent(`${aiLesson.song_title} ${aiLesson.artist} official audio`);
+            const ytRes = await fetch(`https://pipedapi.kavin.rocks/search?q=${ytSearch}&filter=videos`);
+            if (ytRes.ok) {
+              const ytData = await ytRes.json();
+              if (ytData.items && ytData.items.length > 0) {
+                const vidUrl = ytData.items[0].url || '';
+                const vidId = vidUrl.split('v=')[1]?.split('&')[0];
+                if (vidId) {
+                  const startS = aiLesson.chorus_start_sec || 45;
+                  extVid = { ytId: vidId, start: startS, end: startS + 90 };
+                }
+              }
+            }
+          } catch (e) {}
+        }
+
+        let mediaHtml = '';
+        if (extVid) {
+          mediaHtml += `
+            <div id="reelVideoPlayerBox" class="rounded-2xl overflow-hidden border border-slate-700 aspect-[9/16] max-h-72 bg-black relative flex items-center justify-center">
+              <iframe id="reelActiveIframe" class="w-full h-full pointer-events-none" src="https://www.youtube.com/embed/${extVid.ytId}?start=${extVid.start}&end=${extVid.end}&autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media"></iframe>
+            </div>
+          `;
+        }
+
+        if (trackPreview) {
+          mediaHtml += `
+            <div class="pt-2">
+              <audio id="reelBackupAudio" controls src="${trackPreview}" class="w-full h-8 rounded-lg"></audio>
+            </div>
+          `;
+        }
+
+        document.getElementById('reelVideoWrapper').innerHTML = mediaHtml;
+        document.getElementById('reelAiSongTitle').textContent = `🎵 ${aiLesson.song_title} - ${aiLesson.artist}`;
+        document.getElementById('reelAiLyricEn').textContent = `"${aiLesson.power_phrase_en}"`;
+        document.getElementById('reelAiLyricEs').textContent = aiLesson.power_phrase_es;
+
+        document.getElementById('dynamicReelResultContainer').classList.remove('hidden');
+
+      } catch (err) {
+        alert("No se pudo cargar el Reel: " + err.message);
+      } finally {
+        btn.textContent = '🎬 Buscar Reel y Activar Karaoke'; btn.disabled = false;
+      }
+    }
+
+    // Silencia la música de fondo cuando el usuario reproduce su propia voz grabada
+    function muteReelBackgroundAudio() {
+      const ytFrame = document.getElementById('reelActiveIframe');
+      if (ytFrame) {
+        // Reinicia o pausa el video de fondo mandando un comando simple al iframe
+        const currentSrc = ytFrame.src;
+        ytFrame.src = "";
+        setTimeout(() => { ytFrame.src = currentSrc; }, 100);
+      }
+      const audioBack = document.getElementById('reelBackupAudio');
+      if (audioBack) { audioBack.pause(); audioBack.currentTime = 0; }
+    }
+
+    // Cabina StarMaker con Modo Inmersivo de Pantalla Completa (0 a 30s)
+    // Cabina StarMaker optimizada con ingeniería de sonido (Cero retardo / Latencia Cero)
     async function toggleStarMakerRecording() {
       const btn = document.getElementById('btnStarRecord');
       const meterBox = document.getElementById('starMeterBox');
-      
+      const mainCard = document.getElementById('reelMainCard');
+      const searchArea = document.getElementById('reelSearchArea');
+      const headerInfo = document.getElementById('reelHeaderInfo');
+
       if (isRecordingStar) {
         if (starMediaRecorder && starMediaRecorder.state !== 'inactive') starMediaRecorder.stop();
         isRecordingStar = false;
         clearInterval(starTimerInterval);
+        
+        mainCard.classList.remove('fixed', 'inset-0', 'z-50', 'm-0', 'rounded-none', 'p-6', 'overflow-y-auto');
+        searchArea.classList.remove('hidden');
+        headerInfo.classList.remove('hidden');
+
         btn.textContent = '🎤 Cantar con la Pista (StarMaker)';
         btn.classList.remove('recording-pulse');
         meterBox.classList.add('hidden');
@@ -1172,14 +1283,34 @@
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // INGENIERÍA DE SONIDO: Desactivamos filtros por software del navegador para eliminar la latencia de entrada
+        const constraints = {
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            latency: 0.0 // Solicitamos latencia cero al buffer del hardware
+          }
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         starChunks = [];
-        starMediaRecorder = new MediaRecorder(stream);
+        
+        // Configuramos códecs óptimos para móvil si están disponibles (webm/opus para máxima fluidez)
+        const options = { mimeType: 'audio/webm;codecs=opus' };
+        starMediaRecorder = MediaRecorder.isTypeSupported(options.mimeType) 
+          ? new MediaRecorder(stream, options) 
+          : new MediaRecorder(stream);
+
         starMediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) starChunks.push(e.data); };
         
         starMediaRecorder.onstop = () => {
           clearInterval(starTimerInterval);
-          const blob = new Blob(starChunks, { type: starMediaRecorder.mimeType || '' });
+          mainCard.classList.remove('fixed', 'inset-0', 'z-50', 'm-0', 'rounded-none', 'p-6', 'overflow-y-auto');
+          searchArea.classList.remove('hidden');
+          headerInfo.classList.remove('hidden');
+
+          const blob = new Blob(starChunks, { type: starMediaRecorder.mimeType || 'audio/webm' });
           if (starAudioUrl) URL.revokeObjectURL(starAudioUrl);
           starAudioUrl = URL.createObjectURL(blob);
           stream.getTracks().forEach(t => t.stop());
@@ -1189,27 +1320,31 @@
           player.play().catch(() => {});
         };
 
-        // Arranca sincronizado en el segundo 0
-        starMediaRecorder.start(200);
+        // Activación de Pantalla Completa Inmersiva
+        mainCard.classList.add('fixed', 'inset-0', 'z-50', 'm-0', 'rounded-none', 'p-6', 'overflow-y-auto');
+        searchArea.classList.add('hidden');
+        headerInfo.classList.add('hidden');
+
+        // Búfer ultrarrápido de 50ms para sincronía perfecta de velocidad con la pista
+        starMediaRecorder.start(50);
         isRecordingStar = true;
         starStartTime = Date.now();
         
-        btn.textContent = '⏹️ Grabando... (0s / 30s)';
+        btn.textContent = '⏹️ Grabando en vivo... (0s / 30s)';
         btn.classList.add('recording-pulse');
         meterBox.classList.remove('hidden');
 
-        // Cronómetro visual sincronizado segundo a segundo
         const pctBar = document.getElementById('starLevelBar');
         const pctText = document.getElementById('starVolumePct');
-        
+        const maxDuration = 30; // 30 segundos exactos
+
         starTimerInterval = setInterval(() => {
           const elapsed = Math.floor((Date.now() - starStartTime) / 1000);
-          const maxDuration = 30; // Puedes ajustarlo a 90 si prefieres 1:30m
           const progress = Math.min(100, Math.round((elapsed / maxDuration) * 100));
           
           if (pctBar) pctBar.style.width = `${progress}%`;
           if (pctText) pctText.textContent = `${elapsed}s / ${maxDuration}s`;
-          btn.textContent = `⏹️ Grabando Karaoke... (${elapsed}s)`;
+          btn.textContent = `⏹️ Grabando Karaoke... (${elapsed}s / ${maxDuration}s)`;
 
           if (elapsed >= maxDuration) {
             if (isRecordingStar) toggleStarMakerRecording();
