@@ -1,7 +1,8 @@
-const CACHE_NAME = 'daviex-cache-v1';
+const CACHE_NAME = 'eihwaz-cache-v2';
 const ASSETS = [
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './ai-tutor.js'
 ];
 
 self.addEventListener('install', (event) => {
