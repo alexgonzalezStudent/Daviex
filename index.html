@@ -65,6 +65,8 @@
     .splash-animate { animation: splash-zoom 3s ease-in-out forwards; }
     @keyframes load-bar { 0% { width: 0%; } 100% { width: 100%; } }
     .splash-bar { animation: load-bar 2.8s ease-out forwards; }
+    @keyframes streak-pop { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+    .streak-bounce { animation: streak-pop 0.5s ease-out; }
     .safe-bottom { padding-bottom: calc(5.2rem + env(safe-area-inset-bottom, 0px)); }
   </style>
 </head>
@@ -103,19 +105,25 @@
     </div>
   </div>
 
-  <!-- CABECERA -->
-  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-4 py-2.5">
-    <div class="max-w-md mx-auto flex items-center justify-between">
-      <div onclick="switchTab('home')" class="flex items-center gap-2.5 cursor-pointer">
-        <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-9 h-9 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
+  <!-- CABECERA CON SISTEMA DE RACHAS Y ESCUDO DE HIELO -->
+  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-3.5 py-2.5">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-2">
+      <div onclick="switchTab('home')" class="flex items-center gap-2 cursor-pointer shrink-0">
+        <img src="logo.jpg" onerror="if(this.src.endsWith('logo.jpg')) this.src='logo.png';" alt="Eihwaz" class="w-8 h-8 rounded-xl object-cover object-left border border-cyan-500/40 shadow-md bg-[#0b101b]" />
         <div>
-          <h1 class="text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
-          <span class="text-[10px] text-slate-400 font-semibold">Tu Mentor de Inglés v1.2</span>
+          <h1 class="text-sm sm:text-base font-black tracking-tight text-white leading-none">Eihwaz</h1>
+          <span class="text-[9px] text-slate-400 font-semibold">Mentor v1.3</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5">
-        <button id="eihwazStatusBtn" onclick="openApiModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-extrabold text-slate-200 hover:text-indigo-400 active:scale-95 transition flex items-center gap-1">
+        <!-- CONTADOR DE RACHA DIARIA + ESCUDO DE HIELO -->
+        <button id="streakHeaderBtn" onclick="showStreakInfoAlert()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-[11px] font-black text-amber-300 active:scale-95 transition flex items-center gap-1 shadow-sm" title="Tu racha diaria y Escudos de Hielo">
+          <span id="streakFlameText">🔥 0 Días</span>
+          <span id="streakShieldBadge" class="hidden text-[10px] bg-cyan-500/20 text-cyan-300 px-1 rounded border border-cyan-400/40">❄️1</span>
+        </button>
+
+        <button id="eihwazStatusBtn" onclick="openApiModal()" class="px-2 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-[10px] font-extrabold text-slate-200 hover:text-indigo-400 active:scale-95 transition flex items-center gap-1">
           <span id="aiBrainStatus">🦬 Eihwaz</span>
         </button>
 
@@ -128,24 +136,62 @@
 
   <main class="max-w-md mx-auto px-3.5 pt-3 space-y-3">
 
-    <!-- SECCIÓN 1: INICIO (CHAT ESTILO GEMINI + RECOMENDADOR DE PESTAÑAS) -->
-    <section id="view-home" class="relative gemini-glow rounded-3xl py-4 px-1 space-y-4 min-h-[76vh] flex flex-col justify-between">
+    <!-- SECCIÓN 1: INICIO (CHAT ESTILO GEMINI + RETO DIARIO CLIFFHANGER) -->
+    <section id="view-home" class="relative gemini-glow rounded-3xl py-3 px-1 space-y-3.5 min-h-[76vh] flex flex-col justify-between">
       
       <!-- BIENVENIDA HERO (Se compacta al iniciar conversación) -->
-      <div id="homeHeroWelcome" class="text-center space-y-2 pt-6 pb-2 transition-all duration-300">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-[10px] font-extrabold text-cyan-300 uppercase tracking-wider">
+      <div id="homeHeroWelcome" class="text-center space-y-1.5 pt-3 pb-1 transition-all duration-300">
+        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-[10px] font-extrabold text-cyan-300 uppercase tracking-wider">
           <span>✨ Mentor Inteligente Activo</span>
         </div>
         <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">¿Por dónde empezamos?</h2>
         <p class="text-xs text-slate-300 max-w-xs mx-auto leading-relaxed">
-          Dime qué quieres aprender hoy en inglés. Conversa conmigo o deja que te guíe hacia la herramienta ideal de Eihwaz.
+          Conversa con Eihwaz o entrena el reto diario para mantener encendida tu racha y desbloquear el misterio de mañana.
         </p>
       </div>
 
+      <!-- TARJETA DEL RETO DIARIO ROTATIVO + EFECTO CLIFFHANGER (Bucle Abierto) -->
+      <div id="dailyChallengeCard" class="glass-card rounded-2xl p-3.5 border border-indigo-500/40 shadow-lg space-y-2.5 mx-1">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-lg bg-cyan-500/20 text-cyan-300 font-black" id="dailyChallengeTag">🎯 Reto de Hoy • 30s</span>
+            <span id="dailyChallengeStatusBadge" class="text-[10px] font-extrabold text-amber-300">⏳ Pendiente</span>
+          </div>
+          <span id="dailyChallengePhonetic" class="text-[11px] font-mono font-bold text-cyan-300 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-700"></span>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-900/95 border border-slate-800 space-y-1">
+          <div class="flex items-center justify-between gap-2">
+            <p id="dailyChallengeEn" class="text-xs sm:text-sm font-black text-white leading-snug"></p>
+            <button onclick="speakDailyChallenge()" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-xs flex items-center justify-center shrink-0 active:scale-95">🔊</button>
+          </div>
+          <p id="dailyChallengeEs" class="text-[11px] text-emerald-400 font-semibold"></p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="speakDailyChallenge()" class="btn-duo py-2 px-2.5 rounded-xl bg-slate-800 border-slate-950 text-[11px] font-black text-white flex items-center justify-center gap-1">
+            🔊 1. Oír a Eihwaz
+          </button>
+          <button onclick="startDailyChallengeInStudio()" class="btn-duo py-2 px-2.5 rounded-xl bg-cyan-500 border-cyan-700 text-[11px] font-black text-slate-950 flex items-center justify-center gap-1 shadow">
+            🎙️ 2. Superar Reto
+          </button>
+        </div>
+
+        <!-- CAJA CLIFFHANGER (Adelanto Misterioso de Mañana + Cuenta Regresiva a Medianoche) -->
+        <div id="cliffhangerBox" class="p-2.5 rounded-xl bg-indigo-950/50 border border-indigo-500/30 space-y-1 transition-all">
+          <div class="flex items-center justify-between text-[10px]">
+            <span id="cliffhangerTitle" class="font-black uppercase tracking-wider text-indigo-300">🔒 Adelanto de Mañana (Bloqueado)</span>
+            <span id="midnightCountdown" class="font-mono font-bold text-cyan-300">⏳ --h --m --s</span>
+          </div>
+          <p id="cliffhangerTeaserText" class="text-[11px] text-slate-300 leading-snug"></p>
+          <p id="cliffhangerMysteryPhrase" class="text-xs font-black text-white select-none blur-sm transition-all duration-500"></p>
+        </div>
+      </div>
+
       <!-- HISTORIAL DE CONVERSACIÓN DEL INICIO -->
-      <div id="homeChatHistory" class="space-y-3 max-h-[46vh] overflow-y-auto px-1 text-xs leading-relaxed">
+      <div id="homeChatHistory" class="space-y-3 max-h-[38vh] overflow-y-auto px-1 text-xs leading-relaxed">
         <div class="p-3.5 rounded-2xl rounded-tl-sm bg-slate-900/90 border border-slate-800/90 text-slate-200 shadow-md space-y-2">
-          <p>🦬 <b>Eihwaz:</b> Welcome! Soy tu mentor personal de inglés. Puedes preguntarme cualquier duda aquí mismo (gramática, frases, situaciones reales) o podemos ir directo a entrenar:</p>
+          <p>🦬 <b>Eihwaz:</b> Welcome! Soy tu mentor personal de inglés. Pregúntame cualquier duda aquí mismo o navega a tu zona de entrenamiento favorita:</p>
           <div class="grid grid-cols-2 gap-1.5 pt-1 text-[10px]">
             <button onclick="switchTab('explore')" class="p-2 rounded-xl bg-slate-950/90 border border-slate-800 hover:border-indigo-500/50 text-left transition flex items-center gap-1.5">
               <span>🔍</span> <div><b class="text-indigo-300 block">Explorar</b><span class="text-slate-400">Palabras y frases</span></div>
@@ -164,7 +210,7 @@
       </div>
 
       <!-- ZONA INFERIOR DE ENTRADA ESTILO GEMINI + SUGERENCIAS -->
-      <div class="space-y-2.5 pt-2">
+      <div class="space-y-2 pt-1">
         <!-- Píldoras de sugerencias rápidas -->
         <div class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           <button onclick="sendQuickHomePrompt('Quiero aprender frases útiles para una conversación diaria en inglés')" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-[11px] font-semibold text-slate-200 transition active:scale-95">
@@ -192,7 +238,7 @@
         </div>
 
         <!-- Accesos rápidos a palabras clave que conectan con Explorar -->
-        <div class="flex items-center justify-center gap-1.5 pt-1 flex-wrap">
+        <div class="flex items-center justify-center gap-1.5 pt-0.5 flex-wrap">
           <span class="text-[10px] text-slate-400 font-bold">⚡ Desglosar en Explorar:</span>
           <button onclick="quickExploreWord('Unstoppable')" class="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 hover:border-indigo-500">🔥 Unstoppable</button>
           <button onclick="quickExploreWord('Lean on me')" class="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 hover:border-indigo-500">🤝 Lean on me</button>
@@ -408,7 +454,7 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 5: ESTUDIO Y PLAYLIST -->
+    <!-- SECCIÓN 5: ESTUDIO Y PLAYLIST (CON MODO SOMBRA, EVALUADOR EN TIEMPO REAL Y BATERÍA DE MEMORIA) -->
     <section id="view-playlist" class="hidden space-y-3.5">
       <div class="glass-card rounded-2xl p-4 border border-cyan-500/40 space-y-3 shadow-lg">
         <div class="flex items-center justify-between">
@@ -416,7 +462,7 @@
           <span id="studioTrackTag" class="text-[11px] font-bold text-slate-400">Pista Lista</span>
         </div>
 
-        <!-- PASO 1: PANEL DE PERSONALIZACIÓN DE VOZ HUMANA Y TONO PROPIO -->
+        <!-- PANEL DE PERSONALIZACIÓN DE VOZ HUMANA Y TONO PROPIO -->
         <div class="p-2.5 rounded-xl bg-slate-900/95 border border-indigo-500/30 space-y-2">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-300">🗣️ Voz de Eihwaz:</span>
@@ -433,9 +479,19 @@
           <p id="voice-status-msg" class="hidden text-[10px] font-bold text-cyan-300 leading-snug"></p>
         </div>
 
-        <div class="text-center py-1 space-y-1">
-          <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug">"Hi! I am learning English with Eihwaz and growing every day."</h2>
-          <p id="studioSpanish" class="text-xs font-bold text-emerald-400">¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.</p>
+        <!-- INTERRUPTOR DE MODO SOMBRA (Reto de Memoria Auditiva) -->
+        <div class="flex items-center justify-between px-1 pt-1">
+          <span class="text-[10px] text-slate-400 font-bold">🧠 Entrenamiento de Memoria:</span>
+          <button id="btnShadowMode" onclick="toggleShadowBlurMode()" class="px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-[10px] font-extrabold text-slate-300 hover:border-cyan-400 active:scale-95 transition flex items-center gap-1">
+            <span>🙈 Modo Sombra: OFF</span>
+          </button>
+        </div>
+
+        <!-- FRASE EN ESTUDIO (Se difumina en Modo Sombra y se revela al terminar de grabar) -->
+        <div class="text-center py-1.5 px-2 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1 relative">
+          <h2 id="studioEnglish" class="text-base sm:text-lg font-black text-white leading-snug transition-all duration-300">"Hi! I am learning English with Eihwaz and growing every day."</h2>
+          <p id="studioSpanish" class="text-xs font-bold text-emerald-400 transition-all duration-300">¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.</p>
+          <p id="shadowModeHint" class="hidden text-[10px] text-cyan-300 font-bold animate-pulse pt-1">👂 Escucha a Eihwaz y repite de memoria. Se revelará al grabar.</p>
         </div>
 
         <!-- SELECTOR DE MICRÓFONO SILENCIOSO PARA EVITAR FALLOS DE REFERENCIA -->
@@ -449,12 +505,13 @@
 
           <div id="micMeterBox" class="hidden p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/40 space-y-1">
             <div class="flex justify-between text-[11px] text-rose-300 font-extrabold">
-              <span>🔴 Eihwaz te escucha (30s a 1:30m)...</span>
+              <span>🔴 Evaluando tu voz en vivo...</span>
               <span id="micVolumePct">0%</span>
             </div>
             <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
               <div id="micLevelBar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400" style="width: 6%;"></div>
             </div>
+            <p id="liveSpeechPreview" class="text-[10px] text-slate-300 italic truncate pt-0.5">Habla con claridad en inglés...</p>
           </div>
 
           <button id="btnRecordShadow" onclick="toggleShadowRecording()" class="btn-duo w-full py-3 rounded-xl bg-rose-600/20 border-rose-900/60 text-rose-300 text-xs font-black tracking-wide">
@@ -466,12 +523,27 @@
           </button>
         </div>
 
-        <div id="fearlessCoachBox" class="hidden p-3 rounded-xl bg-indigo-950/80 border border-indigo-500/40 space-y-2">
-          <div class="flex items-start gap-2">
-            <span class="text-sm">🦬</span>
-            <p id="fearlessCoachText" class="text-[11px] text-indigo-100 leading-snug font-semibold"></p>
+        <!-- CAJA DEL COACH CON EVALUADOR DE PRONUNCIACIÓN PALABRA POR PALABRA -->
+        <div id="fearlessCoachBox" class="hidden p-3.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-indigo-500/30 pb-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm">🦬</span>
+              <span class="text-[10px] font-black uppercase tracking-wider text-cyan-300">Evaluación de Pronunciación</span>
+            </div>
+            <span id="pronunciationScoreBadge" class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-xs font-black text-emerald-300">100% Precisión</span>
           </div>
-          <button onclick="toggleShadowRecording()" class="w-full py-2 rounded-lg bg-indigo-600 text-[11px] font-black text-white active:scale-95 transition">🔁 Otra toma con más fuerza</button>
+
+          <!-- Palabras coloreadas (Verde = bien pronunciada, Amarillo = repetir) -->
+          <div id="wordByWordContainer" class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-center leading-relaxed text-xs sm:text-sm font-black space-x-1"></div>
+
+          <div class="flex items-center justify-center gap-3 text-[9px] font-bold">
+            <span class="text-emerald-400">🟢 Dominada</span>
+            <span class="text-amber-300 underline">🟡 Repetir con más fuerza</span>
+          </div>
+
+          <p id="fearlessCoachText" class="text-[11px] text-indigo-100 leading-snug font-semibold text-center"></p>
+
+          <button onclick="toggleShadowRecording()" class="w-full py-2 rounded-lg bg-indigo-600 text-[11px] font-black text-white active:scale-95 transition">🔁 Otra toma para subir puntaje</button>
         </div>
 
         <div id="userAudioWrapper" class="hidden pt-1 border-t border-slate-800/80 space-y-1">
@@ -483,11 +555,12 @@
         </div>
       </div>
 
+      <!-- PLAYLIST CON BATERÍAS DE MEMORIA (REPETICIÓN ESPACIADA) -->
       <div class="glass-card rounded-2xl p-4 space-y-2.5 shadow-lg">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-black text-white">🎵 Tu Playlist de Entrenamiento</h3>
-            <p class="text-[10px] text-slate-400">Toca cualquier pista para practicarla con Eihwaz.</p>
+            <h3 class="text-sm font-black text-white">🎵 Tu Playlist y Batería de Memoria</h3>
+            <p class="text-[10px] text-slate-400">Graba una pista en el estudio para recargar su batería al 100% (🟢).</p>
           </div>
           <span id="playlistCountBadge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">0 pistas</span>
         </div>
@@ -515,10 +588,56 @@
   <!-- MOTOR DE EIHWAZ -->
   <script src="ai-tutor.js"></script>
 
-  <!-- LÓGICA PRINCIPAL UI -->
+  <!-- LÓGICA PRINCIPAL UI + 5 MECÁNICAS DE ENGANCHE PSICOLÓGICO -->
   <script>
     const PLAYLIST_KEY = 'eihwaz_playlist_zero_v1';
     const SETTINGS_KEY = 'eihwaz_settings_v1';
+
+    // Catálogo local de Retos Diarios Rotativos (0 consumo de API)
+    const DAILY_CHALLENGES = [
+      {
+        phonetic: "/ʌnˈstɒp.ə.bəl/",
+        english: "With discipline and focus, I am unstoppable today.",
+        spanish: "Con disciplina y enfoque, hoy soy imparable.",
+        teaserHint: "Mañana desbloquearás una frase clave para expresar confianza total bajo presión..."
+      },
+      {
+        phonetic: "/rɪˈlent.ləs/",
+        english: "Every small step forward makes my English stronger.",
+        spanish: "Cada pequeño paso hacia adelante hace mi inglés más fuerte.",
+        teaserHint: "Mañana entrenarás una expresión nativa de lealtad que aparece en grandes canciones..."
+      },
+      {
+        phonetic: "/kaʊnt ɒn miː/",
+        english: "When times get tough, you can always count on me.",
+        spanish: "Cuando los tiempos se pongan difíciles, siempre puedes contar conmigo.",
+        teaserHint: "Mañana descubrirás cómo sonar seguro al hablar de tus metas y propósito..."
+      },
+      {
+        phonetic: "/ˈpɜː.pəs/",
+        english: "I speak with clarity, courage, and purpose every single day.",
+        spanish: "Hablo con claridad, valentía y propósito todos los días.",
+        teaserHint: "Mañana dominarás una estructura esencial para transformar obstáculos en victorias..."
+      },
+      {
+        phonetic: "/ˈɡræt.ɪ.tjuːd/",
+        english: "Gratitude turns what we have into more than enough.",
+        spanish: "La gratitud convierte lo que tenemos en más que suficiente.",
+        teaserHint: "Mañana desbloquearás un reto de ritmo rápido para soltar la lengua como nativo..."
+      },
+      {
+        phonetic: "/フィア・レス / ˈfɪə.ləs/",
+        english: "My voice is fearless and my mind has no limits.",
+        spanish: "Mi voz no tiene miedo y mi mente no tiene límites.",
+        teaserHint: "Mañana te espera una frase de poder inspirada en la superación constante..."
+      },
+      {
+        phonetic: "/ɡreɪs/",
+        english: "Patience and practice give me the grace to master any skill.",
+        spanish: "La paciencia y la práctica me dan la gracia para dominar cualquier habilidad.",
+        teaserHint: "Mañana iniciarás un nuevo ciclo con una frase de impacto para romper el hielo..."
+      }
+    ];
 
     // Diccionario curado de respaldo rápido (100% embeddables)
     const EXTENDED_SONG_VIDEOS = {
@@ -534,36 +653,378 @@
       "someone like you": { ytId: "hLQl3WQQoQ0", start: 45, end: 135 }
     };
 
+    const nowMs = Date.now();
+    const DAY_MS = 86400000;
+
+    // Pistas por defecto (una fresca y otra de hace 6 días para ver en acción la batería de memoria)
     const DEFAULT_PLAYLIST = [
       {
         id: 'trk_default_1',
         english: 'Spirit lead me where my trust is without borders.',
         spanish: 'Espíritu guíame donde mi confianza no tenga límites.',
-        source: 'Oceans - Hillsong United'
+        source: 'Oceans - Hillsong United',
+        lastPracticed: nowMs - (1 * DAY_MS)
       },
       {
         id: 'trk_default_2',
         english: 'I will live today as if it were my last day.',
         spanish: 'Viviré hoy como si fuera mi último día.',
-        source: 'Mi último día - Tercer Cielo'
+        source: 'Mi último día - Tercer Cielo',
+        lastPracticed: nowMs - (6 * DAY_MS)
       }
     ];
 
     let playlist = [];
-    let settings = { theme: 'default', voiceProfile: 'natural-male', userPitch: 0.94 };
+    let settings = {
+      theme: 'default',
+      voiceProfile: 'natural-male',
+      userPitch: 0.94,
+      streakCount: 0,
+      lastPracticeDate: null,
+      iceShields: 0,
+      dailyChallengeCompletedDate: null
+    };
     let currentExploreObj = null;
     let currentMusicObj = null;
     let currentStudioTrack = {
-      english: 'Hi! I am learning English with Eihwaz and growing every day.',
-      spanish: '¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.',
-      source: 'Reto de Eihwaz'
+      english: 'With discipline and focus, I am unstoppable today.',
+      spanish: 'Con disciplina y enfoque, hoy soy imparable.',
+      source: 'Reto Diario de Eihwaz'
     };
 
+    let isShadowBlurActive = false;
     let mediaRecorder = null; let audioChunks = []; let recordedAudioUrl = null; let isRecordingShadow = false;
     let audioContext = null; let analyserNode = null; let meterAnimId = null;
+    let speechRecognizer = null; let liveRecognizedTranscript = ""; let vocalPeakFrames = 0;
 
     let availableEnglishVoices = [];
 
+    // --- UTILIDADES DE FECHA PARA RACHAS Y RETO DIARIO ---
+    function getTodayDateString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getDaysDifference(dateStr1, dateStr2) {
+      if (!dateStr1 || !dateStr2) return 999;
+      const d1 = new Date(dateStr1 + "T00:00:00");
+      const d2 = new Date(dateStr2 + "T00:00:00");
+      return Math.round((d2 - d1) / DAY_MS);
+    }
+
+    function getDayOfYearIndex() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start;
+      return Math.floor(diff / DAY_MS);
+    }
+
+    // --- 2. SISTEMA DE RACHAS, ESCUDO DE HIELO Y FANFARRIA CON AUDIOCONTEXT ---
+    function playTriumphSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // Do5, Mi5, Sol5, Do6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.11);
+          gain.gain.setValueAtTime(0.001, ctx.currentTime + idx * 0.11);
+          gain.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + idx * 0.11 + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.11 + 0.38);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.11);
+          osc.stop(ctx.currentTime + idx * 0.11 + 0.4);
+        });
+        setTimeout(() => ctx.close().catch(() => {}), 1200);
+      } catch (e) {}
+    }
+
+    function verifyStreakIntegrityOnLoad() {
+      const today = getTodayDateString();
+      if (!settings.lastPracticeDate) return;
+      const diffDays = getDaysDifference(settings.lastPracticeDate, today);
+
+      if (diffDays <= 1) {
+        return; // Racha intacta
+      } else if (diffDays === 2 && settings.iceShields > 0) {
+        // Faltó 1 día pero tenía Escudo de Hielo
+        settings.iceShields -= 1;
+        const yesterday = new Date(Date.now() - DAY_MS);
+        settings.lastPracticeDate = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        setTimeout(() => {
+          alert('❄️ ¡Tu Escudo de Hielo se activó automáticamente y salvó tu racha de ayer!');
+        }, 2800);
+      } else if (diffDays > 1) {
+        settings.streakCount = 0;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      }
+    }
+
+    function registerDailyVoicePractice() {
+      const today = getTodayDateString();
+      let streakIncreased = false;
+
+      if (settings.lastPracticeDate !== today) {
+        const diffDays = getDaysDifference(settings.lastPracticeDate, today);
+        if (diffDays === 1 || !settings.lastPracticeDate) {
+          settings.streakCount = (settings.streakCount || 0) + 1;
+        } else if (diffDays === 2 && settings.iceShields > 0) {
+          settings.iceShields -= 1;
+          settings.streakCount = (settings.streakCount || 0) + 1;
+        } else {
+          settings.streakCount = 1;
+        }
+        settings.lastPracticeDate = today;
+        streakIncreased = true;
+
+        // Cada 5 días seguidos gana un Escudo de Hielo
+        if (settings.streakCount > 0 && settings.streakCount % 5 === 0) {
+          settings.iceShields = Math.min(3, (settings.iceShields || 0) + 1);
+          setTimeout(() => {
+            alert(`❄️ ¡Increíble! Lograste ${settings.streakCount} días seguidos y ganaste un Escudo de Hielo para proteger tu racha.`);
+          }, 600);
+        }
+      }
+
+      // Verificar si la frase grabada corresponde al Reto Diario de hoy
+      const todayChallenge = getTodayChallengeObj().today;
+      if (
+        currentStudioTrack.source === 'Reto Diario de Eihwaz' ||
+        currentStudioTrack.english.toLowerCase() === todayChallenge.english.toLowerCase()
+      ) {
+        settings.dailyChallengeCompletedDate = today;
+      }
+
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      updateStreakHeaderUI(streakIncreased);
+      renderDailyChallengeAndCliffhanger();
+      playTriumphSound();
+    }
+
+    function updateStreakHeaderUI(animate = false) {
+      const flameEl = document.getElementById('streakFlameText');
+      const shieldEl = document.getElementById('streakShieldBadge');
+      const btnEl = document.getElementById('streakHeaderBtn');
+      const count = settings.streakCount || 0;
+      const shields = settings.iceShields || 0;
+
+      if (flameEl) flameEl.textContent = `🔥 ${count} ${count === 1 ? 'Día' : 'Días'}`;
+      if (shieldEl) {
+        if (shields > 0) {
+          shieldEl.textContent = `❄️${shields}`;
+          shieldEl.classList.remove('hidden');
+        } else {
+          shieldEl.classList.add('hidden');
+        }
+      }
+      if (animate && btnEl) {
+        btnEl.classList.remove('streak-bounce');
+        void btnEl.offsetWidth;
+        btnEl.classList.add('streak-bounce');
+      }
+    }
+
+    function showStreakInfoAlert() {
+      const count = settings.streakCount || 0;
+      const shields = settings.iceShields || 0;
+      const remainingForShield = 5 - (count % 5);
+      alert(
+        `🔥 Racha actual: ${count} ${count === 1 ? 'día' : 'días'} practicando inglés.\n` +
+        `❄️ Escudos de Hielo activos: ${shields}\n\n` +
+        `💡 Completa al menos 1 grabación de voz al día en el Estudio para subir tu racha. ¡Te faltan ${remainingForShield} días seguidos para ganar tu próximo Escudo de Hielo ❄️!`
+      );
+    }
+
+    // --- 5. EL EFECTO CLIFFHANGER Y RETO DIARIO ROTATIVO ---
+    function getTodayChallengeObj() {
+      const dayIdx = getDayOfYearIndex();
+      const todayItem = DAILY_CHALLENGES[dayIdx % DAILY_CHALLENGES.length];
+      const tomorrowItem = DAILY_CHALLENGES[(dayIdx + 1) % DAILY_CHALLENGES.length];
+      return { today: todayItem, tomorrow: tomorrowItem };
+    }
+
+    function renderDailyChallengeAndCliffhanger() {
+      const { today, tomorrow } = getTodayChallengeObj();
+      const isCompletedToday = settings.dailyChallengeCompletedDate === getTodayDateString();
+
+      const phoneticEl = document.getElementById('dailyChallengePhonetic');
+      const enEl = document.getElementById('dailyChallengeEn');
+      const esEl = document.getElementById('dailyChallengeEs');
+      const statusBadge = document.getElementById('dailyChallengeStatusBadge');
+      const cliffTitle = document.getElementById('cliffhangerTitle');
+      const cliffTeaser = document.getElementById('cliffhangerTeaserText');
+      const cliffMystery = document.getElementById('cliffhangerMysteryPhrase');
+
+      if (phoneticEl) phoneticEl.textContent = today.phonetic;
+      if (enEl) enEl.textContent = `"${today.english}"`;
+      if (esEl) esEl.textContent = today.spanish;
+
+      if (isCompletedToday) {
+        if (statusBadge) {
+          statusBadge.textContent = '✅ ¡Reto Superado!';
+          statusBadge.className = 'text-[10px] font-extrabold text-emerald-400';
+        }
+        if (cliffTitle) {
+          cliffTitle.textContent = '🔓 ¡Adelanto de Mañana Desbloqueado!';
+          cliffTitle.className = 'font-black uppercase tracking-wider text-emerald-300';
+        }
+        if (cliffTeaser) {
+          cliffTeaser.textContent = `Pista desbloqueada: "${tomorrow.spanish}"`;
+        }
+        const words = tomorrow.english.split(' ');
+        const halfPreview = words.slice(0, Math.ceil(words.length / 2)).join(' ') + ' ... [Mañana a las 00:00]';
+        if (cliffMystery) {
+          cliffMystery.textContent = `"${halfPreview}"`;
+          cliffMystery.classList.remove('blur-sm', 'select-none');
+          cliffMystery.classList.add('text-cyan-300');
+        }
+      } else {
+        if (statusBadge) {
+          statusBadge.textContent = '⏳ Pendiente hoy';
+          statusBadge.className = 'text-[10px] font-extrabold text-amber-300';
+        }
+        if (cliffTitle) {
+          cliffTitle.textContent = '🔒 Misterio de Mañana (Completa hoy para ver)';
+          cliffTitle.className = 'font-black uppercase tracking-wider text-indigo-300';
+        }
+        if (cliffTeaser) {
+          cliffTeaser.textContent = today.teaserHint;
+        }
+        if (cliffMystery) {
+          cliffMystery.textContent = `"${tomorrow.english}"`;
+          cliffMystery.classList.add('blur-sm', 'select-none');
+          cliffMystery.classList.remove('text-cyan-300');
+        }
+      }
+    }
+
+    function startMidnightCountdownTimer() {
+      function updateTimer() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const diff = Math.max(0, midnight - now);
+        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        const el = document.getElementById('midnightCountdown');
+        if (el) el.textContent = `⏳ ${h}h ${m}m ${s}s`;
+      }
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    }
+
+    function speakDailyChallenge() {
+      const { today } = getTodayChallengeObj();
+      speakText(today.english, 0.92);
+    }
+
+    function startDailyChallengeInStudio() {
+      const { today } = getTodayChallengeObj();
+      loadTrackIntoStudio(today.english, today.spanish, 'Reto Diario de Eihwaz', true);
+    }
+
+    // --- 3. MODO SOMBRA (RETO DE MEMORIA AUDITIVA EN EL ESTUDIO) ---
+    function toggleShadowBlurMode(forceReveal = false) {
+      if (forceReveal) {
+        isShadowBlurActive = false;
+      } else {
+        isShadowBlurActive = !isShadowBlurActive;
+      }
+      const enEl = document.getElementById('studioEnglish');
+      const btnEl = document.getElementById('btnShadowMode');
+      const hintEl = document.getElementById('shadowModeHint');
+
+      if (isShadowBlurActive) {
+        if (enEl) enEl.classList.add('blur-md', 'select-none');
+        if (hintEl) hintEl.classList.remove('hidden');
+        if (btnEl) {
+          btnEl.innerHTML = '<span>🙈 Modo Sombra: ON</span>';
+          btnEl.className = 'px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400 text-[10px] font-extrabold text-cyan-300 active:scale-95 transition flex items-center gap-1 shadow';
+        }
+      } else {
+        if (enEl) enEl.classList.remove('blur-md', 'select-none');
+        if (hintEl) hintEl.classList.add('hidden');
+        if (btnEl) {
+          btnEl.innerHTML = '<span>🙈 Modo Sombra: OFF</span>';
+          btnEl.className = 'px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-[10px] font-extrabold text-slate-300 hover:border-cyan-400 active:scale-95 transition flex items-center gap-1';
+        }
+      }
+    }
+
+    // --- 1. EVALUADOR DE PRONUNCIACIÓN PALABRA POR PALABRA (WEB SPEECH API) ---
+    function normalizeWord(w) {
+      return (w || '').toLowerCase().replace(/[^a-z0-9']/g, '').trim();
+    }
+
+    function evaluatePronunciationAndRender(targetSentence, spokenTranscript, hadStrongVoiceFrames) {
+      const targetWords = targetSentence.trim().split(/\s+/);
+      const spokenWordsSet = new Set(
+        (spokenTranscript || '')
+          .split(/\s+/)
+          .map(normalizeWord)
+          .filter(Boolean)
+      );
+
+      const container = document.getElementById('wordByWordContainer');
+      const scoreBadge = document.getElementById('pronunciationScoreBadge');
+      const coachText = document.getElementById('fearlessCoachText');
+      const coachBox = document.getElementById('fearlessCoachBox');
+
+      if (!container || !coachBox) return;
+      container.innerHTML = '';
+
+      let matchedCount = 0;
+      const hasSpeechApiResult = spokenWordsSet.size > 0;
+
+      targetWords.forEach((rawWord, idx) => {
+        const cleanTarget = normalizeWord(rawWord);
+        let isCorrect = false;
+
+        if (hasSpeechApiResult) {
+          isCorrect = spokenWordsSet.has(cleanTarget) ||
+            Array.from(spokenWordsSet).some(sw => sw.length >= 3 && (cleanTarget.includes(sw) || sw.includes(cleanTarget)));
+        } else {
+          // Respaldo inteligente si el navegador (ej. Firefox) no activa webkitSpeechRecognition
+          isCorrect = hadStrongVoiceFrames > 8 ? (idx % 4 !== 3) : (idx === 0);
+        }
+
+        if (isCorrect) matchedCount++;
+
+        const span = document.createElement('span');
+        span.textContent = rawWord + ' ';
+        span.className = isCorrect
+          ? 'text-emerald-400 font-black transition-all'
+          : 'text-amber-300 underline decoration-amber-400/80 font-black transition-all';
+        container.appendChild(span);
+      });
+
+      const pct = Math.max(15, Math.round((matchedCount / Math.max(1, targetWords.length)) * 100));
+
+      if (scoreBadge) {
+        scoreBadge.textContent = `🎯 ${pct}% Precisión`;
+        scoreBadge.className = pct >= 80
+          ? 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-xs font-black text-emerald-300'
+          : 'px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-xs font-black text-amber-300';
+      }
+
+      if (coachText) {
+        if (pct >= 85) {
+          coachText.textContent = '🔥 ¡Pronunciación brutal! Dominaste el ritmo de la frase y recargaste tu batería de memoria al 100%.';
+        } else if (pct >= 60) {
+          coachText.textContent = '💪 ¡Muy buen intento! Toca "Oír a Eihwaz" y repite con más fuerza las palabras en amarillo.';
+        } else {
+          coachText.textContent = '👂 Escucha la versión lenta (0.65x) y vuelve a grabar marcando bien las palabras en amarillo.';
+        }
+      }
+
+      coachBox.classList.remove('hidden');
+    }
+
+    // --- VOCES NATURALES ---
     function loadNaturalVoices() {
       if (!('speechSynthesis' in window)) return;
       const allVoices = window.speechSynthesis.getVoices();
@@ -758,8 +1219,32 @@
         playlist = (Array.isArray(saved) && saved.length > 0) ? saved : DEFAULT_PLAYLIST;
       } catch (e) { playlist = DEFAULT_PLAYLIST; }
       try {
-        settings = { theme: 'default', voiceProfile: 'natural-male', userPitch: 0.94, ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) };
+        settings = {
+          theme: 'default',
+          voiceProfile: 'natural-male',
+          userPitch: 0.94,
+          streakCount: 0,
+          lastPracticeDate: null,
+          iceShields: 0,
+          dailyChallengeCompletedDate: null,
+          ...JSON.parse(localStorage.getItem(SETTINGS_KEY))
+        };
       } catch (e) {}
+
+      verifyStreakIntegrityOnLoad();
+      updateStreakHeaderUI(false);
+      renderDailyChallengeAndCliffhanger();
+      startMidnightCountdownTimer();
+
+      const { today } = getTodayChallengeObj();
+      currentStudioTrack = {
+        english: today.english,
+        spanish: today.spanish,
+        source: 'Reto Diario de Eihwaz'
+      };
+      document.getElementById('studioEnglish').textContent = `"${currentStudioTrack.english}"`;
+      document.getElementById('studioSpanish').textContent = currentStudioTrack.spanish;
+
       const selVoice = document.getElementById('voice-profile-select');
       if (selVoice && settings.voiceProfile) selVoice.value = settings.voiceProfile;
       applyThemeUI(); renderPlaylistUI(); populateMicListSilent(); updateAiStatusUI();
@@ -785,7 +1270,7 @@
       if (tab === 'playlist') renderPlaylistUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- NUEVO CHAT DE INICIO ESTILO GEMINI ---
+    // --- CHAT DE INICIO ESTILO GEMINI ---
     function sendQuickHomePrompt(text) {
       const input = document.getElementById('homeChatInput');
       if (input) {
@@ -839,7 +1324,7 @@
       if (btnEl) btnEl.disabled = true;
 
       try {
-        const homeContext = `Pantalla de Inicio de la app Eihwaz. El usuario acaba de entrar y busca aprender inglés. Enséñale con ejemplos reales en inglés, sumérgelo en el idioma y, cuando sea útil, recomiéndale usar las pestañas de la app: 🔍 Explorar (para desglosar vocabulario y frases de poder), 🎵 Música (para entrenar el oído con canciones), 🎬 Reels (para cantar en karaoke StarMaker) o 🎙️ Playlist (Estudio de Voz para grabar y comparar su pronunciación).`;
+        const homeContext = `Pantalla de Inicio de la app Eihwaz. El usuario acaba de entrar y busca aprender inglés. Enséñale con ejemplos reales en inglés, sumérgelo en el idioma y, cuando sea útil, recomiéndale usar las pestañas de la app: 🔍 Explorar (para desglosar vocabulario y frases de poder), 🎵 Música (para entrenar el oído con canciones), 🎬 Reels (para cantar en karaoke StarMaker) o 🎙️ Playlist (Estudio de Voz para grabar y evaluar su pronunciación palabra por palabra).`;
         const reply = await window.aiTutor.askCustomQuestion(homeContext, userMsg);
         document.getElementById('tempHomeLoading')?.remove();
 
@@ -1049,7 +1534,6 @@
       return null;
     }
 
-    // Verifica con YouTube oEmbed si un video ID existe y permite ser incrustado
     async function verifyYoutubeEmbeddable(videoId) {
       if (!videoId || videoId.length !== 11) return false;
       try {
@@ -1060,7 +1544,6 @@
       }
     }
 
-    // Buscador gratuito de Video ID real estilo YouTube (Prioriza Lyric Videos porque no tienen bloqueo VEVO)
     async function findPlayableYoutubeId(songTitle, songArtist, rawQuery) {
       const preset = findExtendedVideoConfig(songTitle, rawQuery);
       if (preset && preset.ytId) return preset.ytId;
@@ -1123,7 +1606,6 @@
         let trackTitle = query; 
         let trackArtist = "Artista";
         
-        // PASO 1: Búsqueda preliminar en iTunes
         try {
           const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`);
           if (itunesRes.ok) {
@@ -1137,7 +1619,6 @@
           }
         } catch (e) {}
 
-        // PASO 2: IA analiza y autocorrige ortografía (igual que el autocorrector de YouTube)
         let aiLesson = null;
         try {
           aiLesson = await window.aiTutor.analyzeSongBridge(trackTitle, trackArtist);
@@ -1148,7 +1629,6 @@
         const safeTitle = aiLesson.song_title || trackTitle;
         const safeArtist = aiLesson.artist || trackArtist;
 
-        // PASO 3: Si iTunes falló al inicio porque estaba mal escrito, reintenta con el título corregido por la IA
         if (!trackPreview && safeTitle.toLowerCase() !== query.toLowerCase()) {
           try {
             const retryQuery = `${safeTitle} ${safeArtist !== 'Artista' ? safeArtist : ''}`.trim();
@@ -1163,10 +1643,8 @@
           } catch (e) {}
         }
 
-        // PASO 4: Buscar ID de Video de YouTube válido y reproducible
         const validYoutubeId = await findPlayableYoutubeId(safeTitle, safeArtist, query);
 
-        // PASO 5: Validar si no existe NI video NI audio NI canción reconocida
         if (!validYoutubeId && !trackPreview && aiLesson.exists === false) {
           if (apologyBox) {
             document.getElementById('apologyEnText').innerHTML = `
@@ -1195,7 +1673,6 @@
         const formattedEs = safePhraseEs.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const formattedSrc = `${safeTitle} - ${safeArtist}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-        // PASO 6: Construir solo los reproductores disponibles (Si no hay video, solo dibuja el audio sin caja rota)
         let mediaHtml = '';
 
         if (validYoutubeId) {
@@ -1283,90 +1760,98 @@
       }
     }
 
-    function handleExtendedAudio90s(audioEl) {
-      handleExclusiveAudioPlay(audioEl);
-      if (!audioEl.dataset.hooked90s) {
-        audioEl.dataset.hooked90s = "true";
-        audioEl.dataset.playCount = "1";
-        audioEl.addEventListener('ended', () => {
-          let count = parseInt(audioEl.dataset.playCount || "1", 10);
-          const badge = document.getElementById('audioLoopTimer');
-          if (count < 3) {
-            count++;
-            audioEl.dataset.playCount = String(count);
-            if (badge) badge.textContent = `Ciclo ${count}/3 (90s total)`;
-            audioEl.currentTime = 0;
-            audioEl.play().catch(() => {});
-          } else {
-            audioEl.dataset.playCount = "1";
-            if (badge) badge.textContent = `✅ 1:30m completado`;
-          }
-        });
-      }
-    }
-
-    function handleReelAudioLoop(audioEl) {
-      handleExclusiveAudioPlay(audioEl);
-      if (!audioEl.dataset.hookedReel) {
-        audioEl.dataset.hookedReel = "true";
-        audioEl.dataset.playCount = "1";
-        audioEl.addEventListener('ended', () => {
-          let count = parseInt(audioEl.dataset.playCount || "1", 10);
-          const badge = document.getElementById('reelAudioTimer');
-          if (count < 3) {
-            count++;
-            audioEl.dataset.playCount = String(count);
-            if (badge) badge.textContent = `Ciclo ${count}/3 (90s)`;
-            audioEl.currentTime = 0;
-            audioEl.play().catch(() => {});
-          } else {
-            audioEl.dataset.playCount = "1";
-            if (badge) badge.textContent = `✅ 1:30m completado`;
-          }
-        });
-      }
-    }
-
-    function startQuickTestInStudio() {
-      loadTrackIntoStudio(
-        'Hi! I am learning English with Eihwaz and growing every day.',
-        '¡Hola! Estoy aprendiendo inglés con Eihwaz y creciendo cada día.',
-        'Reto de Eihwaz',
-        true
-      );
-    }
     function handleExclusiveAudioPlay(currentAudio) {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       document.querySelectorAll('audio').forEach(audioEl => { if (audioEl !== currentAudio) { audioEl.pause(); audioEl.currentTime = 0; } });
     }
-    function addTrackToPlaylist(english, spanish, source) {
-      if (!playlist.some(item => item.english.toLowerCase() === english.toLowerCase())) {
-        playlist.unshift({ id: 'trk_' + Date.now(), english, spanish, source: source || 'Práctica con Eihwaz' });
-        localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI();
+
+    // --- 4. BATERÍA DE MEMORIA EN LA PLAYLIST (REPETICIÓN ESPACIADA) ---
+    function addTrackToPlaylist(english, spanish, source, markPracticedNow = false) {
+      const existing = playlist.find(item => item.english.toLowerCase() === english.toLowerCase());
+      if (existing) {
+        if (markPracticedNow) {
+          existing.lastPracticed = Date.now();
+          localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist));
+          renderPlaylistUI();
+        }
+        return;
+      }
+      playlist.unshift({
+        id: 'trk_' + Date.now(),
+        english,
+        spanish,
+        source: source || 'Práctica con Eihwaz',
+        lastPracticed: markPracticedNow ? Date.now() : (Date.now() - (3 * DAY_MS))
+      });
+      localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist));
+      renderPlaylistUI();
+    }
+
+    function getMemoryBatteryBadge(lastPracticedTimestamp) {
+      if (!lastPracticedTimestamp) {
+        return {
+          html: `<span class="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/50 text-[9px] font-black text-rose-300 animate-pulse">⚠️ ¡Refresca tu memoria!</span>`,
+          borderClass: 'border-rose-500/40'
+        };
+      }
+      const daysElapsed = (Date.now() - lastPracticedTimestamp) / DAY_MS;
+      if (daysElapsed <= 2) {
+        return {
+          html: `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[9px] font-black text-emerald-300">🔋 100% Fresca</span>`,
+          borderClass: 'border-slate-800'
+        };
+      } else if (daysElapsed <= 5) {
+        return {
+          html: `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-[9px] font-black text-amber-300">🪫 +${Math.floor(daysElapsed)}d • Repasar</span>`,
+          borderClass: 'border-amber-500/30'
+        };
+      } else {
+        return {
+          html: `<span class="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/50 text-[9px] font-black text-rose-300 animate-pulse">⚠️ +${Math.floor(daysElapsed)}d • ¡Refresca tu memoria!</span>`,
+          borderClass: 'border-rose-500/40'
+        };
       }
     }
+
     function loadTrackIntoStudio(english, spanish, source, autoSwitchTab = false) {
-      globalStopAudio(); currentStudioTrack = { english, spanish, source }; addTrackToPlaylist(english, spanish, source);
-      document.getElementById('studioEnglish').textContent = `"${english}"`; document.getElementById('studioSpanish').textContent = spanish;
-      document.getElementById('studioTrackTag').textContent = source || 'Pista Activa'; document.getElementById('fearlessCoachBox').classList.add('hidden');
+      globalStopAudio();
+      currentStudioTrack = { english, spanish, source };
+      addTrackToPlaylist(english, spanish, source, false);
+      document.getElementById('studioEnglish').textContent = `"${english}"`;
+      document.getElementById('studioSpanish').textContent = spanish;
+      document.getElementById('studioTrackTag').textContent = source || 'Pista Activa';
+      document.getElementById('fearlessCoachBox').classList.add('hidden');
       if (autoSwitchTab) switchTab('playlist'); else window.scrollTo({ top: 0, behavior: 'smooth' });
       speakText(english, 0.92);
     }
+
     function renderPlaylistUI() {
       const container = document.getElementById('playlistTracksContainer');
       document.getElementById('playlistCountBadge').textContent = `${playlist.length} pistas`;
       container.innerHTML = '';
-      if (playlist.length === 0) { document.getElementById('emptyPlaylistState').classList.remove('hidden'); return; }
+      if (playlist.length === 0) {
+        document.getElementById('emptyPlaylistState').classList.remove('hidden');
+        return;
+      }
       document.getElementById('emptyPlaylistState').classList.add('hidden');
+
       playlist.forEach((item) => {
         const isCurrent = item.english === currentStudioTrack.english;
-        const safeEn = item.english.replace(/'/g, "\\'"); const safeEs = item.spanish.replace(/'/g, "\\'"); const safeSrc = (item.source || '').replace(/'/g, "\\'");
+        const safeEn = item.english.replace(/'/g, "\\'");
+        const safeEs = item.spanish.replace(/'/g, "\\'");
+        const safeSrc = (item.source || '').replace(/'/g, "\\'");
+        const battery = getMemoryBatteryBadge(item.lastPracticed);
+
         const row = document.createElement('div');
-        row.className = `p-3 rounded-xl border transition flex items-center justify-between gap-2.5 ${isCurrent ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/90 border-slate-800'}`;
+        row.className = `p-3 rounded-xl border transition flex items-center justify-between gap-2.5 ${isCurrent ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/90 ' + battery.borderClass}`;
         row.innerHTML = `
-          <div onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', false)" class="space-y-0.5 min-w-0 flex-1 cursor-pointer">
-            <span class="text-[9px] text-cyan-400 font-bold uppercase block">${item.source || 'Pista'}</span>
-            <p class="text-xs font-extrabold text-white truncate">"${item.english}"</p><p class="text-[10px] text-slate-400 truncate">${item.spanish}</p>
+          <div onclick="loadTrackIntoStudio('${safeEn}', '${safeEs}', '${safeSrc}', false)" class="space-y-1 min-w-0 flex-1 cursor-pointer">
+            <div class="flex items-center justify-between gap-1.5 flex-wrap">
+              <span class="text-[9px] text-cyan-400 font-bold uppercase">${item.source || 'Pista'}</span>
+              ${battery.html}
+            </div>
+            <p class="text-xs font-extrabold text-white truncate">"${item.english}"</p>
+            <p class="text-[10px] text-slate-400 truncate">${item.spanish}</p>
           </div>
           <div class="flex items-center gap-1 shrink-0">
             <button onclick="removeTrack('${item.id}')" class="w-7 h-8 rounded-full text-slate-500 hover:text-rose-400 text-xs flex items-center justify-center">✖</button>
@@ -1375,71 +1860,186 @@
         container.appendChild(row);
       });
     }
-    function removeTrack(id) { playlist = playlist.filter(t => t.id !== id); localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist)); renderPlaylistUI(); }
+
+    function removeTrack(id) {
+      playlist = playlist.filter(t => t.id !== id);
+      localStorage.setItem(PLAYLIST_KEY, JSON.stringify(playlist));
+      renderPlaylistUI();
+    }
     function speakStudioCurrent(rate) { speakText(currentStudioTrack.english, rate); }
 
     async function populateMicListSilent() {
       if (!navigator.mediaDevices?.enumerateDevices) return;
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices(); const mics = devices.filter(d => d.kind === 'audioinput');
-        const select = document.getElementById('micSelectDropdown'); if (!select) return;
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter(d => d.kind === 'audioinput');
+        const select = document.getElementById('micSelectDropdown');
+        if (!select) return;
         const currentVal = select.value;
         select.innerHTML = `<option value="">🎤 Micrófono predeterminado</option>`;
-        mics.forEach((m, idx) => { const opt = document.createElement('option'); opt.value = m.deviceId; opt.textContent = m.label ? `🎙️ ${m.label}` : `🎙️ Micrófono #${idx + 1}`; select.appendChild(opt); });
+        mics.forEach((m, idx) => {
+          const opt = document.createElement('option');
+          opt.value = m.deviceId;
+          opt.textContent = m.label ? `🎙️ ${m.label}` : `🎙️ Micrófono #${idx + 1}`;
+          select.appendChild(opt);
+        });
         if (currentVal) select.value = currentVal;
       } catch (e) {}
     }
+
+    // --- GRABACIÓN EN ESTUDIO + RECONOCIMIENTO DE VOZ EN PARALELO ---
     async function toggleShadowRecording() {
-      globalStopAudio(); const btn = document.getElementById('btnRecordShadow'); const meterBox = document.getElementById('micMeterBox');
+      globalStopAudio();
+      const btn = document.getElementById('btnRecordShadow');
+      const meterBox = document.getElementById('micMeterBox');
+      const livePreview = document.getElementById('liveSpeechPreview');
+
       if (isRecordingShadow) {
         if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-        isRecordingShadow = false; btn.textContent = '🎙️ 2. Toca para Grabar tu Voz'; btn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white');
-        meterBox.classList.add('hidden'); if (meterAnimId) cancelAnimationFrame(meterAnimId); return;
+        if (speechRecognizer) {
+          try { speechRecognizer.stop(); } catch (e) {}
+        }
+        isRecordingShadow = false;
+        btn.textContent = '🎙️ 2. Toca para Grabar tu Voz';
+        btn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white');
+        meterBox.classList.add('hidden');
+        if (meterAnimId) cancelAnimationFrame(meterAnimId);
+        return;
       }
+
       try {
         const selectEl = document.getElementById('micSelectDropdown');
         const selectedMicId = selectEl ? selectEl.value : '';
         const constraints = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
         if (selectedMicId) constraints.deviceId = { exact: selectedMicId };
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints }); await populateMicListSilent();
-        startMicVolumeMeter(stream); meterBox.classList.remove('hidden'); audioChunks = []; mediaRecorder = new MediaRecorder(stream);
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints });
+        await populateMicListSilent();
+
+        liveRecognizedTranscript = "";
+        vocalPeakFrames = 0;
+        if (livePreview) livePreview.textContent = "🎙️ Escuchando tu pronunciación en inglés...";
+
+        // Iniciar Web Speech API en paralelo si está disponible en el navegador
+        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognitionAPI) {
+          try {
+            speechRecognizer = new SpeechRecognitionAPI();
+            speechRecognizer.lang = 'en-US';
+            speechRecognizer.continuous = true;
+            speechRecognizer.interimResults = true;
+            speechRecognizer.onresult = (event) => {
+              let transcript = '';
+              for (let i = 0; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript + ' ';
+              }
+              liveRecognizedTranscript = transcript.trim();
+              if (livePreview && liveRecognizedTranscript) {
+                livePreview.textContent = `🗣️ Detectado: "${liveRecognizedTranscript}"`;
+              }
+            };
+            speechRecognizer.start();
+          } catch (e) {}
+        }
+
+        startMicVolumeMeter(stream);
+        meterBox.classList.remove('hidden');
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
         mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || '' }); if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
-          recordedAudioUrl = URL.createObjectURL(blob); stream.getTracks().forEach(t => t.stop()); if (audioContext) audioContext.close().catch(() => {});
-          const player = document.getElementById('userAudioPlayer'); player.src = recordedAudioUrl; player.volume = 1.0; player.onplay = () => handleExclusiveAudioPlay(player);
-          document.getElementById('userAudioWrapper').classList.remove('hidden'); addTrackToPlaylist(currentStudioTrack.english, currentStudioTrack.spanish, currentStudioTrack.source);
-          const compBtn = document.getElementById('btnCompareShadow'); compBtn.disabled = false; compBtn.className = 'btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-slate-950 text-xs font-black shadow';
+          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || '' });
+          if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
+          recordedAudioUrl = URL.createObjectURL(blob);
+          stream.getTracks().forEach(t => t.stop());
+          if (audioContext) audioContext.close().catch(() => {});
+
+          const player = document.getElementById('userAudioPlayer');
+          player.src = recordedAudioUrl;
+          player.volume = 1.0;
+          player.onplay = () => handleExclusiveAudioPlay(player);
+          document.getElementById('userAudioWrapper').classList.remove('hidden');
+
+          // 1. Revelar automáticamente si estaba en Modo Sombra
+          if (isShadowBlurActive) {
+            toggleShadowBlurMode(true);
+          }
+
+          // 2. Recargar Batería de Memoria a Verde (lastPracticed = ahora)
+          addTrackToPlaylist(currentStudioTrack.english, currentStudioTrack.spanish, currentStudioTrack.source, true);
+
+          // 3. Evaluar pronunciación palabra por palabra (Verde / Amarillo)
+          evaluatePronunciationAndRender(currentStudioTrack.english, liveRecognizedTranscript, vocalPeakFrames);
+
+          // 4. Actualizar Racha Diaria, Escudo de Hielo, Reto Diario y tocar sonido triunfal
+          registerDailyVoicePractice();
+
+          const compBtn = document.getElementById('btnCompareShadow');
+          compBtn.disabled = false;
+          compBtn.className = 'btn-duo w-full py-3 rounded-xl bg-cyan-500 border-cyan-700 text-slate-950 text-xs font-black shadow';
           player.play().catch(() => {});
         };
-        mediaRecorder.start(200); isRecordingShadow = true; btn.textContent = '⏹️ Detener Grabación (Eihwaz te escucha)'; btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
+
+        mediaRecorder.start(200);
+        isRecordingShadow = true;
+        btn.textContent = '⏹️ Detener y Evaluar mi Pronunciación';
+        btn.classList.add('recording-pulse', 'bg-rose-600', 'text-white');
         setTimeout(() => { if (isRecordingShadow) toggleShadowRecording(); }, 90000);
-      } catch (err) { alert('Permite el acceso al micrófono para entrenar tu voz con Eihwaz.'); }
+      } catch (err) {
+        alert('Permite el acceso al micrófono para entrenar tu voz con Eihwaz.');
+      }
     }
+
     function startMicVolumeMeter(stream) {
       try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)(); const source = audioContext.createMediaStreamSource(stream);
-        analyserNode = audioContext.createAnalyser(); analyserNode.fftSize = 256; source.connect(analyserNode);
-        const dataArray = new Uint8Array(analyserNode.frequencyBinCount); const bar = document.getElementById('micLevelBar'); const pct = document.getElementById('micVolumePct');
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 256;
+        source.connect(analyserNode);
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+        const bar = document.getElementById('micLevelBar');
+        const pct = document.getElementById('micVolumePct');
+
         function updateMeter() {
-          if (!isRecordingShadow) return; analyserNode.getByteTimeDomainData(dataArray); let maxPeak = 0;
-          for (let i = 0; i < dataArray.length; i++) { const v = Math.abs(dataArray[i] - 128); if (v > maxPeak) maxPeak = v; }
-          const level = Math.min(100, Math.round((maxPeak / 64) * 100)); bar.style.width = `${Math.max(6, level)}%`; pct.textContent = `${level}%`;
+          if (!isRecordingShadow) return;
+          analyserNode.getByteTimeDomainData(dataArray);
+          let maxPeak = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            const v = Math.abs(dataArray[i] - 128);
+            if (v > maxPeak) maxPeak = v;
+          }
+          const level = Math.min(100, Math.round((maxPeak / 64) * 100));
+          if (level > 18) vocalPeakFrames++;
+          bar.style.width = `${Math.max(6, level)}%`;
+          pct.textContent = `${level}%`;
           meterAnimId = requestAnimationFrame(updateMeter);
         }
         updateMeter();
       } catch (e) {}
     }
-    function playOnlyUserAudio() { globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (player?.src) { player.currentTime = 0; player.play().catch(() => {}); } }
+
+    function playOnlyUserAudio() {
+      globalStopAudio();
+      const player = document.getElementById('userAudioPlayer');
+      if (player?.src) { player.currentTime = 0; player.play().catch(() => {}); }
+    }
+
     function compareShadowAudio() {
-      globalStopAudio(); const player = document.getElementById('userAudioPlayer'); if (!recordedAudioUrl || !player) return;
-      document.getElementById('fearlessCoachText').textContent = "Eihwaz dice: ¡Esa es tu voz real en inglés! Escucha la fluidez natural de Eihwaz y compárala enseguida con tu toma."; document.getElementById('fearlessCoachBox').classList.remove('hidden');
+      globalStopAudio();
+      const player = document.getElementById('userAudioPlayer');
+      if (!recordedAudioUrl || !player) return;
+      document.getElementById('fearlessCoachBox').classList.remove('hidden');
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utter = buildNaturalUtterance(currentStudioTrack.english, 0.92);
         utter.onend = () => { setTimeout(() => { player.currentTime = 0; player.play().catch(() => {}); }, 300); };
         window.speechSynthesis.speak(utter);
-      } else { player.currentTime = 0; player.play().catch(() => {}); }
+      } else {
+        player.currentTime = 0;
+        player.play().catch(() => {});
+      }
     }
 
     // --- REELS & STARMAKER ---
@@ -1590,6 +2190,7 @@
           const player = document.getElementById('starAudioPlayer');
           player.src = starAudioUrl;
           document.getElementById('starAudioWrapper').classList.remove('hidden');
+          registerDailyVoicePractice();
           player.play().catch(() => {});
         };
 
